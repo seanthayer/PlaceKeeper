@@ -29,3 +29,5 @@ Once you’ve done the above things draft a brief document containing the follow
 </ul>
 
 Once you’ve created that document, save it as a PDF and submit it under the appropriate assignment on Canvas before the deadline listed above. You only need to submit one copy for your entire team.
+
+# Project Description
