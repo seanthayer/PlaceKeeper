@@ -1,13 +1,14 @@
-# final-project-team-1
-
+# Team 1
 
 # 1st deadline:
   
 ### Final Project Team Formation and Project Ideas:
 <ins>Due on Canvas by 11:59pm on Monday, 11/23/2020</ins> <br>
-<strong>Docs link:</strong> https://docs.google.com/document/d/1GuAKGv1Im8B37Z4nTHYA2mmsM1jHFojGIiMzTfrAuVk
+<strong>Original docs link:</strong> https://docs.google.com/document/d/1GuAKGv1Im8B37Z4nTHYA2mmsM1jHFojGIiMzTfrAuVk
 <br>
-
+<strong>Group submission:</strong> https://docs.google.com/document/d/1lFoDqYbyHFHBrLNtUCFQw2Phjw3oAQ31_zbGAh2_mPA/edit?usp=sharing
+<br><br>
+Deadline 1 Requirements ↴
 ## Brainstorming project ideas
 <ul>  
   <li>A high-level description of the application’s “purpose”.                          </li>
