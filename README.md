@@ -1,5 +1,13 @@
 # Team 1
 
+Sean Thayer-Freeman: thayerfs@oregonstate.edu
+
+Blake Henry: henrybl@oregonstate.edu
+
+Jonathan Mather: matherj@oregonstate.edu
+
+Henry Hamilton: hamiltoh@oregonstate.edu
+
 # 1st deadline:
   
 ### Final Project Team Formation and Project Ideas:
