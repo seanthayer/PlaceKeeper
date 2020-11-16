@@ -6,7 +6,7 @@ Blake Henry: henrybl@oregonstate.edu
 
 Jonathan Mather: matherj@oregonstate.edu
 
-Henry Hamilton: hamiltoh@oregonstate.edu
+[Empty Slot]
 
 # 1st deadline:
   
