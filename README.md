@@ -25,4 +25,40 @@ Christian Herinckx: herincch@oregonstate.edu
 
 
 # 
-## Place Keeper
+## PlaceKeeper
+#### Rough Description
+PlaceKeeper will feature a Google Maps embed which the user will be
+able to interact with. Specifically, the user will be able to place map pins in locations of
+their choice, assign a name & description to that map pin, be able to save a map with
+these locations, and finally, be able to retrieve said map at a later time.
+
+## General Roadmap
+
+### Format & Design
+* [ ] Build basic Homepage
+* [ ] Apply basic CSS styling
+* [ ] Build basic 404 page
+* [ ] Build basic About page
+* [ ] Build basic Homepage Modal
+* [ ] . . .
+
+### Front-end Functionality
+* [ ] Implement Modal hiding/unhiding
+* [ ] Implement very basic 'POST' request generation for Modal
+* [ ] . . .
+
+### Back-end Functionality
+* [ ] Implement basic Express serving
+* [ ] Implement 404 & About page routing
+* [ ] Implement basic 'POST' request handling
+* [ ] . . .
+
+### GoogleMaps Embed
+* [ ] Place embed and verify API functionality
+* [ ] Implement ability to place pins
+* [ ] Implement ability to name a pin
+* [ ] Implement ability to store latitude, longitude, and name of a pin in an object var
+* [ ] . . .
+
+### Misc. Features
+* [ ] . . .
