@@ -1,1 +1,21 @@
-/* CSS */
+body {
+  margin: 0;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 3px solid black;
+}
+
+.site-title {
+  display: inline-block;
+  font-family: 'Roboto Slab';
+  font-size: 56px;
+  margin: 67px 20px 67px 20px;
+}
+
+.header-image-container {
+  display: flex;
+  margin: 25px 25px 10px 10px;
+}
