@@ -64,10 +64,10 @@ main {
 #modal-backdrop {
   position: fixed;
   z-index: 1000;
-  backgorund-color: rgba(0,0,0,0.85);
+  background-color: rgba(0,0,0,0.85);
 }
 
-#sell-something-modal {
+#select-pins-modal {
   position: fixed;
   z-index: 1010;
   overflow: scroll;
@@ -86,4 +86,16 @@ main {
   background: none;
   padding: 0;
   cursor: pointer;
+}
+ul.saved-places-list-element {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+ul.saved-place-entry {
+  margin: 5px;
+  padding: 10px;
+  border: 1px solid black;
+  list-style: none;
 }

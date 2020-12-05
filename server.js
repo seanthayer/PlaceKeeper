@@ -1,4 +1,5 @@
-var path = require('path')
+var path = require('path');
+var fs = require('fs');
 var express = require('express');
 var exphbs = require('express-handlebars');
 var app = express();
@@ -14,13 +15,22 @@ var port = 3000;
  * ~ ~ ~
  */
 
+// Here we read the 'data' directory to find any previously saved maps (currently there are two example maps).
+ var savedMaps = fs.readdirSync('./data/');
+ console.log(savedMaps);
+
+ // 'static_import' is to simulate a user triggered 'import' event that will be implemented in the future
+ var static_import = require('./data/' + savedMaps[0]);
+ console.log(static_import);
+
 app.engine('handlebars', exphbs({ defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
 app.use(express.static('public'));
 
 app.get('/', function (req, res, next) {
-  res.status(200).render('homepage');
+  // Render homepage with 'static_import', populating the 'saved-places-list-container' with data from the import
+  res.status(200).render('homepage', {static_import});
 });
 
 app.get('/about', function (req, res, next) {
