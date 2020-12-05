@@ -8,6 +8,11 @@ header {
   border-bottom: 3px solid black;
 }
 
+#map {
+  width: 1280px;
+  height: 720px;
+}
+
 .site-title {
   display: inline-block;
   font-family: 'Roboto Slab';

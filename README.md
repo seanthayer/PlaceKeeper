@@ -11,7 +11,7 @@ Christian Herinckx: herincch@oregonstate.edu
 ## Deadline:
 #### Code and demo due by 5:00pm on Friday, 12/11/2020
 
-**Grading Criteria** ↴ 
+**Grading Criteria** ↴
 * 50 points – Your app satisfies these requirements:
   * The app uses HTML and CSS to implement a well-designed client interface.
   * The app uses client-side JS to enable relevant user interactions.
@@ -24,7 +24,7 @@ Christian Herinckx: herincch@oregonstate.edu
   * If, for example, your app is simply a repackaging of the app we develop together during lecture or the one you developed during your assignments this term, you will likely not score highly in this category.
 
 
-# 
+#
 ## PlaceKeeper
 #### Rough Description
 PlaceKeeper will feature a Google Maps embed which the user will be
@@ -55,11 +55,11 @@ these locations, and finally, be able to retrieve said map at a later time.
 * [x] Implement basic Express serving
 
 ### GoogleMaps Embed
-* [ ] Place embed and verify API functionality
 * [ ] Implement ability to place pins
 * [ ] Implement ability to name a pin
 * [ ] Implement ability to store latitude, longitude, and name of a pin in an object var
 * [ ] . . .
+* [x] Place embed and verify API functionality
 
 ### Misc. Features
 * [ ] . . .
