@@ -8,19 +8,55 @@ header {
   border-bottom: 3px solid black;
 }
 
-#map {
-  width: 1280px;
-  height: 720px;
+main {
+  margin: 25px;
 }
 
 .site-title {
   display: inline-block;
   font-family: 'Roboto Slab';
   font-size: 56px;
-  margin: 67px 20px 67px 20px;
+  margin: 67px 100px 67px 20px;
 }
 
 .header-image-container {
   display: flex;
-  margin: 25px 25px 10px 10px;
+  margin: 25px 25px 10px 100px;
+}
+
+.content-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.map-container {
+  display: flex;
+  flex: 1 1;
+  min-width: 484px;
+  margin-right: 10px;
+}
+
+#map {
+  width: 100%;
+  height: 720px;
+  border: 1px solid black;
+}
+
+.saved-places-container {
+  flex: 0 0;
+  margin-left: 10px;
+}
+
+.search-bar-container {
+  display: flex;
+  padding: 5px 3px 5px 3px;
+  border: 1px solid black;
+}
+
+.search-bar-element {
+  margin: 2px;
+}
+
+.search-bar-button {
+  margin: 2px;
 }
