@@ -33,6 +33,10 @@ app.get('/', function (req, res, next) {
   res.status(200).render('homepage', {static_import});
 });
 
+app.get('/about', function (req, res, next) {
+  res.status(200).render('about');
+});
+
 app.get('*', function (req, res) {
   res.status(404).render('404');
 });

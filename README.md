@@ -37,10 +37,12 @@ these locations, and finally, be able to retrieve said map at a later time.
 ### Format & Design
 * [ ] Build basic Homepage
 * [ ] Apply basic CSS styling
-* [ ] Build basic About page
+* [x] Build basic About page
 * [ ] Build basic Homepage Modal
 * [ ] . . .
 * [x] Build basic 404 page
+* [x] Build basic Homepage
+* [x] Apply basic CSS styling
 
 ### Front-end Functionality
 * [ ] Implement Modal hiding/unhiding
@@ -48,11 +50,12 @@ these locations, and finally, be able to retrieve said map at a later time.
 * [ ] . . .
 
 ### Back-end Functionality
-* [ ] About page routing
+* [x] About page routing
 * [ ] Implement basic 'POST' request handling
 * [ ] . . .
 * [x] Implement 404 page routing
 * [x] Implement basic Express serving
+* [x] Implement serving partials from a {map_name}.json file
 
 ### GoogleMaps Embed
 * [ ] Implement ability to place pins
