@@ -37,7 +37,7 @@ these locations, and finally, be able to retrieve said map at a later time.
 ### Format & Design
 * [ ] Build basic Homepage
 * [ ] Apply basic CSS styling
-* [ ] Build basic About page
+* [x] Build basic About page
 * [ ] Build basic Homepage Modal
 * [ ] . . .
 * [x] Build basic 404 page
@@ -48,7 +48,7 @@ these locations, and finally, be able to retrieve said map at a later time.
 * [ ] . . .
 
 ### Back-end Functionality
-* [ ] About page routing
+* [x] About page routing
 * [ ] Implement basic 'POST' request handling
 * [ ] . . .
 * [x] Implement 404 page routing

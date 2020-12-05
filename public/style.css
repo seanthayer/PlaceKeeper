@@ -60,3 +60,30 @@ main {
 .search-bar-button {
   margin: 2px;
 }
+
+#modal-backdrop {
+  position: fixed;
+  z-index: 1000;
+  backgorund-color: rgba(0,0,0,0.85);
+}
+
+#sell-something-modal {
+  position: fixed;
+  z-index: 1010;
+  overflow: scroll;
+}
+
+.hidden {
+  display: none;
+}
+
+#modal-close {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  font-size: 24px;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}

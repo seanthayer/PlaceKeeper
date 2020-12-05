@@ -23,6 +23,10 @@ app.get('/', function (req, res, next) {
   res.status(200).render('homepage');
 });
 
+app.get('/about', function (req, res, next) {
+  res.status(200).render('about');
+});
+
 app.get('*', function (req, res) {
   res.status(404).render('404');
 });
