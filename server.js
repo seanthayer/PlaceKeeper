@@ -37,6 +37,9 @@ app.get('/about', function (req, res, next) {
   res.status(200).render('about');
 });
 
+app.post(/*Address*/, function(req, res, next) {
+	
+})
 app.get('*', function (req, res) {
   res.status(404).render('404');
 });
