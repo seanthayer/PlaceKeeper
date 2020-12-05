@@ -16,12 +16,12 @@ main {
   display: inline-block;
   font-family: 'Roboto Slab';
   font-size: 56px;
-  margin: 67px 100px 67px 20px;
+  margin: 47px 100px 62px 20px;
 }
 
 .header-image-container {
   display: flex;
-  margin: 25px 25px 10px 100px;
+  margin: 5px 25px 5px 100px;
 }
 
 .content-container {
