@@ -7,12 +7,25 @@
     </section>
 
     <aside class="saved-places-container">
+
       <div class="search-bar-container">
         <div class="search-bar-element">
           <input type="text" class="search-bar-input">
         </div>
         <button class="search-bar-button">Search</button>
       </div>
+
+      <div class="saved-places-list-container">
+        <ul class="saved-places-list-element">
+
+          <!-- Again, 'static_import' here is just passed as a simulated user triggered 'import' event for a map load -->
+          {{#each static_import}}
+            {{> savedPlaceEntry}}
+          {{/each}}
+
+        </ul>
+      </div>
+
     </aside>
 
   </div>

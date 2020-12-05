@@ -60,3 +60,16 @@ main {
 .search-bar-button {
   margin: 2px;
 }
+
+ul.saved-places-list-element {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+ul.saved-place-entry {
+  margin: 5px;
+  padding: 10px;
+  border: 1px solid black;
+  list-style: none;
+}
