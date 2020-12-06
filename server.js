@@ -30,16 +30,17 @@ app.use(express.static('public'));
 
 app.get('/', function (req, res, next) {
   // Render homepage with 'static_import', populating the 'saved-places-list-container' with data from the import
-  res.status(200).render('homepage', {static_import});
+  res.status(200).render('homepage', { homePage: true, static_import});
 });
 
 app.get('/about', function (req, res, next) {
   res.status(200).render('about');
 });
 
-app.post(/*Address*/, function(req, res, next) {
-	
-})
+// app.post(/*Address*/, function(req, res, next) {
+//
+// });
+
 app.get('*', function (req, res) {
   res.status(404).render('404');
 });
