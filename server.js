@@ -2,7 +2,7 @@ var path = require('path');
 var fs = require('fs');
 var express = require('express');
 var exphbs = require('express-handlebars');
-var bodyParse = require('body-parser');
+var bodyParser = require('body-parser');
 var app = express();
 
 /*
@@ -28,6 +28,7 @@ app.engine('handlebars', exphbs({ defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
 app.use(express.static('public'));
+app.use(bodyParser.json());
 
 app.get('/', function (req, res, next) {
   // Render homepage with 'static_import', populating the 'saved-places-list-container' with data from the import
@@ -38,8 +39,16 @@ app.get('/about', function (req, res, next) {
   res.status(200).render('about');
 });
 
-app.post(/*Address*/, function(req, res, next) {
-
+app.post('/test', function(req, res, next) {
+	if (req.body && req.body.lat && req.body.long && req.body.name) {
+		console.log("Added following information");
+		console.log("Name: ", req.body.name);
+		console.log("Lat: ", req.body.lat);
+		console.log("Long: ", req.body.long);
+		next();
+	} else {
+		res.status(400).send("ERROR");
+	}
 })
 app.get('*', function (req, res) {
   res.status(404).render('404');
