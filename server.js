@@ -32,7 +32,7 @@ app.use(bodyParser.json());
 
 app.get('/', function (req, res, next) {
   // Render homepage with 'static_import', populating the 'saved-places-list-container' with data from the import
-  res.status(200).render('homepage', {static_import});
+  res.status(200).render('homepage', { homePage: true, static_import});
 });
 
 app.get('/about', function (req, res, next) {
@@ -53,6 +53,15 @@ app.post('/addPin', function(req, res, next) {
 		res.status(400).send("ERROR");
 	}
 })
+
+app.get('/importMap', function (req, res, next) {
+  console.log("== MAP GET REQ RECEIVED");
+  res.status(200).send(static_import);
+});
+
+// app.post(/*Address*/, function(req, res, next) {
+//
+// });
 app.get('*', function (req, res) {
   res.status(404).render('404');
 });
