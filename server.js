@@ -45,6 +45,9 @@ app.post('/test', function(req, res, next) {
 		console.log("Name: ", req.body.name);
 		console.log("Lat: ", req.body.lat);
 		console.log("Long: ", req.body.long);
+
+		//Add post data to data file
+		res.status(200).send("Success");
 		next();
 	} else {
 		res.status(400).send("ERROR");

@@ -39,3 +39,31 @@ function hideModal(){
   selectPinsModal.classList.add('hidden');
   modalBackdrop.classList.add('hidden');
 }
+
+  //Function that sends a request to the server for adding locations
+  function addPin(name, lat, long) {
+    var postRequest = XMLHttpRequest.open();
+    postRequest.open('POST', '/test');
+
+    var pinObject = {
+      name: name;
+      lat: Lat;
+      long: Long;
+    };
+    var requestBody = JSON.stringify(pinObject);
+    postRequest.setRequestHeader(
+      'Content-Type', 'application/json'
+    );
+
+    postRequest.addEventListener('load', function (event) {
+      if (event.target.status != 200) {
+        var message = event.target.response;
+        alert("Error storing Pin data: ", message);
+      } else {
+        console.log("Request was successful");
+      }
+    });
+
+    postRequest.send(requestBody);
+  } 
+
