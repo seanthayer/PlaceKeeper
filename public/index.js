@@ -39,3 +39,19 @@ function hideModal(){
   selectPinsModal.classList.add('hidden');
   modalBackdrop.classList.add('hidden');
 }
+
+/*
+ * Wait until the DOM content is loaded, and then hook up UI interactions, etc.
+ */
+window.addEventListener('DOMContentLoaded', function () {
+  var selectPinsButton = document.getElementById('select-pins-button');
+  if (selectPinsButton){
+    selectPinsButton.addEventListener('click', showModal);
+  }
+
+  var hideModalButton = document.getElementsByClassName('modal-hide-button');
+  for(var i = 0; i < hideModalButton.length; ++i){
+    hideModalButton[i].addEventListener('click', hideModal);
+  }
+
+});
