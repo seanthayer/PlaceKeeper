@@ -61,6 +61,28 @@ main {
   margin: 2px;
 }
 
+.modal-search-bar-container {
+  display: flex;
+}
+
+.modal-search-bar-input {
+  margin-top: 18px;
+  margin-left: 5px;
+}
+
+.modal-search-bar-text {
+  margin-left: 40px;
+  font-size: 22px;
+}
+
+.modal-description {
+  margin-left: 20px;
+}
+
+.modal-body {
+  margin-left: 40px;
+}
+
 #modal-backdrop {
   top: 0;
   bottom: 0;
@@ -71,21 +93,93 @@ main {
   background-color: rgba(0,0,0,0.85);
 }
 
+.modal-title{
+  margin-left: 20px;
+  margin-top: 10px;
+  font-size: 22px;
+}
+
+.modal-header {
+  border-bottom: 1px solid rgb(208, 208, 208);
+}
+
 #select-pins-modal {
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   width: auto;
-  max-width: 600px;
-  min-width: 350px;
+  max-width: 700px;
+  min-width: 400px;
   min-height: 300px;
   margin: 40px auto;
   background-color: #fff;
-  border-radius: 15px
+  border-radius: 15px;
   position: fixed;
   z-index: 1010;
-  overflow: scroll;
+}
+
+.modal-pin-table table, th, td{
+  border: 2px solid black;
+  padding: 10px;
+}
+
+.modal-table-checkboxes {
+  width: 60px;
+}
+
+#select-all {
+  background-color: gray;
+  border: 1px solid white;
+}
+
+.pin-name {
+  width: 120px
+}
+
+.latitude {
+  width: 180px;
+}
+
+.longitude {
+  width: 180px;
+}
+
+.modal-table-header{
+  background-color: gray;
+  color: white;
+  font-weight: 100;
+  font-size: 14px;
+
+}
+
+.modal-table-row{
+  background-color: rgb(208, 208, 208);
+  color: black;
+}
+
+.action-button {
+  height: 50px;
+  float: right;
+  margin-right: 20px;
+  border-radius: 5px;
+}
+
+.modal-footer {
+  border-top: 1px solid rgb(208, 208, 208);
+  padding-top: 20px;
+}
+
+#modal-cancel {
+  width: 80px;
+  border: 2px solid rgb(208, 208, 208);
+  background-color: #fff;
+}
+#modal-accept {
+  width: 150px;
+  border: 0px;
+  color: white;
+  background-color: rgb(0,135,189);
 }
 
 .hidden {
@@ -96,12 +190,12 @@ main {
   position: absolute;
   right: 10px;
   top: 5px;
-  font-size: 24px;
+  font-size: 25px;
   border: none;
   background: none;
   padding: 0;
   cursor: pointer;
-  color: #fff;
+  color: rgb(125, 125, 125);
 }
 
 ul.saved-places-list-element {

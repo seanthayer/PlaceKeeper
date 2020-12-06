@@ -1,3 +1,4 @@
+
 //Handles clicking and resetting involved with the modal
 
 /*
@@ -14,6 +15,7 @@ window.addEventListener('DOMContentLoaded', function () {
     hideModalButton[i].addEventListener('click', hideModal);
   }
 
+
 });
 //Shows the modal when the button to select pins is clicked
 function showModal(){
@@ -22,6 +24,7 @@ function showModal(){
 
   selectPinsModal.classList.remove('hidden');
   modalBackdrop.classList.remove('hidden');
+
 }
 
 //Hides modal when close/exit button are clicked
@@ -39,9 +42,9 @@ function hideModal(){
     postRequest.open('POST', '/addPin');
 
     var pinObject = {
-      name: name;
-      lat: Lat;
-      long: Long;
+      name: name,
+      lat: Lat,
+      long: Long
     };
     var requestBody = JSON.stringify(pinObject);
     postRequest.setRequestHeader(
