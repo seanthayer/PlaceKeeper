@@ -21,6 +21,17 @@ function initMap() {
 
     });
 
+    var context = {
+      name: "Test",
+      lat: event.latLng.lat(),
+      lng: event.latLng.lng()
+    }
+
+    var savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
+
+    var savedPlacesList = document.querySelector('.saved-places-list-element');
+    savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
+
   });
 
 }
