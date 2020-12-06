@@ -12,7 +12,16 @@ function initMap() {
 
   });
 
-  // importMap();
+  map.addListener('click', function (event) {
+
+    var marker = new google.maps.Marker({
+
+      position: event.latLng,
+      map: map
+
+    });
+
+  });
 
 }
 
