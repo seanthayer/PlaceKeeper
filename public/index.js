@@ -43,7 +43,7 @@ function hideModal(){
   //Function that sends a request to the server for adding locations
   function addPin(name, lat, long) {
     var postRequest = XMLHttpRequest.open();
-    postRequest.open('POST', '/test');
+    postRequest.open('POST', '/addPin');
 
     var pinObject = {
       name: name;
@@ -60,10 +60,13 @@ function hideModal(){
         var message = event.target.response;
         alert("Error storing Pin data: ", message);
       } else {
+        //Add pin data here
         console.log("Request was successful");
       }
     });
 
     postRequest.send(requestBody);
   } 
+
+  //Add event listener to button
 

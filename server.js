@@ -39,7 +39,7 @@ app.get('/about', function (req, res, next) {
   res.status(200).render('about');
 });
 
-app.post('/test', function(req, res, next) {
+app.post('/addPin', function(req, res, next) {
 	if (req.body && req.body.lat && req.body.long && req.body.name) {
 		console.log("Added following information");
 		console.log("Name: ", req.body.name);
