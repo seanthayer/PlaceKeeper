@@ -22,4 +22,7 @@ templates['savedPlaceEntry'] = template({"compiler":[8,">= 4.3.0"],"main":functi
     + alias4(((helper = (helper = lookupProperty(helpers,"lng") || (depth0 != null ? lookupProperty(depth0,"lng") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lng","hash":{},"data":data,"loc":{"start":{"line":4,"column":11},"end":{"line":4,"column":18}}}) : helper)))
     + "</li>\r\n</ul>\r\n";
 },"useData":true});
+templates['pinInfoBox'] = template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<h1>Testing 123</h1>\r\n";
+},"useData":true});
 })();

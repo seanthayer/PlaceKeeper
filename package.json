@@ -9,7 +9,7 @@
     "start": "node server.js",
     "predev": "npm run build",
     "dev": "nodemon server.js",
-    "build": "handlebars ./views/partials/savedPlaceEntry.handlebars -f ./public/savedPlaceEntry.js"
+    "build": "handlebars ./views/partials/savedPlaceEntry.handlebars ./views/partials/pinInfoBox.handlebars -f ./public/handlebarsPartials.js"
   },
   "repository": {
     "type": "git",

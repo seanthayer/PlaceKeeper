@@ -21,6 +21,14 @@ function initMap() {
 
     });
 
+    var offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
+
+    var infoBox = new google.maps.InfoWindow();
+    infoBox.setPosition(event.latLng);
+    infoBox.setContent(Handlebars.templates.pinInfoBox());
+    infoBox.setOptions({pixelOffset: offset});
+    infoBox.open(map);
+
     var context = {
       name: "Test",
       lat: event.latLng.lat(),
