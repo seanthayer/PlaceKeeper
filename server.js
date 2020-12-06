@@ -37,6 +37,11 @@ app.get('/about', function (req, res, next) {
   res.status(200).render('about');
 });
 
+app.get('/importMap', function (req, res, next) {
+  console.log("== MAP GET REQ RECEIVED");
+  res.status(200).send(static_import);
+});
+
 // app.post(/*Address*/, function(req, res, next) {
 //
 // });
