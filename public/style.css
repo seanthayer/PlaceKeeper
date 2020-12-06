@@ -44,6 +44,7 @@ main {
 
 .saved-places-container {
   flex: 0 0;
+  max-height: 720px;
   margin-left: 10px;
 }
 
@@ -60,6 +61,24 @@ main {
 .search-bar-button {
   margin: 2px;
 }
+
+.saved-places-list-container {
+  max-height: 720px;
+  overflow: auto;
+}
+
+ul.saved-places-list-element {
+  max-height: 720px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+ul.saved-place-entry {
+  margin: 5px;
+  padding: 10px;
+  border: 1px solid black;
+  list-style: none;
 
 .modal-search-bar-container {
   display: flex;
@@ -196,17 +215,4 @@ main {
   padding: 0;
   cursor: pointer;
   color: rgb(125, 125, 125);
-}
-
-ul.saved-places-list-element {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-ul.saved-place-entry {
-  margin: 5px;
-  padding: 10px;
-  border: 1px solid black;
-  list-style: none;
 }

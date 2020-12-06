@@ -21,6 +21,25 @@ function initMap() {
 
     });
 
+    var offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
+
+    var infoBox = new google.maps.InfoWindow();
+    infoBox.setPosition(event.latLng);
+    infoBox.setContent(Handlebars.templates.pinInfoBox());
+    infoBox.setOptions({pixelOffset: offset});
+    infoBox.open(map);
+
+    var context = {
+      name: "Test",
+      lat: event.latLng.lat(),
+      lng: event.latLng.lng()
+    }
+
+    var savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
+
+    var savedPlacesList = document.querySelector('.saved-places-list-element');
+    savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
+
   });
 
 }
