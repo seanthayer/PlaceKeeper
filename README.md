@@ -35,7 +35,12 @@ these locations, and finally, be able to retrieve said map at a later time.
 ## General Roadmap
 
 ### Format & Design
-* [ ] . . .
+* [ ] Create a link to /about
+* [ ] Style /about
+* [ ] Further style homepage
+* [ ] Create another page?
+
+<ins>Completed</ins>↴
 * [x] Build basic 404 page
 * [x] Build basic Homepage
 * [x] Apply basic CSS styling
@@ -44,11 +49,18 @@ these locations, and finally, be able to retrieve said map at a later time.
 
 ### Front-end Functionality
 * [ ] Implement very basic 'POST' request generation for Modal
-* [ ] . . .
+* [ ] Implement filtering of places (by name) in 'saved-places-list-element' using 'search-bar-input'
+* [ ] Implement selecting list item and panning to pin on map
+* [ ] Implement CLIENT SIDE deletion of a list item. This should not delete on server side unless a user saves the map. (Don't worry about deletion of pin on map yet either, just a list item from the DOM.)
+
+<ins>Completed</ins>↴
 * [x] Implement Modal hiding/unhiding
 
 ### Back-end Functionality
-* [ ] . . .
+* [ ] Implement completed request and response 'POST' handling for saving a map
+* [ ] Implement completed request and response 'GET' handling for /importMap
+
+<ins>Completed</ins>↴
 * [x] Implement 404 page routing
 * [x] Implement basic Express serving
 * [x] Implement serving partials from a {map_name}.json file
@@ -58,7 +70,12 @@ these locations, and finally, be able to retrieve said map at a later time.
 ### GoogleMaps Embed
 * [ ] Implement ability to name a pin
 * [ ] Implement ability to store latitude, longitude, and name of a pin in an object var
-* [ ] . . .
+* [ ] Implement function to return array of current pins
+* [ ] Implement robust infobox popup
+* [ ] Implement panning to pin on click
+* [ ] Implement deleting pin from map directly or removing pin when its list item is removed
+
+<ins>Completed</ins>↴
 * [x] Place embed and verify API functionality
 * [x] Implement ability to place pins
 
