@@ -52,6 +52,7 @@ these locations, and finally, be able to retrieve said map at a later time.
 * [ ] Implement filtering of places (by name) in 'saved-places-list-element' using 'search-bar-input'
 * [ ] Implement selecting list item and panning to pin on map
 * [ ] Implement CLIENT SIDE deletion of a list item. This should not delete on server side unless a user saves the map. (Don't worry about deletion of pin on map yet either, just a list item from the DOM.)
+* [ ] Implement reading of current pins from 'saved-places-list-element' using 'saved-place-entry' and the associated datasets (name, data-lat, data-lng)
 
 <ins>Completed</ins>↴
 * [x] Implement Modal hiding/unhiding
@@ -68,16 +69,15 @@ these locations, and finally, be able to retrieve said map at a later time.
 * [x] Implement basic 'POST' request handling
 
 ### GoogleMaps Embed
-* [ ] Implement ability to name a pin
-* [ ] Implement ability to store latitude, longitude, and name of a pin in an object var
-* [ ] Implement function to return array of current pins
-* [ ] Implement robust infobox popup
 * [ ] Implement panning to pin on click
 * [ ] Implement deleting pin from map directly or removing pin when its list item is removed
 
 <ins>Completed</ins>↴
 * [x] Place embed and verify API functionality
 * [x] Implement ability to place pins
+* [x] Implement ability to name a pin
+* [x] Implement ability to store latitude, longitude, and name of a pin in an object var
+* [x] Implement robust infobox popup
 
 ### Misc. Features
 * [ ] . . .
