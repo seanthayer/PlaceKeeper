@@ -18,14 +18,20 @@ function initMap() {
 
   });
 
-  mapClickListener = eventHandler.addListener(map, 'click', createNewPin);
+  // Adds a 'click' listener on the map, and calls for the creation of a new pin
+  mapClickListener = eventHandler.addListener(map, 'click', generateNewPinForm);
 
 }
 
-function createNewPin(event) {
+function generateNewPinForm(event) {
 
+  // Removes the listener associated with a map 'click' event. Prevents multiple form instances from being generated at a time
+  eventHandler.removeListener(mapClickListener);
+
+  // Listeners pass the 'event' parameter allowing us to get the coords of the event
   var clickEventCoords = event.latLng;
 
+  // Now the marker is generated
   var newPinMarker = new google.maps.Marker({
 
     position: clickEventCoords,
@@ -33,10 +39,13 @@ function createNewPin(event) {
 
   });
 
-  var newPinInfoBox = openPinInfoBox(map, clickEventCoords);
+  // And the infobox
+  var newPinInfoBox = generatePinInfoBox(map, clickEventCoords);
 
+  // Wait for the dynamically generated infobox to be 'domready' (i.e. ready to be accessed within the DOM)
   eventHandler.addListenerOnce(newPinInfoBox, 'domready', function () {
 
+    // Now we package everything together and send it off to be handled
     var newPin = {
 
       marker: newPinMarker,
@@ -45,23 +54,30 @@ function createNewPin(event) {
 
     };
 
-    handleNewPinObject(newPin);
+    handleNewPinForm(newPin, function () {
+
+      // After 'handleNewPinForm' callsback (i.e. is finished), we reinstate the 'click' listener
+      mapClickListener = eventHandler.addListener(map, 'click', generateNewPinForm);
+
+    });
 
   });
 
 }
 
-function handleNewPinObject(newPinObject) {
+function handleNewPinForm(newPinObject, callback) {
 
-  eventHandler.removeListener(mapClickListener);
+  // 'pinDescField' is currently not stored anywhere, but is a placeholder for the future
 
   var pinNameField = mapNode.querySelector('input#pin-infobox-name');
   var pinDescField = mapNode.querySelector('textarea#pin-infobox-description');
   var saveButton = mapNode.querySelector('.pin-infobox-buttons-container > button[name="save"]');
   var cancelButton = mapNode.querySelector('.pin-infobox-buttons-container > button[name="cancel"]')
 
+  // The Google API allows us to add event listeners on DOM elements through it, much like the native JS '.addEventListener()'
   eventHandler.addDomListener(saveButton, 'click', function () {
 
+    // A name is required for a new pin
     if (pinNameField.value) {
 
       var context = {
@@ -72,13 +88,14 @@ function handleNewPinObject(newPinObject) {
 
       }
 
+      // Generate a 'saved-place-entry' using Handlebars and the data from the pin. Then close the infobox (leaving the marker) and callback
       var savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
       var savedPlacesList = document.querySelector('.saved-places-list-element');
 
       savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
 
       newPinObject.infoBox.close();
-      mapClickListener = eventHandler.addListener(map, 'click', createNewPin);
+      callback();
 
     } else {
 
@@ -88,17 +105,18 @@ function handleNewPinObject(newPinObject) {
 
   });
 
+  // Self explanatory listeners for 'cancelButton' and the infobox's 'x' button
   eventHandler.addDomListener(cancelButton, 'click', function () {
 
     removeMarkerAndInfoBox(newPinObject);
-    mapClickListener = eventHandler.addListener(map, 'click', createNewPin);
+    callback();
 
   });
 
   eventHandler.addListener(newPinObject.infoBox, 'closeclick', function () {
 
     removeMarkerAndInfoBox(newPinObject);
-    mapClickListener = eventHandler.addListener(map, 'click', createNewPin);
+    callback();
 
   });
 
@@ -111,8 +129,9 @@ function removeMarkerAndInfoBox(newPinObject) {
 
 }
 
-function openPinInfoBox(map, coords) {
+function generatePinInfoBox(map, coords) {
 
+  // 'offset' is used for the 'pixelOffset' option and must be defined by a 'Size' object
   var offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
   var infoBox = new google.maps.InfoWindow();
 
