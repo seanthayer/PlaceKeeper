@@ -6,6 +6,7 @@ var eventHandler;
 // The API will callback 'initMap()' when finished loading
 function initMap() {
 
+  // Points to the API's 'event' namespace
   eventHandler = google.maps.event;
 
   // Creates a new Map object inserting it into <div id="map"></div>
@@ -17,11 +18,7 @@ function initMap() {
 
   });
 
-  eventHandler.addListenerOnce(map, 'tilesloaded', function () {
-
-    mapClickListener = eventHandler.addListener(map, 'click', createNewPin);
-
-  });
+  mapClickListener = eventHandler.addListener(map, 'click', createNewPin);
 
 }
 
@@ -56,6 +53,8 @@ function createNewPin(event) {
 
 function handleNewPinObject(newPinObject) {
 
+  eventHandler.removeListener(mapClickListener);
+
   var pinNameField = mapNode.querySelector('input#pin-infobox-name');
   var pinDescField = mapNode.querySelector('textarea#pin-infobox-description');
   var saveButton = mapNode.querySelector('.pin-infobox-buttons-container > button[name="save"]');
@@ -79,6 +78,7 @@ function handleNewPinObject(newPinObject) {
       savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
 
       newPinObject.infoBox.close();
+      mapClickListener = eventHandler.addListener(map, 'click', createNewPin);
 
     } else {
 
@@ -91,12 +91,14 @@ function handleNewPinObject(newPinObject) {
   eventHandler.addDomListener(cancelButton, 'click', function () {
 
     removeMarkerAndInfoBox(newPinObject);
+    mapClickListener = eventHandler.addListener(map, 'click', createNewPin);
 
   });
 
   eventHandler.addListener(newPinObject.infoBox, 'closeclick', function () {
 
     removeMarkerAndInfoBox(newPinObject);
+    mapClickListener = eventHandler.addListener(map, 'click', createNewPin);
 
   });
 
