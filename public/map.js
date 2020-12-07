@@ -39,25 +39,31 @@ function createNewPin(event) {
 
   eventHandler.addListenerOnce(newPinInfoBox, 'domready', function () {
 
-    handlePinInfoBox(newPinInfoBox, newPinMarker, clickEventCoords);
+    var newPin = {
+      marker: newPinMarker,
+      infoBox: newPinInfoBox,
+      coords: clickEventCoords
+    };
+
+    handleNewPinObject(newPin);
 
   });
 
 }
 
-function handlePinInfoBox(infoBox, marker, coords) {
+function handleNewPinObject(newPinObject) {
 
   var saveButton = document.querySelector('.pin-infobox-buttons-container > button[name="save"]');
   var cancelButton = document.querySelector('.pin-infobox-buttons-container > button[name="cancel"]')
 
-  saveButton.addEventListener('click', function () {
+  eventHandler.addDomListener(saveButton, 'click', function () {
     console.log('Save click');
 
     var context = {
 
       name: "Test",
-      lat: coords.lat(),
-      lng: coords.lng()
+      lat: newPinObject.coords.lat(),
+      lng: newPinObject.coords.lng()
 
     }
 
@@ -66,22 +72,30 @@ function handlePinInfoBox(infoBox, marker, coords) {
 
     savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
 
+    newPinObject.infoBox.close();
+
   });
 
-  cancelButton.addEventListener('click', function () {
+  eventHandler.addDomListener(cancelButton, 'click', function () {
     console.log('Cancel click');
 
-    infoBox.close();
-    marker.setMap(null);
+    removeMarkerAndInfoBox(newPinObject);
 
   });
 
-  eventHandler.addListener(infoBox, 'closeclick', function () {
+  eventHandler.addListener(newPinObject.infoBox, 'closeclick', function () {
     console.log('Cancel click');
 
-    infoBox.close();
-    marker.setMap(null);
+    removeMarkerAndInfoBox(newPinObject);
+
   });
+
+}
+
+function removeMarkerAndInfoBox(newPinObject) {
+
+  newPinObject.infoBox.close();
+  newPinObject.marker.setMap(null);
 
 }
 
