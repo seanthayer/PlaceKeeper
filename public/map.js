@@ -1,4 +1,5 @@
 var map;
+var mapNode = document.querySelector('#map');
 
 // The API will callback 'initMap()' when finished loading
 function initMap() {
@@ -7,7 +8,7 @@ function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
 
     // Each Map object must have a center defined with a latitude & longitude pair, and a zoom level
-    center: {lat: 43.815136416911436, lng: -120.6398112171833},
+    center: { lat: 43.815136416911436, lng: -120.6398112171833 },
     zoom: 5
 
   });
@@ -21,26 +22,58 @@ function initMap() {
 
     });
 
-    var offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
+    openPinInfoBox(map, event.latLng);
 
-    var infoBox = new google.maps.InfoWindow();
-    infoBox.setPosition(event.latLng);
-    infoBox.setContent(Handlebars.templates.pinInfoBox());
-    infoBox.setOptions({pixelOffset: offset});
-    infoBox.open(map);
+    var infoBoxObserver = new MutationObserver(function () {
+
+      handlePinInfoBox();
+
+      this.disconnect();
+
+    });
+
+    infoBoxObserver.observe(mapNode, {
+
+      attributes: false,
+      childList: true,
+      subtree: true
+
+    });
+
+    // var saveButton = document.querySelector('.pin-infobox-buttons-container > button[name="save"]');
 
     var context = {
+
       name: "Test",
       lat: event.latLng.lat(),
       lng: event.latLng.lng()
+
     }
 
     var savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
-
     var savedPlacesList = document.querySelector('.saved-places-list-element');
+
     savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
 
   });
+
+}
+
+function handlePinInfoBox() {
+
+  mapNode.querySelector('button.gm-ui-hover-effect').remove();
+
+}
+
+function openPinInfoBox(map, pos) {
+
+  var offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
+  var infoBox = new google.maps.InfoWindow();
+
+  infoBox.setPosition(pos);
+  infoBox.setContent(Handlebars.templates.pinInfoBox());
+  infoBox.setOptions({ pixelOffset: offset });
+  infoBox.open(map);
 
 }
 
@@ -50,7 +83,6 @@ function importMap() {
   var reqURL = '/importMap';
 
   getRequest.open('GET', reqURL);
-
   getRequest.setRequestHeader('Content-Type', 'application/json');
 
   getRequest.addEventListener('load', function(event) {
