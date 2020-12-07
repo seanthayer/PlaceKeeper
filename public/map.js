@@ -1,4 +1,5 @@
 var map;
+var mapNode = document.querySelector('#map');
 var mapClickListener;
 var eventHandler;
 
@@ -40,9 +41,11 @@ function createNewPin(event) {
   eventHandler.addListenerOnce(newPinInfoBox, 'domready', function () {
 
     var newPin = {
+
       marker: newPinMarker,
       infoBox: newPinInfoBox,
       coords: clickEventCoords
+
     };
 
     handleNewPinObject(newPin);
@@ -53,38 +56,45 @@ function createNewPin(event) {
 
 function handleNewPinObject(newPinObject) {
 
-  var saveButton = document.querySelector('.pin-infobox-buttons-container > button[name="save"]');
-  var cancelButton = document.querySelector('.pin-infobox-buttons-container > button[name="cancel"]')
+  var pinNameField = mapNode.querySelector('input#pin-infobox-name');
+  var pinDescField = mapNode.querySelector('textarea#pin-infobox-description');
+  var saveButton = mapNode.querySelector('.pin-infobox-buttons-container > button[name="save"]');
+  var cancelButton = mapNode.querySelector('.pin-infobox-buttons-container > button[name="cancel"]')
 
   eventHandler.addDomListener(saveButton, 'click', function () {
-    console.log('Save click');
 
-    var context = {
+    if (pinNameField.value) {
 
-      name: "Test",
-      lat: newPinObject.coords.lat(),
-      lng: newPinObject.coords.lng()
+      var context = {
+
+        name: pinNameField.value,
+        lat: newPinObject.coords.lat(),
+        lng: newPinObject.coords.lng()
+
+      }
+
+      var savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
+      var savedPlacesList = document.querySelector('.saved-places-list-element');
+
+      savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
+
+      newPinObject.infoBox.close();
+
+    } else {
+
+      alert('You must enter a name for a new pin!');
 
     }
-
-    var savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
-    var savedPlacesList = document.querySelector('.saved-places-list-element');
-
-    savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
-
-    newPinObject.infoBox.close();
 
   });
 
   eventHandler.addDomListener(cancelButton, 'click', function () {
-    console.log('Cancel click');
 
     removeMarkerAndInfoBox(newPinObject);
 
   });
 
   eventHandler.addListener(newPinObject.infoBox, 'closeclick', function () {
-    console.log('Cancel click');
 
     removeMarkerAndInfoBox(newPinObject);
 
