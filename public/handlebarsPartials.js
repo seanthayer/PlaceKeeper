@@ -12,8 +12,8 @@ templates['savedPlaceEntry'] = template({"compiler":[8,">= 4.3.0"],"main":functi
     + alias4(((helper = (helper = lookupProperty(helpers,"name") || (depth0 != null ? lookupProperty(depth0,"name") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"loc":{"start":{"line":1,"column":36},"end":{"line":1,"column":44}}}) : helper)))
     + "\" data-lat=\""
     + alias4(((helper = (helper = lookupProperty(helpers,"lat") || (depth0 != null ? lookupProperty(depth0,"lat") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lat","hash":{},"data":data,"loc":{"start":{"line":1,"column":56},"end":{"line":1,"column":63}}}) : helper)))
-    + "\" data-long=\""
-    + alias4(((helper = (helper = lookupProperty(helpers,"lng") || (depth0 != null ? lookupProperty(depth0,"lng") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lng","hash":{},"data":data,"loc":{"start":{"line":1,"column":76},"end":{"line":1,"column":83}}}) : helper)))
+    + "\" data-lng=\""
+    + alias4(((helper = (helper = lookupProperty(helpers,"lng") || (depth0 != null ? lookupProperty(depth0,"lng") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lng","hash":{},"data":data,"loc":{"start":{"line":1,"column":75},"end":{"line":1,"column":82}}}) : helper)))
     + "\">\r\n  <li>Place: "
     + alias4(((helper = (helper = lookupProperty(helpers,"name") || (depth0 != null ? lookupProperty(depth0,"name") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"loc":{"start":{"line":2,"column":13},"end":{"line":2,"column":21}}}) : helper)))
     + "</li>\r\n  <li>Lat: "
@@ -23,6 +23,6 @@ templates['savedPlaceEntry'] = template({"compiler":[8,">= 4.3.0"],"main":functi
     + "</li>\r\n</ul>\r\n";
 },"useData":true});
 templates['pinInfoBox'] = template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<h1>Testing 123</h1>\r\n";
+    return "<div class=\"pin-infobox-container\">\r\n  <h2 class=\"pin-infobox-title\">Create New Pin</h2>\r\n  <fieldset class=\"pin-infobox-fieldset\">\r\n    <legend>Pin Details</legend>\r\n    <label for=\"pin-infobox-name\">Name:</label>\r\n    <input type=\"text\" id=\"pin-infobox-name\" name=\"name\" maxlength=\"30\" placeholder=\"Max 30 characters\"><br><br>\r\n    <label for=\"pin-infobox-description\">Description</label><br>\r\n    <textarea id=\"pin-infobox-description\" name=\"description\" rows=\"4\" cols=\"28\" maxlength=\"200\" placeholder=\"Max 200 characters\"></textarea><br>\r\n    <div class=\"pin-infobox-buttons-container\">\r\n      <button type=\"button\" name=\"cancel\">Cancel</button>\r\n      <button type=\"button\" name=\"save\">Save</button>\r\n    </div>\r\n  </fieldset>\r\n</div>\r\n";
 },"useData":true});
 })();
