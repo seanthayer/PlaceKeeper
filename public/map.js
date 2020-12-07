@@ -1,8 +1,11 @@
 var map;
-var mapNode = document.querySelector('#map');
+var mapClickListener;
+var eventHandler;
 
 // The API will callback 'initMap()' when finished loading
 function initMap() {
+
+  eventHandler = google.maps.event;
 
   // Creates a new Map object inserting it into <div id="map"></div>
   map = new google.maps.Map(document.getElementById('map'), {
@@ -13,40 +16,48 @@ function initMap() {
 
   });
 
-  map.addListener('click', function (event) {
+  eventHandler.addListenerOnce(map, 'tilesloaded', function () {
 
-    var marker = new google.maps.Marker({
+    mapClickListener = eventHandler.addListener(map, 'click', createNewPin);
 
-      position: event.latLng,
-      map: map
+  });
 
-    });
+}
 
-    openPinInfoBox(map, event.latLng);
+function createNewPin(event) {
 
-    var infoBoxObserver = new MutationObserver(function () {
+  var clickEventCoords = event.latLng;
 
-      handlePinInfoBox();
+  var newPinMarker = new google.maps.Marker({
 
-      this.disconnect();
+    position: clickEventCoords,
+    map: map
 
-    });
+  });
 
-    infoBoxObserver.observe(mapNode, {
+  var newPinInfoBox = openPinInfoBox(map, clickEventCoords);
 
-      attributes: false,
-      childList: true,
-      subtree: true
+  eventHandler.addListenerOnce(newPinInfoBox, 'domready', function () {
 
-    });
+    handlePinInfoBox(newPinInfoBox, newPinMarker, clickEventCoords);
 
-    // var saveButton = document.querySelector('.pin-infobox-buttons-container > button[name="save"]');
+  });
+
+}
+
+function handlePinInfoBox(infoBox, marker, coords) {
+
+  var saveButton = document.querySelector('.pin-infobox-buttons-container > button[name="save"]');
+  var cancelButton = document.querySelector('.pin-infobox-buttons-container > button[name="cancel"]')
+
+  saveButton.addEventListener('click', function () {
+    console.log('Save click');
 
     var context = {
 
       name: "Test",
-      lat: event.latLng.lat(),
-      lng: event.latLng.lng()
+      lat: coords.lat(),
+      lng: coords.lng()
 
     }
 
@@ -57,23 +68,34 @@ function initMap() {
 
   });
 
+  cancelButton.addEventListener('click', function () {
+    console.log('Cancel click');
+
+    infoBox.close();
+    marker.setMap(null);
+
+  });
+
+  eventHandler.addListener(infoBox, 'closeclick', function () {
+    console.log('Cancel click');
+
+    infoBox.close();
+    marker.setMap(null);
+  });
+
 }
 
-function handlePinInfoBox() {
-
-  mapNode.querySelector('button.gm-ui-hover-effect').remove();
-
-}
-
-function openPinInfoBox(map, pos) {
+function openPinInfoBox(map, coords) {
 
   var offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
   var infoBox = new google.maps.InfoWindow();
 
-  infoBox.setPosition(pos);
+  infoBox.setPosition(coords);
   infoBox.setContent(Handlebars.templates.pinInfoBox());
   infoBox.setOptions({ pixelOffset: offset });
   infoBox.open(map);
+
+  return infoBox;
 
 }
 
