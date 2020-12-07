@@ -42,6 +42,29 @@ main {
   border: 1px solid black;
 }
 
+.pin-infobox-title {
+  text-align: center;
+  margin: 5px;
+}
+
+#pin-infobox-name {
+  font-family: 'Roboto';
+}
+
+#pin-infobox-description {
+  font-family: 'Roboto';
+  min-width: 210px;
+  min-height: 60px;
+  max-width: 210px;
+  max-height: 60px;
+}
+
+.pin-infobox-buttons-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 12px 4px 12px;
+}
+
 .saved-places-container {
   flex: 0 0;
   max-height: 720px;

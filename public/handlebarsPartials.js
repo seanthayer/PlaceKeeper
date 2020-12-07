@@ -23,6 +23,6 @@ templates['savedPlaceEntry'] = template({"compiler":[8,">= 4.3.0"],"main":functi
     + "</li>\r\n</ul>\r\n";
 },"useData":true});
 templates['pinInfoBox'] = template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<h1>Testing 123</h1>\r\n";
+    return "<h2 class=\"pin-infobox-title\">Create New Pin</h2>\r\n<fieldset class=\"pin-infobox-fieldset\">\r\n  <legend>Pin Details</legend>\r\n  <label for=\"pin-infobox-name\">Name:</label>\r\n  <input type=\"text\" id=\"pin-infobox-name\" name=\"name\" maxlength=\"30\" placeholder=\"Max 30 characters\"><br><br>\r\n  <label for=\"pin-infobox-description\">Description</label><br>\r\n  <textarea id=\"pin-infobox-description\" name=\"description\" rows=\"4\" cols=\"28\" maxlength=\"200\" placeholder=\"Max 200 characters\"></textarea><br>\r\n  <div class=\"pin-infobox-buttons-container\">\r\n    <button type=\"button\" name=\"cancel\">Cancel</button>\r\n    <button type=\"button\" name=\"save\">Save</button>\r\n  </div>\r\n</fieldset>\r\n";
 },"useData":true});
 })();
