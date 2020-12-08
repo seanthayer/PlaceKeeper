@@ -259,14 +259,24 @@ function importMap() {
 
 function renderSavedPlacesList(list) {
 
-  var savedPlacesList = document.querySelector('.saved-places-list-element')
+  var savedPlacesList = document.querySelector('.saved-places-list-element');
   var savedPlacesListNodes = Array.from(savedPlacesList.childNodes);
+
+  var modalTable = document.querySelector('.modal-pin-table');
+  var modalTableRowNodes = Array.from(modalTable.querySelectorAll('.modal-table-row'));
 
   savedPlacesListNodes.forEach((node) => {
 
     node.parentNode.removeChild(node);
 
   });
+
+  modalTableRowNodes.forEach((node) => {
+
+    node.parentNode.removeChild(node);
+
+  });
+
 
   list.forEach((pin) => {
 
@@ -277,7 +287,7 @@ function renderSavedPlacesList(list) {
       lng: pin.latLng.lng()
 
     }
-    
+
     // Input new pin to modal
     var pinsHTML = Handlebars.templates.pins(context);
     var pinsList = document.getElementsByClassName('modal-pin-table');
