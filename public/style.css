@@ -202,6 +202,9 @@ ul.saved-place-entry {
 
 .modal-body {
   margin-bottom: 10px;
+  max-height: 400px;
+  overflow: scroll;
+  overflow-x: hidden;
 }
 
 .modal-table-header{
