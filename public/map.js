@@ -77,12 +77,14 @@ function generateNewPinForm(event) {
 function generateReadOnlyInfoBox(event) {
 
   var eventOriginPin;
+  var eventOriginPinIndex;
 
   for (var i = 0; i < mapPins.length; i++) {
 
     if (mapPins[i].latLng === event.latLng) {
 
       eventOriginPin = mapPins[i];
+      eventOriginPin.index = i;
 
     }
 
@@ -91,7 +93,12 @@ function generateReadOnlyInfoBox(event) {
   map.panTo(eventOriginPin.latLng);
 
   var context = {
-    name: eventOriginPin.name
+
+    name: eventOriginPin.name,
+    lat: eventOriginPin.latLng.lat(),
+    lng: eventOriginPin.latLng.lng(),
+    index: eventOriginPin.index
+
   }
 
   var readOnlyInfoBoxHTML = Handlebars.templates.pinInfoBoxReadOnly(context);
@@ -99,20 +106,37 @@ function generateReadOnlyInfoBox(event) {
 
   eventHandler.addListenerOnce(readOnlyInfoBox, 'domready', function () {
 
-    handleReadOnlyInfoBox(readOnlyInfoBox, function () {
-      eventOriginPin.clickListener = eventHandler.addListenerOnce(eventOriginPin.marker, 'click', generateReadOnlyInfoBox);
-    });
+    handleReadOnlyInfoBox(eventOriginPin, readOnlyInfoBox);
 
   });
 
 }
 
-function handleReadOnlyInfoBox(infobox, callback) {
+function handleReadOnlyInfoBox(pin, infobox) {
+
+  var infoBoxContainer = mapNode.querySelector(`.pin-infobox-readonly-container[data-id="${pin.index}"]`)
+  var buttonContainer = infoBoxContainer.querySelector('.pin-trash-button-container');
+  var trashButton = buttonContainer.querySelector('button.pin-trash-button');
+
+  eventHandler.addDomListenerOnce(trashButton, 'click', function () {
+
+    buttonContainer.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
+
+    eventHandler.addDomListenerOnce(trashButton, 'click', function () {
+
+      removeMarkerAndInfoBox(pin.marker, infobox);
+      
+      mapPins.splice(pin.index, 1);
+
+    });
+
+  });
 
   eventHandler.addListenerOnce(infobox, 'closeclick', function () {
 
     infobox.close();
-    callback();
+
+    pin.clickListener = eventHandler.addListenerOnce(pin.marker, 'click', generateReadOnlyInfoBox);
 
   });
 
@@ -149,7 +173,6 @@ function handleNewPinForm(newPinObject, callback) {
 
       newPinObject.infoBox.close();
 
-      // var listener_ = eventHandler.addListener(newPinObject.marker, 'click', generateReadOnlyInfoBox);
       var pin_ = new Pin(newPinObject.marker, {
 
         name: pinNameField.value,
@@ -174,24 +197,24 @@ function handleNewPinForm(newPinObject, callback) {
   // Self explanatory listeners for 'cancelButton' and the infobox's 'x' button
   eventHandler.addDomListener(cancelButton, 'click', function () {
 
-    removeMarkerAndInfoBox(newPinObject);
+    removeMarkerAndInfoBox(newPinObject.marker, newPinObject.infoBox);
     callback();
 
   });
 
   eventHandler.addListener(newPinObject.infoBox, 'closeclick', function () {
 
-    removeMarkerAndInfoBox(newPinObject);
+    removeMarkerAndInfoBox(newPinObject.marker, newPinObject.infoBox);
     callback();
 
   });
 
 }
 
-function removeMarkerAndInfoBox(newPinObject) {
+function removeMarkerAndInfoBox(marker, infoBox) {
 
-  newPinObject.infoBox.close();
-  newPinObject.marker.setMap(null);
+  infoBox.close();
+  marker.setMap(null);
 
 }
 
