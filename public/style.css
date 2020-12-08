@@ -65,6 +65,21 @@ main {
   margin: 8px 12px 4px 12px;
 }
 
+.pin-infobox-readonly-title {
+  text-align: center;
+  margin: 5px 0px 5px 0px;
+}
+
+.pin-trash-button-container {
+  color: crimson;
+  font-size: 12px;
+  text-align: right;
+}
+
+.far.fa-trash-alt {
+  color: crimson;
+}
+
 .saved-places-container {
   flex: 0 0;
   max-height: 720px;
