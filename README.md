@@ -69,7 +69,6 @@ these locations, and finally, be able to retrieve said map at a later time.
 * [x] Implement basic 'POST' request handling
 
 ### GoogleMaps Embed
-* [ ] Implement panning to pin on click
 * [ ] Implement deleting pin from map directly or removing pin when its list item is removed
 
 <ins>Completed</ins>↴
@@ -77,7 +76,9 @@ these locations, and finally, be able to retrieve said map at a later time.
 * [x] Implement ability to place pins
 * [x] Implement ability to name a pin
 * [x] Implement ability to store latitude, longitude, and name of a pin in an object var
-* [x] Implement robust infobox popup
+* [x] Implement robust infobox popup form entry
+* [x] Implement infobox popup for existing pins
+* [x] Implement panning to pin on click
 
 ### Misc. Features
 * [ ] . . .

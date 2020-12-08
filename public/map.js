@@ -88,6 +88,8 @@ function generateReadOnlyInfoBox(event) {
 
   }
 
+  map.panTo(eventOriginPin.latLng);
+
   var context = {
     name: eventOriginPin.name
   }
