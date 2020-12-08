@@ -38,7 +38,7 @@ templates['pinInfoBoxReadOnly'] = template({"compiler":[8,">= 4.3.0"],"main":fun
     + "\" data-lng=\""
     + alias4(((helper = (helper = lookupProperty(helpers,"lng") || (depth0 != null ? lookupProperty(depth0,"lng") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lng","hash":{},"data":data,"loc":{"start":{"line":1,"column":73},"end":{"line":1,"column":80}}}) : helper)))
     + "\" data-id=\""
-    + alias4(((helper = (helper = lookupProperty(helpers,"index") || (depth0 != null ? lookupProperty(depth0,"index") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"index","hash":{},"data":data,"loc":{"start":{"line":1,"column":91},"end":{"line":1,"column":100}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"uniqueID") || (depth0 != null ? lookupProperty(depth0,"uniqueID") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"uniqueID","hash":{},"data":data,"loc":{"start":{"line":1,"column":91},"end":{"line":1,"column":103}}}) : helper)))
     + "\">\r\n  <h2 class=\"pin-infobox-readonly-title\">"
     + alias4(((helper = (helper = lookupProperty(helpers,"name") || (depth0 != null ? lookupProperty(depth0,"name") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"loc":{"start":{"line":2,"column":41},"end":{"line":2,"column":49}}}) : helper)))
     + "</h2>\r\n  <div class=\"pin-trash-button-container\">\r\n    <button type=\"button\" name=\"pin-trash-button\" class=\"pin-trash-button\"><i class=\"far fa-trash-alt\"></i></button>\r\n  </div>\r\n</div>\r\n";

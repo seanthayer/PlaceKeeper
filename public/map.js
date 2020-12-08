@@ -76,6 +76,8 @@ function generateNewPinForm(event) {
 
 function generateReadOnlyInfoBox(event) {
 
+  // Abandon all hope, ye who enter here
+
   var eventOriginPin;
   var eventOriginPinIndex;
 
@@ -84,7 +86,6 @@ function generateReadOnlyInfoBox(event) {
     if (mapPins[i].latLng === event.latLng) {
 
       eventOriginPin = mapPins[i];
-      eventOriginPin.index = i;
 
     }
 
@@ -97,7 +98,7 @@ function generateReadOnlyInfoBox(event) {
     name: eventOriginPin.name,
     lat: eventOriginPin.latLng.lat(),
     lng: eventOriginPin.latLng.lng(),
-    index: eventOriginPin.index
+    uniqueID: eventOriginPin.latLng
 
   }
 
@@ -114,7 +115,9 @@ function generateReadOnlyInfoBox(event) {
 
 function handleReadOnlyInfoBox(pin, infobox) {
 
-  var infoBoxContainer = mapNode.querySelector(`.pin-infobox-readonly-container[data-id="${pin.index}"]`)
+  // AVERT THINE EYES LEST THEY BURN INTO ASH
+
+  var infoBoxContainer = mapNode.querySelector(`.pin-infobox-readonly-container[data-id="${pin.latLng}"]`)
   var buttonContainer = infoBoxContainer.querySelector('.pin-trash-button-container');
   var trashButton = buttonContainer.querySelector('button.pin-trash-button');
 
@@ -125,8 +128,10 @@ function handleReadOnlyInfoBox(pin, infobox) {
     eventHandler.addDomListenerOnce(trashButton, 'click', function () {
 
       removeMarkerAndInfoBox(pin.marker, infobox);
-      
-      mapPins.splice(pin.index, 1);
+
+      mapPins.splice(mapPins.indexOf(pin), 1);
+
+      renderSavedPlacesList(mapPins);
 
     });
 
@@ -157,20 +162,6 @@ function handleNewPinForm(newPinObject, callback) {
     // A name is required for a new pin
     if (pinNameField.value) {
 
-      var context = {
-
-        name: pinNameField.value,
-        lat: newPinObject.coords.lat(),
-        lng: newPinObject.coords.lng()
-
-      }
-
-      // Generate a 'saved-place-entry' using Handlebars and the data from the pin. Then close the infobox (leaving the marker) and callback
-      var savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
-      var savedPlacesList = document.querySelector('.saved-places-list-element');
-
-      savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
-
       newPinObject.infoBox.close();
 
       var pin_ = new Pin(newPinObject.marker, {
@@ -182,7 +173,7 @@ function handleNewPinForm(newPinObject, callback) {
 
       mapPins.push(pin_);
 
-      console.log(mapPins);
+      renderSavedPlacesList(mapPins);
 
       callback();
 
@@ -265,3 +256,36 @@ function importMap() {
   getRequest.send();
 
 }
+
+function renderSavedPlacesList(list) {
+
+  var savedPlacesList = document.querySelector('.saved-places-list-element')
+  var savedPlacesListNodes = Array.from(savedPlacesList.childNodes);
+
+  savedPlacesListNodes.forEach((node) => {
+
+    node.parentNode.removeChild(node);
+
+  });
+
+  list.forEach((pin) => {
+
+    var context = {
+
+      name: pin.name,
+      lat: pin.latLng.lat(),
+      lng: pin.latLng.lng()
+
+    }
+
+    // Generate a 'saved-place-entry' using Handlebars and the data from the pin. Then close the infobox (leaving the marker) and callback
+    var savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
+
+    savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
+    savedPlacesList.append(' ');
+
+  });
+
+}
+
+renderSavedPlacesList(mapPins);
