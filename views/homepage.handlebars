@@ -43,7 +43,7 @@
       <div class="modal-search-bar-container">
         <h1 class="modal-search-bar-text">Map Name:</h1>
         <div class="modal-search-bar-element">
-          <input type="text" class="modal-search-bar-input">
+          <input type="text" id="modal-search-bar-input">
         </div>
       </div>
 
@@ -54,14 +54,15 @@
       <div class="modal-body">
         <table class="modal-pin-table">
           <tr class="modal-table-header">
-            <th class="modal-table-checkboxes"><input type = "checkbox" id = "select-all"></th>
-            <th class="pin-name">Pin Name</th>
-            <th class="latitude">Latitude</th>
-            <th class="longitude">Longitude</th>
+            <th class="modal-table-checkboxes"><input type = "checkbox" id = "select-all" onClick="toggle(this)"></th>
+            <th class="header-pin-name">Pin Name</th>
+            <th class="header-latitude">Latitude</th>
+            <th class="header-longitude">Longitude</th>
           </tr>
           {{#each static_import}}
             {{> pins}}
           {{/each}}
+
         </table>
       </div>
 

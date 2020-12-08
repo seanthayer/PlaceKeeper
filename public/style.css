@@ -123,7 +123,7 @@ ul.saved-place-entry {
   display: flex;
 }
 
-.modal-search-bar-input {
+#modal-search-bar-input {
   margin-top: 18px;
   margin-left: 5px;
 }
@@ -191,6 +191,18 @@ ul.saved-place-entry {
   border: 1px solid white;
 }
 
+.header-pin-name {
+  width: 120px
+}
+
+.header-latitude {
+  width: 180px;
+}
+
+.header-longitude {
+  width: 180px;
+}
+
 .pin-name {
   width: 120px
 }
@@ -201,6 +213,13 @@ ul.saved-place-entry {
 
 .longitude {
   width: 180px;
+}
+
+.modal-body {
+  margin-bottom: 10px;
+  max-height: 400px;
+  overflow: scroll;
+  overflow-x: hidden;
 }
 
 .modal-table-header{
