@@ -2,6 +2,16 @@ var map;
 var mapNode = document.querySelector('#map');
 var mapClickListener;
 var eventHandler;
+var mapPins = [];
+
+function Pin(marker, pinData) {
+
+  this.marker = marker;
+  this.name = pinData.name;
+  this.latLng = pinData.latLng;
+  this.clickListener = eventHandler.addListenerOnce(this.marker, 'click', generateReadOnlyInfoBox);
+
+}
 
 // The API will callback 'initMap()' when finished loading
 function initMap() {
@@ -20,14 +30,11 @@ function initMap() {
   });
 
   // Adds a 'click' listener on the map, and calls for the creation of a new pin
-  mapClickListener = eventHandler.addListener(map, 'click', generateNewPinForm);
+  mapClickListener = eventHandler.addListenerOnce(map, 'click', generateNewPinForm);
 
 }
 
 function generateNewPinForm(event) {
-
-  // Removes the listener associated with a map 'click' event. Prevents multiple form instances from being generated at a time
-  eventHandler.removeListener(mapClickListener);
 
   // Listeners pass the 'event' parameter allowing us to get the coords of the event
   var clickEventCoords = event.latLng;
@@ -41,7 +48,8 @@ function generateNewPinForm(event) {
   });
 
   // And the infobox
-  var newPinInfoBox = generatePinInfoBox(map, clickEventCoords);
+  var newPinInfoBoxHTML = Handlebars.templates.pinInfoBox();
+  var newPinInfoBox = generatePinInfoBox(map, clickEventCoords, newPinInfoBoxHTML);
 
   // Wait for the dynamically generated infobox to be 'domready' (i.e. ready to be accessed within the DOM)
   eventHandler.addListenerOnce(newPinInfoBox, 'domready', function () {
@@ -57,10 +65,52 @@ function generateNewPinForm(event) {
 
     handleNewPinForm(newPin, function () {
 
-      // After 'handleNewPinForm' callsback (i.e. is finished), we reinstate the 'click' listener
-      mapClickListener = eventHandler.addListener(map, 'click', generateNewPinForm);
+      // After 'handleNewPinForm' callsback (i.e. is finished), we reinstate the map 'click' listener
+      mapClickListener = eventHandler.addListenerOnce(map, 'click', generateNewPinForm);
 
     });
+
+  });
+
+}
+
+function generateReadOnlyInfoBox(event) {
+
+  var eventOriginPin;
+
+  for (var i = 0; i < mapPins.length; i++) {
+
+    if (mapPins[i].latLng === event.latLng) {
+
+      eventOriginPin = mapPins[i];
+
+    }
+
+  }
+
+  var context = {
+    name: eventOriginPin.name
+  }
+
+  var readOnlyInfoBoxHTML = Handlebars.templates.pinInfoBoxReadOnly(context);
+  var readOnlyInfoBox = generatePinInfoBox(map, eventOriginPin.latLng, readOnlyInfoBoxHTML);
+
+  eventHandler.addListenerOnce(readOnlyInfoBox, 'domready', function () {
+
+    handleReadOnlyInfoBox(readOnlyInfoBox, function () {
+      eventOriginPin.clickListener = eventHandler.addListenerOnce(eventOriginPin.marker, 'click', generateReadOnlyInfoBox);
+    });
+
+  });
+
+}
+
+function handleReadOnlyInfoBox(infobox, callback) {
+
+  eventHandler.addListenerOnce(infobox, 'closeclick', function () {
+
+    infobox.close();
+    callback();
 
   });
 
@@ -96,6 +146,19 @@ function handleNewPinForm(newPinObject, callback) {
       savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
 
       newPinObject.infoBox.close();
+
+      // var listener_ = eventHandler.addListener(newPinObject.marker, 'click', generateReadOnlyInfoBox);
+      var pin_ = new Pin(newPinObject.marker, {
+
+        name: pinNameField.value,
+        latLng: newPinObject.coords
+
+      });
+
+      mapPins.push(pin_);
+
+      console.log(mapPins);
+
       callback();
 
     } else {
@@ -130,14 +193,14 @@ function removeMarkerAndInfoBox(newPinObject) {
 
 }
 
-function generatePinInfoBox(map, coords) {
+function generatePinInfoBox(map, coords, html) {
 
   // 'offset' is used for the 'pixelOffset' option and must be defined by a 'Size' object
   var offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
   var infoBox = new google.maps.InfoWindow();
 
   infoBox.setPosition(coords);
-  infoBox.setContent(Handlebars.templates.pinInfoBox());
+  infoBox.setContent(html);
   infoBox.setOptions({ pixelOffset: offset });
   infoBox.open(map);
 
