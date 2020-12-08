@@ -282,10 +282,7 @@ function renderSavedPlacesList(list) {
     var savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
 
     savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
-    savedPlacesList.append(' ');
 
   });
 
 }
-
-renderSavedPlacesList(mapPins);
