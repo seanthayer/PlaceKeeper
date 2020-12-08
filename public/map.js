@@ -88,6 +88,11 @@ function handleNewPinForm(newPinObject, callback) {
 
       }
 
+      // Input new pin to modal
+      var pinsHTML = Handlebars.templates.pins(context);
+      var pinsList = document.getElementsByClassName('modal-pin-table');
+      pinsList[0].insertAdjacentHTML('beforeend', pinsHTML);
+
       // Generate a 'saved-place-entry' using Handlebars and the data from the pin. Then close the infobox (leaving the marker) and callback
       var savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
       var savedPlacesList = document.querySelector('.saved-places-list-element');

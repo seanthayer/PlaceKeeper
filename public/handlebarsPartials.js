@@ -25,4 +25,20 @@ templates['savedPlaceEntry'] = template({"compiler":[8,">= 4.3.0"],"main":functi
 templates['pinInfoBox'] = template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div class=\"pin-infobox-container\">\r\n  <h2 class=\"pin-infobox-title\">Create New Pin</h2>\r\n  <fieldset class=\"pin-infobox-fieldset\">\r\n    <legend>Pin Details</legend>\r\n    <label for=\"pin-infobox-name\">Name:</label>\r\n    <input type=\"text\" id=\"pin-infobox-name\" name=\"name\" maxlength=\"30\" placeholder=\"Max 30 characters\"><br><br>\r\n    <label for=\"pin-infobox-description\">Description</label><br>\r\n    <textarea id=\"pin-infobox-description\" name=\"description\" rows=\"4\" cols=\"28\" maxlength=\"200\" placeholder=\"Max 200 characters\"></textarea><br>\r\n    <div class=\"pin-infobox-buttons-container\">\r\n      <button type=\"button\" name=\"cancel\">Cancel</button>\r\n      <button type=\"button\" name=\"save\">Save</button>\r\n    </div>\r\n  </fieldset>\r\n</div>\r\n";
 },"useData":true});
+templates['pins'] = template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=container.hooks.helperMissing, alias3="function", alias4=container.escapeExpression, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
+
+  return "<tr class=\"modal-table-row\">\r\n    <th class=\"modal-table-checkboxes\"><input type = \"checkbox\" class=\"select-pin\"></th>\r\n    <th class=\"pin-name\">"
+    + alias4(((helper = (helper = lookupProperty(helpers,"name") || (depth0 != null ? lookupProperty(depth0,"name") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"loc":{"start":{"line":3,"column":25},"end":{"line":3,"column":33}}}) : helper)))
+    + "</th>\r\n    <th class=\"latitude\">"
+    + alias4(((helper = (helper = lookupProperty(helpers,"lat") || (depth0 != null ? lookupProperty(depth0,"lat") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lat","hash":{},"data":data,"loc":{"start":{"line":4,"column":25},"end":{"line":4,"column":32}}}) : helper)))
+    + "</th>\r\n    <th class=\"longitude\">"
+    + alias4(((helper = (helper = lookupProperty(helpers,"lng") || (depth0 != null ? lookupProperty(depth0,"lng") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lng","hash":{},"data":data,"loc":{"start":{"line":5,"column":26},"end":{"line":5,"column":33}}}) : helper)))
+    + "</th>\r\n</tr>";
+},"useData":true});
 })();
