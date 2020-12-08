@@ -14,7 +14,8 @@ function initMap() {
 
     // Each Map object must have a center defined with a latitude & longitude pair, and a zoom level
     center: { lat: 43.815136416911436, lng: -120.6398112171833 },
-    zoom: 5
+    zoom: 5,
+    clickableIcons: false
 
   });
 
