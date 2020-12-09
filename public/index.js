@@ -56,51 +56,28 @@ function resetModal(checkboxes){
   }
 }
 function writeToFile(jsonData, file_name){
-  var postRequest = new XMLHttpRequest();
-  var reqURL = 'exportFile';
-  postRequest.open('POST', reqURL);
-  var reqbody = JSON.stringify(jsonData);
-  console.log(reqbody)
-
+  let postRequest = new XMLHttpRequest();
+  let reqURL = '/exportFile';
+  postRequest.open('POST', reqURL, true);
   postRequest.setRequestHeader('Content-Type','application/json');
-  postRequest.send(file_name);
 
-  // postRequest.addEventListener('load', function(event) {
-  //   console.log("hi")
-  //   if (event.target.status != 200){
-  //     console.log("hi")
-  //     var message = event.target.respone;
-  //     alert("Error saving Pins: ", message);
-  //   } else {
-  //       console.log("Request successful");
-  //     }
-  // });
+  postRequest.addEventListener('load', function(event) {
+    if (event.target.status != 200){
+      console.log("hi")
+      var message = event.target.response;
+      alert("Error saving Pins: ", message);
+    } else {
+        console.log("Request successful");
+      }
+  });
 
-  // postRequest.send(reqbody, file_name);
+  file_name = `data/${file_name}.json`
+  console.log(file_name)
 
-  // let dataStr = JSON.stringify(jsonData);
-  // fs.writeFile("test.json", dataStr, function(err, result) {
-  //   if(err)
-  //     console.log('error', err);
-  // });
-
-  // var fso = new ActiveXObject("Scripting.FileSystemObject");
-  // var a = fso.CreateTextFile("./data/${file_name}.json", true);
-  // a.WriteLine(jsonData);
-  // a.Close();
-}
-
-//Exports to json file found on: https://www.codevoila.com/post/30/export-json-data-to-downloadable-file-using-javascript
-function exportToJsonFile(jsonData, file_name) {
-  let dataStr = JSON.stringify(jsonData);
-  let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-
-  let exportFileDefaultName = file_name;
-
-  let linkElement = document.createElement('a');
-  linkElement.setAttribute('href', dataUri);
-  linkElement.setAttribute('download', exportFileDefaultName);
-  linkElement.click();
+  let obj = {"data": jsonData, "file": file_name};
+  obj = JSON.stringify(obj)
+  console.log(obj)
+  postRequest.send(obj);
 }
 
 //Select-all button for checkboxes
@@ -145,7 +122,6 @@ function hideModal(){
     postRequest.setRequestHeader(
       'Content-Type', 'application/json'
     );
-
     postRequest.addEventListener('load', function (event) {
       if (event.target.status != 200) {
         var message = event.target.response;

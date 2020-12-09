@@ -30,6 +30,11 @@ app.set('view engine', 'handlebars');
 app.use(express.static('public'));
 app.use(bodyParser.json());
 
+app.all("*", function (req, res, next) {
+	console.log(`[ REQ ] ${req.method} ${req.url}`);
+	next();
+  });
+
 app.get('/', function (req, res, next) {
   // Render homepage with 'static_import', populating the 'saved-places-list-container' with data from the import
   res.status(200).render('homepage', { homePage: true, static_import});
@@ -55,14 +60,28 @@ app.post('/addPin', function(req, res, next) {
 });
 
 app.post('/exportFile', function (req, res, next) {
-	console.log("req.body", req.body);
+	let obj = req.body;
+	var obj2;
+	var file;
+	for (let i in obj){
+		if (i == 'data'){
 
-	// fs.writeFile("test.json", req.body, function(err, result) {	
-    // 	if(err) console.log('error', err);
-	// });
-	// res.status(200).send("Success");
-	// next();
+			obj2 = obj['data']
+		}
+		else {
+			file = obj['file']
+		}
+	}
+
+
+	fs.writeFile(file, JSON.stringify(obj2,null,4), (err) => {
+		if (err) throw err;
+		console.log('The file has been saved!');
+	  });
+	res.status(200).send("Success");
+	next();
 });
+
 
 app.get('/importMap', function (req, res, next) {
   console.log("== MAP GET REQ RECEIVED");
