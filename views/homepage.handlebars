@@ -3,8 +3,23 @@
       <button type="button" id="select-pins-button">Save Pins</button>
     </div>
   <div class="content-container">
+
     <section class="map-container">
+
       <div id="map"></div>
+
+      <div class="import-and-save-buttons-container">
+
+        <div class="import-map-element">
+            <button type="button" class="import-map-button">Import Map</button>
+        </div>
+
+        <div class="pin-select-container">
+            <button type="button" id="select-pins-button">Save Map</button>
+        </div>
+
+      </div>
+
     </section>
 
     <aside class="saved-places-container">
@@ -32,6 +47,26 @@
 
 </main>
 
+<div class="import-modal-backdrop hidden"></div>
+<div class="import-modal-container hidden">
+  <div class="modal-header">
+    <h2 class="modal-title">Import Map</h2>
+    <button type="button" class="import-modal-hide-button">&times;</button>
+  </div>
+
+  <div class="modal-description">
+    <p>Available Maps:</p>
+  </div>
+
+  <div class="modal-body">
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="import-modal-close-button">Close</button>
+  </div>
+
+</div>
 
 <div id="modal-backdrop" class="hidden">
     <div id="select-pins-modal" class="hidden">

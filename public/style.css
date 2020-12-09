@@ -31,6 +31,7 @@ main {
 
 .map-container {
   display: flex;
+  flex-direction: column;
   flex: 1 1;
   min-width: 484px;
   margin-right: 10px;
@@ -117,6 +118,68 @@ ul.saved-place-entry {
   padding: 10px;
   border: 1px solid black;
   list-style: none;
+}
+
+.import-and-save-buttons-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 35px;
+}
+
+.import-map-button {
+  padding: 15px;
+}
+
+.import-modal-backdrop {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: fixed;
+  z-index: 1000;
+  background-color: rgba(0,0,0,0.85);
+}
+
+.import-modal-container {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: auto;
+  max-width: 700px;
+  min-width: 400px;
+  min-height: 300px;
+  margin: 40px auto;
+  background-color: #fff;
+  border-radius: 15px;
+  position: fixed;
+  z-index: 1010;
+}
+
+.import-modal-hide-button {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  font-size: 25px;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  color: rgb(125, 125, 125);
+}
+
+.import-modal-close-button {
+  height: 50px;
+  width: 80px;
+  float: right;
+  margin-right: 20px;
+  border-radius: 5px;
+  border: 2px solid rgb(208, 208, 208);
+  background-color: #fff;
+}
+
+#select-pins-button {
+  padding: 15px;
 }
 
 .modal-search-bar-container {

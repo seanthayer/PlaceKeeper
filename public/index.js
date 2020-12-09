@@ -19,7 +19,41 @@ window.addEventListener('DOMContentLoaded', function () {
   if (saveModalButton){
     saveModalButton.addEventListener('click', savePins);
   }
+
+  var importMapButton = document.querySelector('.import-map-button');
+  if (importMapButton) {
+
+    importMapButton.addEventListener('click', openImportModal);
+
+  }
+
 });
+
+function openImportModal() {
+
+  var modalBackdrop = document.querySelector('.import-modal-backdrop');
+  var importModal = document.querySelector('.import-modal-container');
+  var importModal_XButton = document.querySelector('.import-modal-hide-button');
+  var importModal_CloseButton = document.querySelector('.import-modal-close-button');
+
+  modalBackdrop.classList.remove('hidden');
+  importModal.classList.remove('hidden');
+
+  importModal_XButton.addEventListener('click', function () {
+
+    modalBackdrop.classList.add('hidden');
+    importModal.classList.add('hidden');
+
+  });
+
+  importModal_CloseButton.addEventListener('click', function () {
+
+    modalBackdrop.classList.add('hidden');
+    importModal.classList.add('hidden');
+
+  });
+
+}
 
 function savePins(){
   checkboxes = document.getElementsByClassName('select-pin');
@@ -133,6 +167,6 @@ function hideModal(){
     });
 
     postRequest.send(requestBody);
-  } 
+  }
 
   //Add event listener to button

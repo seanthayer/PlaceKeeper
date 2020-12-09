@@ -16,14 +16,6 @@ var port = 3000;
  * ~ ~ ~
  */
 
-// Here we read the 'data' directory to find any previously saved maps (currently there are two example maps).
- var savedMaps = fs.readdirSync('./data/');
- console.log(savedMaps);
-
- // 'static_import' is to simulate a user triggered 'import' event that will be implemented in the future
- var static_import = require('./data/' + savedMaps[0]);
- console.log(static_import);
-
 app.engine('handlebars', exphbs({ defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
@@ -36,8 +28,9 @@ app.all("*", function (req, res, next) {
   });
 
 app.get('/', function (req, res, next) {
-  // Render homepage with 'static_import', populating the 'saved-places-list-container' with data from the import
-  res.status(200).render('homepage', { homePage: true, static_import});
+
+  res.status(200).render('homepage', { homePage: true });
+
 });
 
 app.get('/about', function (req, res, next) {
@@ -83,14 +76,27 @@ app.post('/exportFile', function (req, res, next) {
 });
 
 
-app.get('/importMap', function (req, res, next) {
-  console.log("== MAP GET REQ RECEIVED");
-  res.status(200).send(static_import);
+app.get('/importMap/:map_name', function (req, res, next) {
+
+  var map_data_dir = fs.readdirSync('./data/');
+  var map_file_name = req.params.map_name + '.json';
+
+  var match_index = map_data_dir.indexOf(map_file_name);
+
+  if (match_index != -1) {
+
+    var importMap = require('./data/' + map_data_dir[match_index]);
+
+    res.status(200).send(importMap);
+
+  } else {
+
+    res.status(404).send('File not found!');
+
+  }
+
 });
 
-// app.post(/*Address*/, function(req, res, next) {
-//
-// });
 app.get('*', function (req, res) {
   res.status(404).render('404');
 });
