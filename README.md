@@ -35,10 +35,6 @@ these locations, and finally, be able to retrieve said map at a later time.
 ## General Roadmap
 
 ### Format & Design
-* [ ] Create a link to /about
-* [ ] Style /about
-* [ ] Further style homepage
-* [ ] Create another page?
 
 <ins>Completed</ins>↴
 * [x] Build basic 404 page
@@ -48,14 +44,14 @@ these locations, and finally, be able to retrieve said map at a later time.
 * [x] Build basic Homepage Modal
 
 ### Front-end Functionality
-* [ ] Implement very basic 'POST' request generation for Modal
+* [ ] Implement completed 'POST' request generation for modal
 * [ ] Implement filtering of places (by name) in 'saved-places-list-element' using 'search-bar-input'
 * [ ] Implement selecting list item and panning to pin on map
-* [ ] Implement CLIENT SIDE deletion of a list item. This should not delete on server side unless a user saves the map. (Don't worry about deletion of pin on map yet either, just a list item from the DOM.)
-* [ ] Implement reading of current pins from 'saved-places-list-element' using 'saved-place-entry' and the associated datasets (name, data-lat, data-lng)
 
 <ins>Completed</ins>↴
 * [x] Implement Modal hiding/unhiding
+* [x] Implement reading of current pins and into modal (name, lat, lng)
+* [x] Implement very basic 'POST' request generation for Modal
 
 ### Back-end Functionality
 * [ ] Implement completed request and response 'POST' handling for saving a map
@@ -69,7 +65,6 @@ these locations, and finally, be able to retrieve said map at a later time.
 * [x] Implement basic 'POST' request handling
 
 ### GoogleMaps Embed
-* [ ] Implement deleting pin from map directly or removing pin when its list item is removed
 
 <ins>Completed</ins>↴
 * [x] Place embed and verify API functionality
@@ -79,6 +74,12 @@ these locations, and finally, be able to retrieve said map at a later time.
 * [x] Implement robust infobox popup form entry
 * [x] Implement infobox popup for existing pins
 * [x] Implement panning to pin on click
+* [x] Implement deleting pin from map directly or removing pin when its list item is removed
 
-### Misc. Features
+### Optional Features
+* [ ] Implement client side deletion of a list item from the saved places list. This should also remove it from the map embed.
+* [ ] Create a link to /about
+* [ ] Style /about
+* [ ] Further style homepage
+* [ ] Create another page?
 * [ ] . . .
