@@ -131,7 +131,7 @@ function handleReadOnlyInfoBox(pin, infobox) {
 
       mapPins.splice(mapPins.indexOf(pin), 1);
 
-      renderSavedPlacesList(mapPins);
+      renderDynamicComponents(mapPins);
 
     });
 
@@ -173,7 +173,7 @@ function handleNewPinForm(newPinObject, callback) {
 
       mapPins.push(pin_);
 
-      renderSavedPlacesList(mapPins);
+      renderDynamicComponents(mapPins);
 
       callback();
 
@@ -224,32 +224,59 @@ function generatePinInfoBox(map, coords, html) {
 
 }
 
-function importMap() {
+function importMap(mapName) {
 
   var getRequest = new XMLHttpRequest();
-  var reqURL = '/importMap';
+  var reqURL = '/importMap/' + mapName;
 
   getRequest.open('GET', reqURL);
   getRequest.setRequestHeader('Content-Type', 'application/json');
 
   getRequest.addEventListener('load', function(event) {
 
-    var importMap;
+    if (event.target.status === 200) {
 
-    importMap = JSON.parse(event.target.response);
+      purgeMapPinData(mapPins);
 
-    importMap.forEach((item, i) => {
+      var importMap;
 
-      var coords = { lat: parseFloat(item.lat), lng: parseFloat(item.lng) };
+      importMap = JSON.parse(event.target.response);
 
-      var marker = new google.maps.Marker({
+      importMap.forEach((pin) => {
 
-        position: coords,
-        map: map
+        var coords = { lat: parseFloat(pin.lat), lng: parseFloat(pin.lng) };
+
+        var latLngObj = new google.maps.LatLng(coords);
+
+        var marker = new google.maps.Marker({
+
+          position: latLngObj,
+          map: map
+
+        });
+
+        var pin_ = new Pin(marker, {
+
+          name: pin.name,
+          latLng: latLngObj
+
+        });
+
+        mapPins.push(pin_);
 
       });
 
-    });
+      renderDynamicComponents(mapPins);
+
+    } else if (event.target.status === 404) {
+
+      alert('Map file not found!');
+
+    } else {
+
+      alert('Error requesting file!');
+
+    }
 
   });
 
@@ -257,7 +284,22 @@ function importMap() {
 
 }
 
-function renderSavedPlacesList(list) {
+function purgeMapPinData(list) {
+
+  var n = list.length - 1;
+
+  for (var pin = n; pin >= 0; pin--) {
+
+    list[pin].marker.setMap(null);
+    list.pop();
+
+  }
+
+  renderDynamicComponents(list);
+
+}
+
+function renderDynamicComponents(list) {
 
   var savedPlacesList = document.querySelector('.saved-places-list-element');
   var savedPlacesListNodes = Array.from(savedPlacesList.childNodes);
@@ -301,3 +343,17 @@ function renderSavedPlacesList(list) {
   });
 
 }
+
+document.querySelector('.search-bar-button').addEventListener('click', function () {
+
+  importMap('places-to-go');
+
+  // if (document.querySelector('.search-bar-input').value) {
+  //
+  //   var mapName = document.querySelector('.search-bar-input').value;
+  //
+  //
+  //
+  // }
+
+});
