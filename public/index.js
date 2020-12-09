@@ -1,6 +1,3 @@
-
-//Handles clicking and resetting involved with the modal
-
 /*
  * Wait until the DOM content is loaded, and then hook up UI interactions, etc.
  */
@@ -33,25 +30,79 @@ function openImportModal() {
 
   var modalBackdrop = document.querySelector('.import-modal-backdrop');
   var importModal = document.querySelector('.import-modal-container');
-  var importModal_XButton = document.querySelector('.import-modal-hide-button');
-  var importModal_CloseButton = document.querySelector('.import-modal-close-button');
+  var importModal_XButton = importModal.querySelector('.import-modal-hide-button');
+  var importModal_CloseButton = importModal.querySelector('.import-modal-close-button');
+  var importModal_Directory = importModal.querySelector('.import-modal-directory-container');
+
+  var importModal_CloseFunc = function () {
+
+    modalBackdrop.classList.add('hidden');
+    importModal.classList.add('hidden');
+
+    removeChildNodes(importModal_Directory);
+
+    importModal_XButton.removeEventListener('click', importModal_CloseFunc);
+    importModal_CloseButton.removeEventListener('click', importModal_CloseFunc);
+
+  }
 
   modalBackdrop.classList.remove('hidden');
   importModal.classList.remove('hidden');
 
-  importModal_XButton.addEventListener('click', function () {
+  importModal_XButton.addEventListener('click', importModal_CloseFunc);
+  importModal_CloseButton.addEventListener('click', importModal_CloseFunc);
 
-    modalBackdrop.classList.add('hidden');
-    importModal.classList.add('hidden');
+  getMapsDirectory(function (data) {
+
+    data.forEach((item) => {
+
+      importModal_Directory.insertAdjacentHTML('beforeend', `<div class="map-directory-entry-container"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`)
+
+    });
 
   });
 
-  importModal_CloseButton.addEventListener('click', function () {
+}
 
-    modalBackdrop.classList.add('hidden');
-    importModal.classList.add('hidden');
+function removeChildNodes(node) {
+
+  var node_ = Array.from(node.childNodes);
+
+  node_.forEach((childNode) => {
+
+    node.removeChild(childNode);
 
   });
+
+}
+
+function getMapsDirectory(callback) {
+
+  var getRequest = new XMLHttpRequest();
+  var reqURL = '/getMapsDirectory';
+
+  getRequest.open('GET', reqURL);
+  getRequest.setRequestHeader('Content-Type', 'application/json');
+
+  getRequest.addEventListener('load', function(event) {
+
+    if (event.target.status === 200) {
+
+      var data = JSON.parse(event.target.response);
+
+      for (var i = 0; i < data.length; i++) {
+
+        data[i] = data[i].split('.')[0];
+
+      }
+
+      callback(data);
+
+    }
+
+  });
+
+  getRequest.send();
 
 }
 

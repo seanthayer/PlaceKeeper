@@ -52,6 +52,22 @@ app.post('/addPin', function(req, res, next) {
 	}
 });
 
+app.get('/getMapsDirectory', function (req, res, next) {
+
+  var map_data_dir = fs.readdirSync('./data/');
+
+  if (map_data_dir) {
+
+    res.status(200).send(map_data_dir);
+
+  } else {
+
+    res.status(404).send();
+
+  }
+
+});
+
 app.post('/exportFile', function (req, res, next) {
 	let obj = req.body;
 	var obj2;
@@ -66,7 +82,6 @@ app.post('/exportFile', function (req, res, next) {
 		}
 	}
 
-
 	fs.writeFile(file, JSON.stringify(obj2,null,4), (err) => {
 		if (err) throw err;
 		console.log('The file has been saved!');
@@ -74,7 +89,6 @@ app.post('/exportFile', function (req, res, next) {
 	res.status(200).send("Success");
 	next();
 });
-
 
 app.get('/importMap/:map_name', function (req, res, next) {
 
