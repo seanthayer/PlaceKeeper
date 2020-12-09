@@ -63,7 +63,7 @@ function writeToFile(jsonData, file_name){
 
   postRequest.addEventListener('load', function(event) {
     if (event.target.status != 200){
-      console.log("hi")
+      console.log("Pins Error")
       var message = event.target.response;
       alert("Error saving Pins: ", message);
     } else {
