@@ -35,14 +35,12 @@ function savePins(){
       lat =  pin_lats[i].textContent
       longs = pin_longs[i].textContent
       jVar = { "name":name, "lat":lat, "lng":longs};
-      console.log(jVar)
 
       checkbox_data.push(jVar)
     }
 
   }
-  console.log(checkbox_data)
-  exportToJsonFile(checkbox_data, file_name)
+  writeToFile(checkbox_data, file_name)
 
   hideModal();
   resetModal();
@@ -56,6 +54,40 @@ function resetModal(checkboxes){
   for (var i = 0; i < checkboxes.length; ++i){
     checkboxes[i].checked = false;
   }
+}
+function writeToFile(jsonData, file_name){
+  var postRequest = new XMLHttpRequest();
+  var reqURL = 'exportFile';
+  postRequest.open('POST', reqURL);
+  var reqbody = JSON.stringify(jsonData);
+  console.log(reqbody)
+
+  postRequest.setRequestHeader('Content-Type','application/json');
+  postRequest.send(file_name);
+
+  // postRequest.addEventListener('load', function(event) {
+  //   console.log("hi")
+  //   if (event.target.status != 200){
+  //     console.log("hi")
+  //     var message = event.target.respone;
+  //     alert("Error saving Pins: ", message);
+  //   } else {
+  //       console.log("Request successful");
+  //     }
+  // });
+
+  // postRequest.send(reqbody, file_name);
+
+  // let dataStr = JSON.stringify(jsonData);
+  // fs.writeFile("test.json", dataStr, function(err, result) {
+  //   if(err)
+  //     console.log('error', err);
+  // });
+
+  // var fso = new ActiveXObject("Scripting.FileSystemObject");
+  // var a = fso.CreateTextFile("./data/${file_name}.json", true);
+  // a.WriteLine(jsonData);
+  // a.Close();
 }
 
 //Exports to json file found on: https://www.codevoila.com/post/30/export-json-data-to-downloadable-file-using-javascript

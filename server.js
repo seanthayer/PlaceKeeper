@@ -52,7 +52,17 @@ app.post('/addPin', function(req, res, next) {
 	} else {
 		res.status(400).send("ERROR");
 	}
-})
+});
+
+app.post('/exportFile', function (req, res, next) {
+	console.log("req.body", req.body);
+
+	// fs.writeFile("test.json", req.body, function(err, result) {	
+    // 	if(err) console.log('error', err);
+	// });
+	// res.status(200).send("Success");
+	// next();
+});
 
 app.get('/importMap', function (req, res, next) {
   console.log("== MAP GET REQ RECEIVED");
