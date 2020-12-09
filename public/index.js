@@ -35,14 +35,12 @@ function savePins(){
       lat =  pin_lats[i].textContent
       longs = pin_longs[i].textContent
       jVar = { "name":name, "lat":lat, "lng":longs};
-      console.log(jVar)
 
       checkbox_data.push(jVar)
     }
 
   }
-  console.log(checkbox_data)
-  exportToJsonFile(checkbox_data, file_name)
+  writeToFile(checkbox_data, file_name)
 
   hideModal();
   resetModal();
@@ -57,18 +55,29 @@ function resetModal(checkboxes){
     checkboxes[i].checked = false;
   }
 }
+function writeToFile(jsonData, file_name){
+  let postRequest = new XMLHttpRequest();
+  let reqURL = '/exportFile';
+  postRequest.open('POST', reqURL, true);
+  postRequest.setRequestHeader('Content-Type','application/json');
 
-//Exports to json file found on: https://www.codevoila.com/post/30/export-json-data-to-downloadable-file-using-javascript
-function exportToJsonFile(jsonData, file_name) {
-  let dataStr = JSON.stringify(jsonData);
-  let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+  postRequest.addEventListener('load', function(event) {
+    if (event.target.status != 200){
+      console.log("Pins Error")
+      var message = event.target.response;
+      alert("Error saving Pins: ", message);
+    } else {
+        console.log("Request successful");
+      }
+  });
 
-  let exportFileDefaultName = file_name;
+  file_name = `data/${file_name}.json`
+  console.log(file_name)
 
-  let linkElement = document.createElement('a');
-  linkElement.setAttribute('href', dataUri);
-  linkElement.setAttribute('download', exportFileDefaultName);
-  linkElement.click();
+  let obj = {"data": jsonData, "file": file_name};
+  obj = JSON.stringify(obj)
+  console.log(obj)
+  postRequest.send(obj);
 }
 
 //Select-all button for checkboxes
@@ -113,7 +122,6 @@ function hideModal(){
     postRequest.setRequestHeader(
       'Content-Type', 'application/json'
     );
-
     postRequest.addEventListener('load', function (event) {
       if (event.target.status != 200) {
         var message = event.target.response;
