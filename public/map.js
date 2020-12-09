@@ -343,17 +343,3 @@ function renderDynamicComponents(list) {
   });
 
 }
-
-document.querySelector('.search-bar-button').addEventListener('click', function () {
-
-  importMap('places-to-go');
-
-  // if (document.querySelector('.search-bar-input').value) {
-  //
-  //   var mapName = document.querySelector('.search-bar-input').value;
-  //
-  //
-  //
-  // }
-
-});

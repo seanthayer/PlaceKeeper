@@ -62,7 +62,7 @@ app.get('/importMap/:map_name', function (req, res, next) {
 
   } else {
 
-    res.status(404).send(false);
+    res.status(404).send('File not found!');
 
   }
 
