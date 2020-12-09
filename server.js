@@ -45,7 +45,23 @@ app.post('/addPin', function(req, res, next) {
 	} else {
 		res.status(400).send("ERROR");
 	}
-})
+});
+
+app.get('/getMapsDirectory', function (req, res, next) {
+
+  var map_data_dir = fs.readdirSync('./data/');
+
+  if (map_data_dir) {
+
+    res.status(200).send(map_data_dir);
+
+  } else {
+
+    res.status(404).send();
+
+  }
+
+});
 
 app.get('/importMap/:map_name', function (req, res, next) {
 
