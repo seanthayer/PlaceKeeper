@@ -22,6 +22,11 @@ app.set('view engine', 'handlebars');
 app.use(express.static('public'));
 app.use(bodyParser.json());
 
+app.all("*", function (req, res, next) {
+	console.log(`[ REQ ] ${req.method} ${req.url}`);
+	next();
+  });
+
 app.get('/', function (req, res, next) {
 
   res.status(200).render('homepage', { homePage: true });
@@ -45,7 +50,31 @@ app.post('/addPin', function(req, res, next) {
 	} else {
 		res.status(400).send("ERROR");
 	}
-})
+});
+
+app.post('/exportFile', function (req, res, next) {
+	let obj = req.body;
+	var obj2;
+	var file;
+	for (let i in obj){
+		if (i == 'data'){
+
+			obj2 = obj['data']
+		}
+		else {
+			file = obj['file']
+		}
+	}
+
+
+	fs.writeFile(file, JSON.stringify(obj2,null,4), (err) => {
+		if (err) throw err;
+		console.log('The file has been saved!');
+	  });
+	res.status(200).send("Success");
+	next();
+});
+
 
 app.get('/importMap/:map_name', function (req, res, next) {
 
