@@ -135,7 +135,7 @@ function hideModal(){
   
   //Function that checks if a certain pin matches the filter request
   //returns true or false
-  function entryPassesFilter(pin, filter){
+  function pinPassesFilter(pin, filter){
   
   		if (filter.text){
       	var pinName = pin.name.toLowerCase();
@@ -159,12 +159,19 @@ function hideModal(){
 			while (pinContainer.lastChild){
 				pinContainer.removeChild(pinContainer.lastChild);
 			}
-			mapPins.forEach(function (pin){
-				if(pinPassesFilter(pin, filter)){
-					addPin(pin.name, pin.lat, pin.long);
+			var i;
+			for(i = 0; i < mapPins.length; i++){
+				if(pinPassesFilter(mapPins[i], filter)){
+					var pinArgs = {
+						name: mapPins[i].name,
+						lat: mapPins[i].latLng.lat(),
+						lng: mapPins[i].latLng.lng()
+					}
+					var pinHTML = Handlebars.templates.savedPlaceEntry(pinArgs);
+					var enrySection = document.getElementById('saved-places-list-container');
+					enrySection.insertAdjacentHTML('beforeend', pinHTML);
 				}
-			});
-
+			}
 	}
 
   //Add event listener to button
