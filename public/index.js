@@ -17,6 +17,11 @@ window.addEventListener('DOMContentLoaded', function () {
     saveModalButton.addEventListener('click', savePins);
   }
 
+  var searchBarButton = document.getElementById('search-bar-button');
+  if(searchBarButton){
+	  searchBarButton.addEventListener('click', doFilterUpdate)
+  }
+
   var importMapButton = document.querySelector('.import-map-button');
   if (importMapButton) {
 
@@ -241,3 +246,49 @@ function hideModal(){
 
     postRequest.send(requestBody);
   }
+
+  
+  //Function that checks if a certain pin matches the filter request
+  //returns true or false
+  function pinPassesFilter(pin, filter){
+  
+  		if (filter.text){
+      	var pinName = pin.name.toLowerCase();
+  			var filterText = filter.text.toLowerCase();
+         if (pinName.indexOf(filterText) === -1){
+				return false;
+  			}
+  		}
+  
+  		return true;
+  }
+
+  //Updates pin results
+  function doFilterUpdate(){
+
+	      var filter = {
+				text: document.getElementById('filter-text').value.trim()
+			}
+
+			var pinContainer = document.getElementById('saved-places-list-container');
+			while (pinContainer.lastChild){
+				pinContainer.removeChild(pinContainer.lastChild);
+			}
+			var i;
+			for(i = 0; i < mapPins.length; i++){
+				if(pinPassesFilter(mapPins[i], filter)){
+					var pinArgs = {
+						name: mapPins[i].name,
+						lat: mapPins[i].latLng.lat(),
+						lng: mapPins[i].latLng.lng()
+					}
+					var pinHTML = Handlebars.templates.savedPlaceEntry(pinArgs);
+					var enrySection = document.getElementById('saved-places-list-container');
+					enrySection.insertAdjacentHTML('beforeend', pinHTML);
+				}
+			}
+	}
+
+  //Add event listener to button
+
+
