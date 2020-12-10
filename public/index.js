@@ -155,12 +155,11 @@ function hideModal(){
 				text: document.getElementById('filter-text').value.trim()
 			}
 
-			var pinContainer = document.getElementsByClassName('saved-places-list-element');
+			var pinContainer = document.getElementById('saved-places-list-container');
 			while (pinContainer.lastChild){
-				/*pinContainer.removeChild(postContainer.lastChild);*/
-				//remove pins
+				pinContainer.removeChild(pinContainer.lastChild);
 			}
-			/*forAllPins*/(function (pin){
+			mapPins.forEach(function (pin){
 				if(pinPassesFilter(pin, filter)){
 					addPin(pin.name, pin.lat, pin.long);
 				}
