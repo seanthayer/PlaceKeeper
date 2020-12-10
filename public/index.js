@@ -54,9 +54,20 @@ function openImportModal() {
 
   getMapsDirectory(function (data) {
 
-    data.forEach((item) => {
+    data.forEach((item, i) => {
 
-      importModal_Directory.insertAdjacentHTML('beforeend', `<div class="map-directory-entry-container"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`)
+      var uniqueID = item + i;
+      var directoryEntry = `<div class="map-directory-entry-container" id="${uniqueID}"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`;
+
+      importModal_Directory.insertAdjacentHTML('beforeend', directoryEntry);
+
+      importModal_Directory.querySelector(`#${uniqueID}`).addEventListener('click', function () {
+
+      importMap(item);
+
+        importModal_CloseFunc();
+
+      });
 
     });
 
@@ -112,23 +123,34 @@ function savePins(){
   pin_lats = document.getElementsByClassName('latitude');
   pin_longs = document.getElementsByClassName('longitude');
   file_name = document.getElementById('modal-search-bar-input').value;
-  console.log(file_name)
-  checkbox_data = []
-  for(var i = 0; i < checkboxes.length; ++i) {
-    if(checkboxes[i].checked){
-      name = pin_names[i].textContent
-      lat =  pin_lats[i].textContent
-      longs = pin_longs[i].textContent
-      jVar = { "name":name, "lat":lat, "lng":longs};
 
-      checkbox_data.push(jVar)
+  if (file_name) {
+
+    file_name = file_name.trim().replace(/\s+/g, '-');
+
+    checkbox_data = []
+    for(var i = 0; i < checkboxes.length; ++i) {
+      if(checkboxes[i].checked){
+        name = pin_names[i].textContent
+        lat =  pin_lats[i].textContent
+        longs = pin_longs[i].textContent
+        jVar = { "name":name, "lat":lat, "lng":longs};
+
+        checkbox_data.push(jVar)
+      }
+
     }
+    writeToFile(checkbox_data, file_name)
+
+    hideModal();
+    resetModal();
+
+  } else {
+
+    alert('Please enter a file name!');
 
   }
-  writeToFile(checkbox_data, file_name)
 
-  hideModal();
-  resetModal();
 }
 
 function resetModal(checkboxes){
