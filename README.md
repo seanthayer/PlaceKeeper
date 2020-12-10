@@ -44,7 +44,6 @@ these locations, and finally, be able to retrieve said map at a later time.
 * [x] Build basic Homepage Modal
 
 ### Front-end Functionality
-* [ ] Implement completed 'POST' request generation for modal
 * [ ] Implement filtering of places (by name) in 'saved-places-list-element' using 'search-bar-input'
 * [ ] Implement selecting list item and panning to pin on map
 
@@ -52,10 +51,9 @@ these locations, and finally, be able to retrieve said map at a later time.
 * [x] Implement Modal hiding/unhiding
 * [x] Implement reading of current pins and into modal (name, lat, lng)
 * [x] Implement very basic 'POST' request generation for Modal
+* [x] Implement completed 'POST' request generation for modal
 
 ### Back-end Functionality
-* [ ] Implement completed request and response 'POST' handling for saving a map
-* [ ] Implement completed request and response 'GET' handling for /importMap
 
 <ins>Completed</ins>↴
 * [x] Implement 404 page routing
@@ -63,6 +61,8 @@ these locations, and finally, be able to retrieve said map at a later time.
 * [x] Implement serving partials from a {map_name}.json file
 * [x] About page routing
 * [x] Implement basic 'POST' request handling
+* [x] Implement completed request and response 'POST' handling for saving a map
+* [x] Implement completed request and response 'GET' handling for /importMap
 
 ### GoogleMaps Embed
 
@@ -78,8 +78,9 @@ these locations, and finally, be able to retrieve said map at a later time.
 
 ### Optional Features
 * [ ] Implement client side deletion of a list item from the saved places list. This should also remove it from the map embed.
-* [ ] Create a link to /about
-* [ ] Style /about
 * [ ] Further style homepage
 * [ ] Create another page?
-* [ ] . . .
+
+<ins>Completed</ins>↴
+* [x] Create a link to /about
+* [x] Style /about
