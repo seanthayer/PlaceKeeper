@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 app.all("*", function (req, res, next) {
 	console.log(`[ REQ ] ${req.method} ${req.url}`);
 	next();
-  });
+});
 
 app.get('/', function (req, res, next) {
 
@@ -82,7 +82,7 @@ app.post('/exportFile', function (req, res, next) {
 		}
 	}
 
-	fs.writeFile(file, JSON.stringify(obj2,null,4), (err) => {
+	fs.writeFile(file, JSON.stringify(obj2,null,2), (err) => {
 		if (err) throw err;
 		console.log('The file has been saved!');
 	  });

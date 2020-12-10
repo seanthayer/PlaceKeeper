@@ -191,12 +191,23 @@ ul.saved-place-entry {
 
 .map-directory-entry-container {
   display: inline-block;
-  margin: 15px;
+  cursor: pointer;
+  margin: 8px;
+  border: 1px solid black;
+  padding: 10px;
 }
 
 .file-title {
   display: inline;
   margin: 2px;
+}
+
+.fas.fa-file {
+  color: green;
+}
+
+.map-directory-entry-container:hover .fas.fa-file {
+  color: lightgreen;
 }
 
 #select-pins-button {

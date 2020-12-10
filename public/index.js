@@ -54,9 +54,20 @@ function openImportModal() {
 
   getMapsDirectory(function (data) {
 
-    data.forEach((item) => {
+    data.forEach((item, i) => {
 
-      importModal_Directory.insertAdjacentHTML('beforeend', `<div class="map-directory-entry-container"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`)
+      var uniqueID = item + i;
+      var directoryEntry = `<div class="map-directory-entry-container" id="${uniqueID}"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`;
+
+      importModal_Directory.insertAdjacentHTML('beforeend', directoryEntry);
+
+      importModal_Directory.querySelector(`#${uniqueID}`).addEventListener('click', function () {
+
+      importMap(item);
+
+        importModal_CloseFunc();
+
+      });
 
     });
 
