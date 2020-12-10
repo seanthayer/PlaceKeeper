@@ -19,6 +19,11 @@ window.addEventListener('DOMContentLoaded', function () {
   if (saveModalButton){
     saveModalButton.addEventListener('click', savePins);
   }
+
+  var searchBarButton = document.getElementById('search-bar-button');
+  if(searchBarButton){
+	  searchBarButton.addEventListener('click', doFilterUpdate)
+  }
 });
 
 function savePins(){
