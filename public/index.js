@@ -219,5 +219,3 @@ function hideModal(){
 
     postRequest.send(requestBody);
   }
-
-  //Add event listener to button
