@@ -130,6 +130,22 @@ function hideModal(){
     });
 
     postRequest.send(requestBody);
-  } 
+  }
+
+  
+  //Function that checks if a certain pin matches the filter request
+  //returns true or false
+  function entryPassesFilter(pin, filter){
+  
+  		if (filter.text){
+      	var pinName = pin.name.toLowerCase();
+  			var filterText = filter.text.toLowerCase();
+         if (pinName.indexOf(filterText) === -1){
+				return false;
+  			}
+  		}
+  
+  		return true;
+  }
 
   //Add event listener to button
