@@ -148,4 +148,24 @@ function hideModal(){
   		return true;
   }
 
+  //Updates pin results
+  function doFilterUpdate(){
+
+	      var filter = {
+				text: document.getElementById('filter-text').value.trim()
+			}
+
+			var pinContainer = document.getElementsByClassName('saved-places-list-element');
+			while (pinContainer.lastChild){
+				/*pinContainer.removeChild(postContainer.lastChild);*/
+				//remove pins
+			}
+			/*forAllPins*/(function (pin){
+				if(pinPassesFilter(pin, filter)){
+					addPin(pin.name, pin.lat, pin.long);
+				}
+			});
+
+	}
+
   //Add event listener to button
