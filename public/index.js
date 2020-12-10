@@ -1,6 +1,3 @@
-
-//Handles clicking and resetting involved with the modal
-
 /*
  * Wait until the DOM content is loaded, and then hook up UI interactions, etc.
  */
@@ -24,7 +21,106 @@ window.addEventListener('DOMContentLoaded', function () {
   if(searchBarButton){
 	  searchBarButton.addEventListener('click', doFilterUpdate)
   }
+
+  var importMapButton = document.querySelector('.import-map-button');
+  if (importMapButton) {
+
+    importMapButton.addEventListener('click', openImportModal);
+
+  }
+
 });
+
+function openImportModal() {
+
+  var modalBackdrop = document.querySelector('.import-modal-backdrop');
+  var importModal = document.querySelector('.import-modal-container');
+  var importModal_XButton = importModal.querySelector('.import-modal-hide-button');
+  var importModal_CloseButton = importModal.querySelector('.import-modal-close-button');
+  var importModal_Directory = importModal.querySelector('.import-modal-directory-container');
+
+  var importModal_CloseFunc = function () {
+
+    modalBackdrop.classList.add('hidden');
+    importModal.classList.add('hidden');
+
+    removeChildNodes(importModal_Directory);
+
+    importModal_XButton.removeEventListener('click', importModal_CloseFunc);
+    importModal_CloseButton.removeEventListener('click', importModal_CloseFunc);
+
+  }
+
+  modalBackdrop.classList.remove('hidden');
+  importModal.classList.remove('hidden');
+
+  importModal_XButton.addEventListener('click', importModal_CloseFunc);
+  importModal_CloseButton.addEventListener('click', importModal_CloseFunc);
+
+  getMapsDirectory(function (data) {
+
+    data.forEach((item, i) => {
+
+      var uniqueID = item + i;
+      var directoryEntry = `<div class="map-directory-entry-container" id="${uniqueID}"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`;
+
+      importModal_Directory.insertAdjacentHTML('beforeend', directoryEntry);
+
+      importModal_Directory.querySelector(`#${uniqueID}`).addEventListener('click', function () {
+
+      importMap(item);
+
+        importModal_CloseFunc();
+
+      });
+
+    });
+
+  });
+
+}
+
+function removeChildNodes(node) {
+
+  var node_ = Array.from(node.childNodes);
+
+  node_.forEach((childNode) => {
+
+    node.removeChild(childNode);
+
+  });
+
+}
+
+function getMapsDirectory(callback) {
+
+  var getRequest = new XMLHttpRequest();
+  var reqURL = '/getMapsDirectory';
+
+  getRequest.open('GET', reqURL);
+  getRequest.setRequestHeader('Content-Type', 'application/json');
+
+  getRequest.addEventListener('load', function(event) {
+
+    if (event.target.status === 200) {
+
+      var data = JSON.parse(event.target.response);
+
+      for (var i = 0; i < data.length; i++) {
+
+        data[i] = data[i].split('.')[0];
+
+      }
+
+      callback(data);
+
+    }
+
+  });
+
+  getRequest.send();
+
+}
 
 function savePins(){
   checkboxes = document.getElementsByClassName('select-pin');
@@ -32,25 +128,34 @@ function savePins(){
   pin_lats = document.getElementsByClassName('latitude');
   pin_longs = document.getElementsByClassName('longitude');
   file_name = document.getElementById('modal-search-bar-input').value;
-  console.log(file_name)
-  checkbox_data = []
-  for(var i = 0; i < checkboxes.length; ++i) {
-    if(checkboxes[i].checked){
-      name = pin_names[i].textContent
-      lat =  pin_lats[i].textContent
-      longs = pin_longs[i].textContent
-      jVar = { "name":name, "lat":lat, "lng":longs};
-      console.log(jVar)
 
-      checkbox_data.push(jVar)
+  if (file_name) {
+
+    file_name = file_name.trim().replace(/\s+/g, '-');
+
+    checkbox_data = []
+    for(var i = 0; i < checkboxes.length; ++i) {
+      if(checkboxes[i].checked){
+        name = pin_names[i].textContent
+        lat =  pin_lats[i].textContent
+        longs = pin_longs[i].textContent
+        jVar = { "name":name, "lat":lat, "lng":longs};
+
+        checkbox_data.push(jVar)
+      }
+
     }
+    writeToFile(checkbox_data, file_name)
+
+    hideModal();
+    resetModal();
+
+  } else {
+
+    alert('Please enter a file name!');
 
   }
-  console.log(checkbox_data)
-  exportToJsonFile(checkbox_data, file_name)
 
-  hideModal();
-  resetModal();
 }
 
 function resetModal(checkboxes){
@@ -62,18 +167,29 @@ function resetModal(checkboxes){
     checkboxes[i].checked = false;
   }
 }
+function writeToFile(jsonData, file_name){
+  let postRequest = new XMLHttpRequest();
+  let reqURL = '/exportFile';
+  postRequest.open('POST', reqURL, true);
+  postRequest.setRequestHeader('Content-Type','application/json');
 
-//Exports to json file found on: https://www.codevoila.com/post/30/export-json-data-to-downloadable-file-using-javascript
-function exportToJsonFile(jsonData, file_name) {
-  let dataStr = JSON.stringify(jsonData);
-  let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+  postRequest.addEventListener('load', function(event) {
+    if (event.target.status != 200){
+      console.log("Pins Error")
+      var message = event.target.response;
+      alert("Error saving Pins: ", message);
+    } else {
+        console.log("Request successful");
+      }
+  });
 
-  let exportFileDefaultName = file_name;
+  file_name = `data/${file_name}.json`
+  console.log(file_name)
 
-  let linkElement = document.createElement('a');
-  linkElement.setAttribute('href', dataUri);
-  linkElement.setAttribute('download', exportFileDefaultName);
-  linkElement.click();
+  let obj = {"data": jsonData, "file": file_name};
+  obj = JSON.stringify(obj)
+  console.log(obj)
+  postRequest.send(obj);
 }
 
 //Select-all button for checkboxes
@@ -118,7 +234,6 @@ function hideModal(){
     postRequest.setRequestHeader(
       'Content-Type', 'application/json'
     );
-
     postRequest.addEventListener('load', function (event) {
       if (event.target.status != 200) {
         var message = event.target.response;
@@ -175,3 +290,5 @@ function hideModal(){
 	}
 
   //Add event listener to button
+
+

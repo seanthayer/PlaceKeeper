@@ -1,10 +1,26 @@
 <main>
-  <div class="pin-select-container">
-      <button type="button" id="select-pins-button">Select Pins</button>
-    </div>
+  
   <div class="content-container">
+
     <section class="map-container">
+
       <div id="map"></div>
+
+      <div class="import-and-save-buttons-container">
+
+        <div class="import-map-element">
+            <button type="button" class="import-map-button">Import Map</button>
+        </div>
+
+        <div class="pin-select-container">
+            <button type="button" id="select-pins-button">Save Map</button>
+        </div>
+
+        <div class="about-link-button">
+            <a id="about-button" href="/about">About Page</a>
+        </div>
+      </div>
+
     </section>
 
     <aside class="saved-places-container">
@@ -18,11 +34,6 @@
 
       <div id="saved-places-list-container" class="saved-places-list-container">
         <ul class="saved-places-list-element">
-
-          {{#each static_import}}
-            {{> savedPlaceEntry}}
-          {{/each}}
-
         </ul>
       </div>
 
@@ -32,6 +43,28 @@
 
 </main>
 
+<div class="import-modal-backdrop hidden"></div>
+<div class="import-modal-container hidden">
+  <div class="modal-header">
+    <h2 class="modal-title">Import Map</h2>
+    <button type="button" class="import-modal-hide-button">&times;</button>
+  </div>
+
+  <div class="modal-description">
+    <p>Available Maps:</p>
+  </div>
+
+  <div class="modal-body import-body">
+    <div class="import-modal-directory-container">
+
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="import-modal-close-button">Close</button>
+  </div>
+
+</div>
 
 <div id="modal-backdrop" class="hidden">
     <div id="select-pins-modal" class="hidden">
