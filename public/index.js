@@ -247,11 +247,11 @@ function hideModal(){
     postRequest.send(requestBody);
   }
 
-  
+
   //Function that checks if a certain pin matches the filter request
   //returns true or false
   function pinPassesFilter(pin, filter){
-  
+
   		if (filter.text){
       	var pinName = pin.name.toLowerCase();
   			var filterText = filter.text.toLowerCase();
@@ -259,7 +259,7 @@ function hideModal(){
 				return false;
   			}
   		}
-  
+
   		return true;
   }
 
@@ -270,7 +270,7 @@ function hideModal(){
 				text: document.getElementById('filter-text').value.trim()
 			}
 
-			var pinContainer = document.getElementById('saved-places-list-container');
+			var pinContainer = document.querySelector('.saved-places-list-element');
 			while (pinContainer.lastChild){
 				pinContainer.removeChild(pinContainer.lastChild);
 			}
@@ -283,12 +283,10 @@ function hideModal(){
 						lng: mapPins[i].latLng.lng()
 					}
 					var pinHTML = Handlebars.templates.savedPlaceEntry(pinArgs);
-					var enrySection = document.getElementById('saved-places-list-container');
-					enrySection.insertAdjacentHTML('beforeend', pinHTML);
+					var entrySection = document.querySelector('.saved-places-list-element');
+					entrySection.insertAdjacentHTML('beforeend', pinHTML);
 				}
 			}
 	}
 
   //Add event listener to button
-
-
