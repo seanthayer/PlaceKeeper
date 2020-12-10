@@ -44,14 +44,13 @@ these locations, and finally, be able to retrieve said map at a later time.
 * [x] Build basic Homepage Modal
 
 ### Front-end Functionality
-* [ ] Implement filtering of places (by name) in 'saved-places-list-element' using 'search-bar-input'
-* [ ] Implement selecting list item and panning to pin on map
 
 <ins>Completed</ins>↴
 * [x] Implement Modal hiding/unhiding
 * [x] Implement reading of current pins and into modal (name, lat, lng)
 * [x] Implement very basic 'POST' request generation for Modal
 * [x] Implement completed 'POST' request generation for modal
+* [x] Implement filtering of places (by name) in 'saved-places-list-element' using 'search-bar-input'
 
 ### Back-end Functionality
 
@@ -77,8 +76,8 @@ these locations, and finally, be able to retrieve said map at a later time.
 * [x] Implement deleting pin from map directly or removing pin when its list item is removed
 
 ### Optional Features
+* [ ] Implement selecting list item and panning to pin on map
 * [ ] Implement client side deletion of a list item from the saved places list. This should also remove it from the map embed.
-* [ ] Further style homepage
 * [ ] Create another page?
 
 <ins>Completed</ins>↴
