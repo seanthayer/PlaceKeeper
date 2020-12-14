@@ -1,8 +1,8 @@
 var map;
 var mapNode = document.querySelector('#map');
 var mapClickListener;
-var eventHandler;
 var mapPins = [];
+var eventHandler;
 
 function Pin(pin) {
 
@@ -35,22 +35,22 @@ function initMap() {
 
 function generateNewPinForm(event) {
 
-  var clickEventLatLng = event.latLng;
+  let clickEventLatLng = event.latLng;
 
-  var newPin_Marker = new google.maps.Marker({
+  let newPin_Marker = new google.maps.Marker({
 
     position: clickEventLatLng,
     map: map
 
   });
 
-  var newPin_InfoBoxHTML = Handlebars.templates.pinInfoBox();
-  var newPin_InfoBox = generatePinInfoBox(map, clickEventLatLng, newPin_InfoBoxHTML);
+  let newPin_InfoBoxHTML = Handlebars.templates.pinInfoBox();
+  let newPin_InfoBox = generatePinInfoBox(map, clickEventLatLng, newPin_InfoBoxHTML);
 
   // Wait for the dynamically generated infobox to be loaded
   eventHandler.addListenerOnce(newPin_InfoBox, 'domready', function () {
 
-    var newPin = {
+    let newPin = {
 
       marker: newPin_Marker,
       infoBox: newPin_InfoBox,
@@ -71,7 +71,7 @@ function generateNewPinForm(event) {
 
 function generateReadOnlyInfoBox(event) {
 
-  var eventOriginPin;
+  let eventOriginPin;
 
   mapPins.forEach((pin) => {
 
@@ -85,7 +85,7 @@ function generateReadOnlyInfoBox(event) {
 
   map.panTo(eventOriginPin.latLng);
 
-  var context = {
+  let context = {
 
     name: eventOriginPin.name,
     lat: eventOriginPin.latLng.lat(),
@@ -94,8 +94,8 @@ function generateReadOnlyInfoBox(event) {
 
   }
 
-  var readOnlyInfoBoxHTML = Handlebars.templates.pinInfoBoxReadOnly(context);
-  var readOnlyInfoBox = generatePinInfoBox(map, eventOriginPin.latLng, readOnlyInfoBoxHTML);
+  let readOnlyInfoBoxHTML = Handlebars.templates.pinInfoBoxReadOnly(context);
+  let readOnlyInfoBox = generatePinInfoBox(map, eventOriginPin.latLng, readOnlyInfoBoxHTML);
 
   eventHandler.addListenerOnce(readOnlyInfoBox, 'domready', function () {
 
@@ -107,9 +107,9 @@ function generateReadOnlyInfoBox(event) {
 
 function handleReadOnlyInfoBox(pin, infobox) {
 
-  var infoBoxContainer = mapNode.querySelector(`.pin-infobox-readonly-container[data-latLng="${pin.latLng}"]`)
-  var buttonContainer = infoBoxContainer.querySelector('.pin-trash-button-container');
-  var trashButton = buttonContainer.querySelector('button.pin-trash-button');
+  let infoBoxContainer = mapNode.querySelector(`.pin-infobox-readonly-container[data-latLng="${pin.latLng}"]`)
+  let buttonContainer = infoBoxContainer.querySelector('.pin-trash-button-container');
+  let trashButton = buttonContainer.querySelector('button.pin-trash-button');
 
   eventHandler.addDomListenerOnce(trashButton, 'click', function () {
 
@@ -152,7 +152,7 @@ function handleNewPinForm(newPinObject, callback) {
 
       newPinObject.infoBox.close();
 
-      var pin_ = new Pin({
+      let pin_ = new Pin({
 
         marker: newPinObject.marker,
         name: pinNameField.value,
@@ -200,8 +200,8 @@ function removeMarkerAndInfoBox(marker, infoBox) {
 function generatePinInfoBox(map, latLng, html) {
 
   // 'offset' is used for the 'pixelOffset' option and must be defined by a 'Size' object
-  var offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
-  var infoBox = new google.maps.InfoWindow();
+  let offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
+  let infoBox = new google.maps.InfoWindow();
 
   infoBox.setPosition(latLng);
   infoBox.setContent(html);
@@ -214,8 +214,8 @@ function generatePinInfoBox(map, latLng, html) {
 
 function importMap(mapName) {
 
-  var getRequest = new XMLHttpRequest();
-  var reqURL = '/importMap/' + mapName;
+  let getRequest = new XMLHttpRequest();
+  let reqURL = '/importMap/' + mapName;
 
   getRequest.open('GET', reqURL);
   getRequest.setRequestHeader('Content-Type', 'application/json');
@@ -226,24 +226,24 @@ function importMap(mapName) {
 
       purgeMapPinData(mapPins);
 
-      var importMap;
+      let importMap;
 
       importMap = JSON.parse(event.target.response);
 
       importMap.forEach((pin) => {
 
-        var coords = { lat: parseFloat(pin.lat), lng: parseFloat(pin.lng) };
+        let coords = { lat: parseFloat(pin.lat), lng: parseFloat(pin.lng) };
 
-        var latLngObj = new google.maps.LatLng(coords);
+        let latLngObj = new google.maps.LatLng(coords);
 
-        var marker = new google.maps.Marker({
+        let marker = new google.maps.Marker({
 
           position: latLngObj,
           map: map
 
         });
 
-        var pin_ = new Pin({
+        let pin_ = new Pin({
 
           marker: marker,
           name: pin.name,
@@ -275,9 +275,9 @@ function importMap(mapName) {
 
 function purgeMapPinData(list) {
 
-  var n = list.length - 1;
+  let n = list.length - 1;
 
-  for (var pin = n; pin >= 0; pin--) {
+  for (let pin = n; pin >= 0; pin--) {
 
     list[pin].marker.setMap(null);
     list.pop();
@@ -290,11 +290,11 @@ function purgeMapPinData(list) {
 
 function renderDynamicComponents(list) {
 
-  var savedPlacesList = document.querySelector('.saved-places-list-element');
+  let savedPlacesList = document.querySelector('.saved-places-list-element');
 
-  var saveModal = document.querySelector('.modal-container.save-modal')
-  var modalTable = saveModal.querySelector('.modal-table');
-  var modalTableRows = modalTable.querySelectorAll('tr.modal-table-row');
+  let saveModal = document.querySelector('.modal-container.save-modal')
+  let modalTable = saveModal.querySelector('.modal-table');
+  let modalTableRows = modalTable.querySelectorAll('tr.modal-table-row');
 
   removeChildNodes(savedPlacesList);
 
@@ -307,7 +307,7 @@ function renderDynamicComponents(list) {
 
   list.forEach((pin) => {
 
-    var context = {
+    let context = {
 
       name: pin.name,
       lat: pin.latLng.lat(),
@@ -315,10 +315,10 @@ function renderDynamicComponents(list) {
 
     }
 
-    var pinsHTML = Handlebars.templates.pins(context);
+    let pinsHTML = Handlebars.templates.pins(context);
     modalTable.insertAdjacentHTML('beforeend', pinsHTML);
 
-    var savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
+    let savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
     savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
 
   });
