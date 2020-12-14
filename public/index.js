@@ -1,15 +1,97 @@
-window.addEventListener('DOMContentLoaded', function () {
+function doFilterUpdate() {
 
-  var saveMapButton = document.querySelector('.save-map-button');
-  saveMapButton.addEventListener('click', openSaveModal);
+  var savedPlacesList = document.querySelector('.saved-places-list-element');
+  var savedPlacesListArray = Array.from(savedPlacesList.childNodes);
+  var filter = { text: document.querySelector('.search-bar-input').value.trim() }
 
-  var searchBarButton = document.querySelector('.search-bar-button');
-  searchBarButton.addEventListener('click', doFilterUpdate);
+  savedPlacesListArray.forEach((node) => {
 
-  var importMapButton = document.querySelector('.import-map-button');
-  importMapButton.addEventListener('click', openImportModal);
+    node.parentNode.removeChild(node);
 
-});
+  });
+
+  mapPins.forEach((pin) => {
+
+    if (pinPassesFilter(pin, filter)) {
+
+      var context = {
+
+        name: pin.name,
+        lat: pin.latLng.lat(),
+        lng: pin.latLng.lng()
+
+      }
+
+      var savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
+      savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
+
+    }
+
+  });
+
+}
+
+function exportMap(data, fileName) {
+
+  var postRequest = new XMLHttpRequest();
+  var reqURL = '/exportFile';
+  var entryData = {
+
+    fileName: fileName,
+    data: data
+
+  }
+
+  postRequest.open('POST', reqURL, true);
+  postRequest.setRequestHeader('Content-Type', 'application/json');
+
+  postRequest.addEventListener('load', function(event) {
+
+    if (event.target.status != 200) {
+
+      alert('Server failed to save data!');
+
+    } else {
+
+      console.log('POST Successful');
+
+    }
+
+  });
+
+  postRequest.send(JSON.stringify(entryData));
+
+}
+
+function getMapsDirectory(callback) {
+
+  var getRequest = new XMLHttpRequest();
+  var reqURL = '/getMapsDirectory';
+
+  getRequest.open('GET', reqURL);
+  getRequest.setRequestHeader('Content-Type', 'application/json');
+
+  getRequest.addEventListener('load', function(event) {
+
+    if (event.target.status === 200) {
+
+      var data = JSON.parse(event.target.response);
+
+      for (var i = 0; i < data.length; i++) {
+
+        data[i] = data[i].split('.')[0];
+
+      }
+
+      callback(data);
+
+    }
+
+  });
+
+  getRequest.send();
+
+}
 
 function openImportModal() {
 
@@ -55,136 +137,6 @@ function openImportModal() {
       });
 
     });
-
-  });
-
-}
-
-function removeChildNodes(node) {
-
-  var node_ = Array.from(node.childNodes);
-
-  node_.forEach((childNode) => {
-
-    node.removeChild(childNode);
-
-  });
-
-}
-
-function getMapsDirectory(callback) {
-
-  var getRequest = new XMLHttpRequest();
-  var reqURL = '/getMapsDirectory';
-
-  getRequest.open('GET', reqURL);
-  getRequest.setRequestHeader('Content-Type', 'application/json');
-
-  getRequest.addEventListener('load', function(event) {
-
-    if (event.target.status === 200) {
-
-      var data = JSON.parse(event.target.response);
-
-      for (var i = 0; i < data.length; i++) {
-
-        data[i] = data[i].split('.')[0];
-
-      }
-
-      callback(data);
-
-    }
-
-  });
-
-  getRequest.send();
-
-}
-
-function saveMap(callback) {
-
-  var saveModal = document.querySelector('.modal-container.save-modal');
-  var saveModal_SelectedPins = saveModal.querySelectorAll('.table-row-checkbox:checked');
-  var fileName = saveModal.querySelector('.modal-input').value;
-
-  if (fileName) {
-
-    fileName = fileName.trim().replace(/\s+/g, '-');
-
-    var pinData = [];
-
-    saveModal_SelectedPins.forEach((pin) => {
-
-      var pinTableRow = pin.parentNode.parentNode;
-
-      var pinObj = {
-
-        name: pinTableRow.querySelector('.table-row-name').textContent,
-        lat: pinTableRow.querySelector('.table-row-latitude').textContent,
-        lng: pinTableRow.querySelector('.table-row-longitude').textContent
-
-      }
-
-      pinData.push(pinObj);
-
-    });
-
-    writeToFile(pinData, fileName);
-
-    callback();
-
-  } else {
-
-    alert('Please enter a file name!');
-
-  }
-
-}
-
-function writeToFile(data, fileName) {
-
-  var postRequest = new XMLHttpRequest();
-  var reqURL = '/exportFile';
-  var entryData = {
-
-    fileName: fileName,
-    data: data
-
-  }
-
-  postRequest.open('POST', reqURL, true);
-  postRequest.setRequestHeader('Content-Type', 'application/json');
-
-  postRequest.addEventListener('load', function(event) {
-
-    if (event.target.status != 200) {
-
-      alert('Server failed to save data!');
-
-    } else {
-
-      console.log('POST Successful');
-
-    }
-
-  });
-
-  postRequest.send(JSON.stringify(entryData));
-
-}
-
-//Select-all button for checkboxes
-function selectAll(source) {
-
-  var saveModal = document.querySelector('.modal-container.save-modal');
-  var saveModal_Checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
-
-  saveModal_Checkboxes.forEach((item) => {
-
-    // TODO: if one checkbox is unchecked then it should uncheck the select all checkbox
-
-    item.checked = source.checked;
 
   });
 
@@ -240,73 +192,103 @@ function openSaveModal() {
 
 }
 
-  //Function that sends a request to the server for adding locations
-  function addPin(name, lat, long) {
-    var postRequest = XMLHttpRequest.open();
-    postRequest.open('POST', '/addPin');
+function pinPassesFilter(pin, filter) {
 
-    var pinObject = {
-      name: name,
-      lat: Lat,
-      long: Long
-    };
-    var requestBody = JSON.stringify(pinObject);
-    postRequest.setRequestHeader(
-      'Content-Type', 'application/json'
-    );
-    postRequest.addEventListener('load', function (event) {
-      if (event.target.status != 200) {
-        var message = event.target.response;
-        alert("Error storing Pin data: ", message);
-      } else {
-        //Add pin data here
-        console.log("Request was successful");
+  if (filter.text) {
+
+    var pinName = pin.name.toLowerCase();
+    var filterText = filter.text.toLowerCase();
+
+    if (pinName.indexOf(filterText) === -1) {
+
+      return false;
+
+    }
+
+  }
+
+  return true;
+
+}
+
+function removeChildNodes(node) {
+
+  var node_ = Array.from(node.childNodes);
+
+  node_.forEach((childNode) => {
+
+    node.removeChild(childNode);
+
+  });
+
+}
+
+function saveMap(callback) {
+
+  var saveModal = document.querySelector('.modal-container.save-modal');
+  var saveModal_SelectedPins = saveModal.querySelectorAll('.table-row-checkbox:checked');
+  var fileName = saveModal.querySelector('.modal-input').value;
+
+  if (fileName) {
+
+    fileName = fileName.trim().replace(/\s+/g, '-');
+
+    var pinData = [];
+
+    saveModal_SelectedPins.forEach((pin) => {
+
+      var pinTableRow = pin.parentNode.parentNode;
+
+      var pinObj = {
+
+        name: pinTableRow.querySelector('.table-row-name').textContent,
+        lat: pinTableRow.querySelector('.table-row-latitude').textContent,
+        lng: pinTableRow.querySelector('.table-row-longitude').textContent
+
       }
+
+      pinData.push(pinObj);
+
     });
 
-    postRequest.send(requestBody);
+    exportMap(pinData, fileName);
+
+    callback();
+
+  } else {
+
+    alert('Please enter a file name!');
+
   }
 
+}
 
-  //Function that checks if a certain pin matches the filter request
-  //returns true or false
-  function pinPassesFilter(pin, filter){
+function selectAll(source) {
 
-  		if (filter.text){
-      	var pinName = pin.name.toLowerCase();
-  			var filterText = filter.text.toLowerCase();
-         if (pinName.indexOf(filterText) === -1){
-				return false;
-  			}
-  		}
+  //Select-all button for checkboxes
 
-  		return true;
-  }
+  var saveModal = document.querySelector('.modal-container.save-modal');
+  var saveModal_Checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
 
-  //Updates pin results
-  function doFilterUpdate(){
+  saveModal_Checkboxes.forEach((item) => {
 
-	      var filter = {
-				text: document.querySelector('.search-bar-input').value.trim()
-			}
+    // TODO: if one checkbox is unchecked then it should uncheck the select all checkbox
 
-			var pinContainer = document.querySelector('.saved-places-list-element');
-			while (pinContainer.lastChild){
-				pinContainer.removeChild(pinContainer.lastChild);
-			}
-			var i;
-			for(i = 0; i < mapPins.length; i++){
-				if(pinPassesFilter(mapPins[i], filter)){
-					var pinArgs = {
-						name: mapPins[i].name,
-						lat: mapPins[i].latLng.lat(),
-						lng: mapPins[i].latLng.lng()
-					}
-					var pinHTML = Handlebars.templates.savedPlaceEntry(pinArgs);
-					var entrySection = document.querySelector('.saved-places-list-element');
-					entrySection.insertAdjacentHTML('beforeend', pinHTML);
-				}
-			}
-	}
+    item.checked = source.checked;
 
-  //Add event listener to button
+  });
+
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+
+  var saveMapButton = document.querySelector('.save-map-button');
+  saveMapButton.addEventListener('click', openSaveModal);
+
+  var searchBarButton = document.querySelector('.search-bar-button');
+  searchBarButton.addEventListener('click', doFilterUpdate);
+
+  var importMapButton = document.querySelector('.import-map-button');
+  importMapButton.addEventListener('click', openImportModal);
+
+});
