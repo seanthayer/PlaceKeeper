@@ -1,13 +1,13 @@
-var dotenv = require('dotenv').config({ path: `${__dirname}/PRIVATE_ENV_VARS.env` });
-var fs = require('fs');
-var express = require('express');
-var exphbs = require('express-handlebars');
-var bodyParser = require('body-parser');
-var app = express();
+const dotenv = require('dotenv').config({ path: `${__dirname}/PRIVATE_ENV_VARS.env` });
+const fs = require('fs');
+const express = require('express');
+const exphbs = require('express-handlebars');
+const bodyParser = require('body-parser');
+const app = express();
 
 const API_KEY = process.env.G_MAPS_API_KEY || false;
 
-var port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 
 app.engine('handlebars', exphbs({ defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
@@ -15,62 +15,36 @@ app.set('view engine', 'handlebars');
 app.use(express.static('public'));
 app.use(bodyParser.json());
 
-app.all("*", function (req, res, next) {
-	console.log(`[ REQ ] ${req.method} ${req.url}`);
+app.all('*', function (req, res, next) {
+
+	console.log(`[SERVER] REQUEST: '${req.method}' | URL: '${req.url}'`);
+
 	next();
+
 });
 
-app.get('/', function (req, res, next) {
+app.get('/', function (req, res) {
 
   res.status(200).render('homepage', { homePage: true, API_KEY: API_KEY });
 
 });
 
-app.get('/about', function (req, res, next) {
+app.get('/about', function (req, res) {
+
   res.status(200).render('about');
-});
-
-app.post('/addPin', function(req, res, next) {
-	if (req.body && req.body.lat && req.body.long && req.body.name) {
-		console.log("Added following information");
-		console.log("Name: ", req.body.name);
-		console.log("Lat: ", req.body.lat);
-		console.log("Long: ", req.body.long);
-
-		//Add post data to data file
-		res.status(200).send("Success");
-		next();
-	} else {
-		res.status(400).send("ERROR");
-	}
-});
-
-app.get('/getMapsDirectory', function (req, res, next) {
-
-  var map_data_dir = fs.readdirSync('./data/');
-
-  if (map_data_dir) {
-
-    res.status(200).send(map_data_dir);
-
-  } else {
-
-    res.status(404).send();
-
-  }
 
 });
 
-app.post('/exportFile', function (req, res, next) {
+app.post('/exportFile', function (req, res) {
 
-	var entryData = {
+	let entryData = {
 
 		fileName: req.body.fileName,
 		data: req.body.data
 
 	}
 
-	var filePath = './data/' + entryData.fileName + '.json';
+	let filePath = './data/' + entryData.fileName + '.json';
 
 	fs.writeFile(filePath, JSON.stringify(entryData.data, null, 2), (err) => {
 
@@ -90,16 +64,32 @@ app.post('/exportFile', function (req, res, next) {
 
 });
 
-app.get('/importMap/:map_name', function (req, res, next) {
+app.get('/getMapsDirectory', function (req, res) {
 
   var map_data_dir = fs.readdirSync('./data/');
-  var map_file_name = req.params.map_name + '.json';
 
-  var match_index = map_data_dir.indexOf(map_file_name);
+  if (map_data_dir) {
+
+    res.status(200).send(map_data_dir);
+
+  } else {
+
+    res.status(404).send();
+
+  }
+
+});
+
+app.get('/importMap/:map_name', function (req, res) {
+
+  let map_data_dir = fs.readdirSync('./data/');
+  let map_file_name = req.params.map_name + '.json';
+
+  let match_index = map_data_dir.indexOf(map_file_name);
 
   if (match_index != -1) {
 
-    var importMap = require('./data/' + map_data_dir[match_index]);
+    let importMap = require('./data/' + map_data_dir[match_index]);
 
     res.status(200).send(importMap);
 
@@ -112,9 +102,13 @@ app.get('/importMap/:map_name', function (req, res, next) {
 });
 
 app.get('*', function (req, res) {
+
   res.status(404).render('404');
+
 });
 
 app.listen(port, function () {
-  console.log("== Server is listening on port", port);
+
+  console.log(`[SERVER] Listening on port: '${port}'`);
+
 });
