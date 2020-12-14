@@ -307,39 +307,3 @@ ul.saved-place-entry {
 .hidden {
   display: none;
 }
-
-#about-button {
-  position: relative;
-  top: 13px;
-  border: grey solid 1px;
-  background: rgb(240,240,240);
-  padding-top: 14px;
-  padding-bottom: 17px;
-  padding-right: 15px;
-  padding-left: 15px;
-}
-
-#about-info-box {
-  font-size: 50px;
-}
-
-#about-info {
-  border: solid 3px black;
-  max-height: 300px;
-  max-width: 750px;
-  font-size: 25px;
-  padding: 3px;
-}
-
-#author-box {
-  font-size: 50px;
-}
-
-#authors {
-  border: solid 3px black;
-  max-height: 300px;
-  max-width: 717px;
-  font-size: 25px;
-  padding-top: 3px;
-  padding-bottom: 3px;
-}

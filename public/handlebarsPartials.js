@@ -43,7 +43,7 @@ templates['pinInfoBoxReadOnly'] = template({"compiler":[8,">= 4.3.0"],"main":fun
     + alias4(((helper = (helper = lookupProperty(helpers,"name") || (depth0 != null ? lookupProperty(depth0,"name") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"loc":{"start":{"line":2,"column":41},"end":{"line":2,"column":49}}}) : helper)))
     + "</h2>\r\n  <div class=\"pin-trash-button-container\">\r\n    <button type=\"button\" name=\"pin-trash-button\" class=\"pin-trash-button\"><i class=\"far fa-trash-alt\"></i></button>\r\n  </div>\r\n</div>\r\n";
 },"useData":true});
-templates['pins'] = template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
+templates['pinTableRow'] = template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=container.hooks.helperMissing, alias3="function", alias4=container.escapeExpression, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];

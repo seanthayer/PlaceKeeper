@@ -29,12 +29,6 @@ app.get('/', function (req, res) {
 
 });
 
-app.get('/about', function (req, res) {
-
-  res.status(200).render('about');
-
-});
-
 app.post('/exportFile', function (req, res) {
 
 	let entryData = {

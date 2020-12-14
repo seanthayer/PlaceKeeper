@@ -385,7 +385,7 @@ function renderDynamicComponents(list) {
 
     }
 
-    let pinsHTML = Handlebars.templates.pins(context);
+    let pinsHTML = Handlebars.templates.pinTableRow(context);
     saveModal_ModalTable.insertAdjacentHTML('beforeend', pinsHTML);
 
     let savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
