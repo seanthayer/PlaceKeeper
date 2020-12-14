@@ -130,9 +130,7 @@ function saveMap() {
 
     });
 
-    console.log(pinData);
-
-    // writeToFile(pinData, fileName);
+    writeToFile(pinData, fileName);
 
     // hideModal();
     // resetModal();
@@ -154,29 +152,37 @@ function resetModal(checkboxes){
     checkboxes[i].checked = false;
   }
 }
-function writeToFile(jsonData, file_name){
-  let postRequest = new XMLHttpRequest();
-  let reqURL = '/exportFile';
+
+function writeToFile(data, fileName) {
+
+  var postRequest = new XMLHttpRequest();
+  var reqURL = '/exportFile';
+  var entryData = {
+
+    fileName: fileName,
+    data: data
+
+  }
+
   postRequest.open('POST', reqURL, true);
-  postRequest.setRequestHeader('Content-Type','application/json');
+  postRequest.setRequestHeader('Content-Type', 'application/json');
 
   postRequest.addEventListener('load', function(event) {
-    if (event.target.status != 200){
-      console.log("Pins Error")
-      var message = event.target.response;
-      alert("Error saving Pins: ", message);
+
+    if (event.target.status != 200) {
+
+      alert('Server failed to save data!');
+
     } else {
-        console.log("Request successful");
-      }
+
+      console.log('POST Successful');
+
+    }
+
   });
 
-  file_name = `data/${file_name}.json`
-  console.log(file_name)
+  postRequest.send(JSON.stringify(entryData));
 
-  let obj = {"data": jsonData, "file": file_name};
-  obj = JSON.stringify(obj)
-  console.log(obj)
-  postRequest.send(obj);
 }
 
 //Select-all button for checkboxes

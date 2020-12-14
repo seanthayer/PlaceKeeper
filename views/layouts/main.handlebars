@@ -19,10 +19,20 @@
     <script src="/index.js" charset="utf-8" defer></script>
 
     {{#if homePage}}
+
       <script src="/map.js" charset="utf-8" defer></script>
 
       <!-- API key is redacted in public releases -->
-      <script src="https://maps.googleapis.com/maps/api/js?key={{ API_KEY }}&callback=initMap&v=3.42.9" charset="utf-8" defer></script>
+      {{#if API_KEY}}
+
+        <script src="https://maps.googleapis.com/maps/api/js?key={{ API_KEY }}&callback=initMap&v=3.42.9" charset="utf-8" defer></script>
+
+      {{else}}
+
+        <script src="https://maps.googleapis.com/maps/api/js?callback=initMap&v=3.42.9" charset="utf-8" defer></script>
+
+      {{/if}}
+
     {{/if}}
 
   </head>

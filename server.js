@@ -5,7 +5,7 @@ var exphbs = require('express-handlebars');
 var bodyParser = require('body-parser');
 var app = express();
 
-const API_KEY = process.env.G_MAPS_API_KEY;
+const API_KEY = process.env.G_MAPS_API_KEY || false;
 
 var port = process.env.PORT || 3000;
 
@@ -62,25 +62,32 @@ app.get('/getMapsDirectory', function (req, res, next) {
 });
 
 app.post('/exportFile', function (req, res, next) {
-	let obj = req.body;
-	var obj2;
-	var file;
-	for (let i in obj){
-		if (i == 'data'){
 
-			obj2 = obj['data']
-		}
-		else {
-			file = obj['file']
-		}
+	var entryData = {
+
+		fileName: req.body.fileName,
+		data: req.body.data
+
 	}
 
-	fs.writeFile(file, JSON.stringify(obj2,null,2), (err) => {
-		if (err) throw err;
-		console.log('The file has been saved!');
-	  });
-	res.status(200).send("Success");
-	next();
+	var filePath = './data/' + entryData.fileName + '.json';
+
+	fs.writeFile(filePath, JSON.stringify(entryData.data, null, 2), (err) => {
+
+		if (err) {
+
+			res.status(500).send('POST ERROR');
+
+			throw err;
+
+		} else {
+
+			res.status(200).send();
+
+		}
+
+	});
+
 });
 
 app.get('/importMap/:map_name', function (req, res, next) {
