@@ -1,15 +1,7 @@
 window.addEventListener('DOMContentLoaded', function () {
 
   var saveMapButton = document.querySelector('.save-map-button');
-  saveMapButton.addEventListener('click', showModal);
-
-  var saveModal_XButton = document.querySelector('.modal-x-button.save-modal');
-  var saveModal_CloseButton = document.querySelector('.modal-close-button.save-modal');
-  saveModal_XButton.addEventListener('click', hideModal);
-  saveModal_CloseButton.addEventListener('click', hideModal);
-
-  var saveModal_SaveButton = document.querySelector('.modal-save-button.save-modal');
-  saveModal_SaveButton.addEventListener('click', savePins);
+  saveMapButton.addEventListener('click', openSaveModal);
 
   var searchBarButton = document.querySelector('.search-bar-button');
   searchBarButton.addEventListener('click', doFilterUpdate);
@@ -21,16 +13,16 @@ window.addEventListener('DOMContentLoaded', function () {
 
 function openImportModal() {
 
-  var modalBackdrop = document.querySelector('.modal-backdrop.import-modal');
   var importModal = document.querySelector('.modal-container.import-modal');
+  var importModal_BackDrop = document.querySelector('.modal-backdrop.import-modal');
   var importModal_XButton = importModal.querySelector('.modal-x-button.import-modal');
   var importModal_CloseButton = importModal.querySelector('.modal-close-button.import-modal');
   var importModal_Directory = importModal.querySelector('.modal-directory-container.import-modal');
 
   var importModal_CloseFunc = function () {
 
-    modalBackdrop.classList.add('hidden');
     importModal.classList.add('hidden');
+    importModal_BackDrop.classList.add('hidden');
 
     removeChildNodes(importModal_Directory);
 
@@ -39,8 +31,8 @@ function openImportModal() {
 
   }
 
-  modalBackdrop.classList.remove('hidden');
   importModal.classList.remove('hidden');
+  importModal_BackDrop.classList.remove('hidden');
 
   importModal_XButton.addEventListener('click', importModal_CloseFunc);
   importModal_CloseButton.addEventListener('click', importModal_CloseFunc);
@@ -110,34 +102,40 @@ function getMapsDirectory(callback) {
 
 }
 
-function savePins(){
+function saveMap() {
+
   var saveModal = document.querySelector('.modal-container.save-modal');
-  var saveModal_CheckBoxes = saveModal.querySelectorAll('.table-row-checkbox');
-  var saveModal_PinNames = saveModal.querySelectorAll('.table-row-name');
-  var saveModal_PinLat = saveModal.querySelectorAll('.table-row-latitude');
-  var saveModal_PinLng = document.querySelectorAll('.table-row-longitude');
-  var file_name = document.querySelector('.modal-input.save-modal').value;
+  var saveModal_SelectedPins = saveModal.querySelectorAll('.table-row-checkbox:checked');
+  var fileName = saveModal.querySelector('.modal-input').value;
 
-  if (file_name) {
+  if (fileName) {
 
-    file_name = file_name.trim().replace(/\s+/g, '-');
+    fileName = fileName.trim().replace(/\s+/g, '-');
 
-    checkbox_data = []
-    for(var i = 0; i < checkboxes.length; ++i) {
-      if(checkboxes[i].checked){
-        name = pin_names[i].textContent
-        lat =  pin_lats[i].textContent
-        longs = pin_longs[i].textContent
-        jVar = { "name":name, "lat":lat, "lng":longs};
+    var pinData = [];
 
-        checkbox_data.push(jVar)
+    saveModal_SelectedPins.forEach((pin) => {
+
+      var pinTableRow = pin.parentNode.parentNode;
+
+      var pinObj = {
+
+        name: pinTableRow.querySelector('.table-row-name').textContent,
+        lat: pinTableRow.querySelector('.table-row-latitude').textContent,
+        lng: pinTableRow.querySelector('.table-row-longitude').textContent
+
       }
 
-    }
-    writeToFile(checkbox_data, file_name)
+      pinData.push(pinObj);
 
-    hideModal();
-    resetModal();
+    });
+
+    console.log(pinData);
+
+    // writeToFile(pinData, fileName);
+
+    // hideModal();
+    // resetModal();
 
   } else {
 
@@ -189,13 +187,30 @@ function toggle(source) {
   }
 }
 
-//Shows the modal when the button to select pins is clicked
-function showModal(){
-  var selectPinsModal = document.querySelector('.modal-container.save-modal');
-  var modalBackdrop = document.querySelector('.modal-backdrop.save-modal');
+function openSaveModal(){
 
-  selectPinsModal.classList.remove('hidden');
-  modalBackdrop.classList.remove('hidden');
+  var saveModal = document.querySelector('.modal-container.save-modal');
+  var saveModal_BackDrop = document.querySelector('.modal-backdrop.save-modal');
+  var saveModal_XButton = saveModal.querySelector('.modal-x-button');
+  var saveModal_CloseButton = saveModal.querySelector('.modal-close-button');
+  var saveModal_SaveButton = saveModal.querySelector('.modal-save-button');
+
+  var saveModal_CloseFunc = function () {
+
+    saveModal.classList.add('hidden');
+    saveModal_BackDrop.classList.add('hidden');
+
+    saveModal_XButton.removeEventListener('click', saveModal_CloseFunc);
+    saveModal_CloseButton.removeEventListener('click', saveModal_CloseFunc);
+
+  }
+
+  saveModal.classList.remove('hidden');
+  saveModal_BackDrop.classList.remove('hidden');
+
+  saveModal_XButton.addEventListener('click', hideModal);
+  saveModal_CloseButton.addEventListener('click', hideModal);
+  saveModal_SaveButton.addEventListener('click', saveMap);
 
 }
 
