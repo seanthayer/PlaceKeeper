@@ -3,12 +3,12 @@ window.addEventListener('DOMContentLoaded', function () {
   var saveMapButton = document.querySelector('.save-map-button');
   saveMapButton.addEventListener('click', showModal);
 
-  var saveModal_XButton = document.querySelector('.save-modal-x-button');
-  var saveModal_CloseButton = document.querySelector('.save-modal-close-button');
+  var saveModal_XButton = document.querySelector('.modal-x-button.save-modal');
+  var saveModal_CloseButton = document.querySelector('.modal-close-button.save-modal');
   saveModal_XButton.addEventListener('click', hideModal);
   saveModal_CloseButton.addEventListener('click', hideModal);
 
-  var saveModal_SaveButton = document.querySelector('.save-modal-save-button');
+  var saveModal_SaveButton = document.querySelector('.modal-save-button.save-modal');
   saveModal_SaveButton.addEventListener('click', savePins);
 
   var searchBarButton = document.querySelector('.search-bar-button');
@@ -21,11 +21,11 @@ window.addEventListener('DOMContentLoaded', function () {
 
 function openImportModal() {
 
-  var modalBackdrop = document.querySelector('.import-modal-backdrop');
-  var importModal = document.querySelector('.import-modal-container');
-  var importModal_XButton = importModal.querySelector('.import-modal-x-button');
-  var importModal_CloseButton = importModal.querySelector('.import-modal-close-button');
-  var importModal_Directory = importModal.querySelector('.import-modal-directory-container');
+  var modalBackdrop = document.querySelector('.modal-backdrop.import-modal');
+  var importModal = document.querySelector('.modal-container.import-modal');
+  var importModal_XButton = importModal.querySelector('.modal-x-button.import-modal');
+  var importModal_CloseButton = importModal.querySelector('.modal-close-button.import-modal');
+  var importModal_Directory = importModal.querySelector('.modal-directory-container.import-modal');
 
   var importModal_CloseFunc = function () {
 
@@ -111,11 +111,12 @@ function getMapsDirectory(callback) {
 }
 
 function savePins(){
-  checkboxes = document.getElementsByClassName('select-pin');
-  pin_names = document.getElementsByClassName('pin-name');
-  pin_lats = document.getElementsByClassName('latitude');
-  pin_longs = document.getElementsByClassName('longitude');
-  file_name = document.querySelector('.save-modal-input').value;
+  var saveModal = document.querySelector('.modal-container.save-modal');
+  var saveModal_CheckBoxes = saveModal.querySelectorAll('.table-row-checkbox');
+  var saveModal_PinNames = saveModal.querySelectorAll('.table-row-name');
+  var saveModal_PinLat = saveModal.querySelectorAll('.table-row-latitude');
+  var saveModal_PinLng = document.querySelectorAll('.table-row-longitude');
+  var file_name = document.querySelector('.modal-input.save-modal').value;
 
   if (file_name) {
 
@@ -147,10 +148,10 @@ function savePins(){
 }
 
 function resetModal(checkboxes){
-  checkboxes = document.getElementsByClassName('select-pin');
-  selectAllBox = document.querySelector('.table-select-all');
+  checkboxes = document.querySelector('.modal-table-checkboxes.save-modal');
+  selectAllBox = document.querySelector('.modal-table-select-all.save-modal');
   selectAllBox.checked = false;
-  document.querySelector('.save-modal-input').value = '';
+  document.querySelector('.modal-input.save-modal').value = '';
   for (var i = 0; i < checkboxes.length; ++i){
     checkboxes[i].checked = false;
   }
@@ -182,7 +183,7 @@ function writeToFile(jsonData, file_name){
 
 //Select-all button for checkboxes
 function toggle(source) {
-  checkboxes = document.getElementsByClassName('select-pin');
+  checkboxes = document.querySelectorAll('.table-row-checkbox');
   for(var i = 0; i < checkboxes.length; ++i) {
     checkboxes[i].checked = source.checked
   }
@@ -190,8 +191,8 @@ function toggle(source) {
 
 //Shows the modal when the button to select pins is clicked
 function showModal(){
-  var selectPinsModal = document.querySelector('.save-modal-container');
-  var modalBackdrop = document.querySelector('.save-modal-backdrop');
+  var selectPinsModal = document.querySelector('.modal-container.save-modal');
+  var modalBackdrop = document.querySelector('.modal-backdrop.save-modal');
 
   selectPinsModal.classList.remove('hidden');
   modalBackdrop.classList.remove('hidden');
@@ -200,8 +201,8 @@ function showModal(){
 
 //Hides modal when close/exit button are clicked
 function hideModal(){
-  var selectPinsModal = document.querySelector('.save-modal-container');
-  var modalBackdrop = document.querySelector('.save-modal-backdrop');
+  var selectPinsModal = document.querySelector('.modal-container.save-modal');
+  var modalBackdrop = document.querySelector('.modal-backdrop.save-modal');
 
   selectPinsModal.classList.add('hidden');
   modalBackdrop.classList.add('hidden');

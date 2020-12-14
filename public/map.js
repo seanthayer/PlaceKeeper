@@ -304,7 +304,7 @@ function renderDynamicComponents(list) {
   var savedPlacesList = document.querySelector('.saved-places-list-element');
   var savedPlacesListNodes = Array.from(savedPlacesList.childNodes);
 
-  var modalTable = document.querySelector('.modal-pin-table');
+  var modalTable = document.querySelector('.modal-table.save-modal');
   var modalTableRowNodes = Array.from(modalTable.querySelectorAll('.modal-table-row'));
 
   savedPlacesListNodes.forEach((node) => {
@@ -330,14 +330,10 @@ function renderDynamicComponents(list) {
 
     }
 
-    // Input new pin to modal
     var pinsHTML = Handlebars.templates.pins(context);
-    var pinsList = document.getElementsByClassName('modal-pin-table');
-    pinsList[0].insertAdjacentHTML('beforeend', pinsHTML);
+    modalTable.insertAdjacentHTML('beforeend', pinsHTML);
 
-    // Generate a 'saved-place-entry' using Handlebars and the data from the pin. Then close the infobox (leaving the marker) and callback
     var savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
-
     savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
 
   });

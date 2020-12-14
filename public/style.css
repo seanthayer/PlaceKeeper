@@ -130,7 +130,7 @@ ul.saved-place-entry {
   padding: 15px;
 }
 
-.import-modal-backdrop {
+.modal-backdrop {
   top: 0;
   bottom: 0;
   left: 0;
@@ -140,7 +140,7 @@ ul.saved-place-entry {
   background-color: rgba(0,0,0,0.85);
 }
 
-.import-modal-container {
+.modal-container {
   top: 0;
   bottom: 0;
   left: 0;
@@ -156,13 +156,13 @@ ul.saved-place-entry {
   z-index: 1010;
 }
 
-.modal-body.import-body {
+.modal-body.import-modal {
   overflow: auto;
   overflow-x: auto;
   margin: 0px 20px 16px 20px;
 }
 
-.import-modal-x-button {
+.modal-x-button {
   position: absolute;
   right: 10px;
   top: 5px;
@@ -174,13 +174,13 @@ ul.saved-place-entry {
   color: rgb(125, 125, 125);
 }
 
-.import-modal-close-button {
+.modal-close-button {
   width: 80px;
   border: 2px solid rgb(208, 208, 208);
   background-color: #fff;
 }
 
-.import-modal-directory-container {
+.modal-directory-container {
   height: 300px;
   border: 1px solid black;
 }
@@ -214,7 +214,7 @@ ul.saved-place-entry {
   display: flex;
 }
 
-.save-modal-input {
+.modal-input {
   margin-top: 18px;
   margin-left: 5px;
 }
@@ -232,22 +232,6 @@ ul.saved-place-entry {
   margin-left: 40px;
 }
 
-.save-modal-backdrop {
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  position: fixed;
-  z-index: 1000;
-  background-color: rgba(0,0,0,0.85);
-}
-
-.save-modal-close-button {
-  width: 80px;
-  border: 2px solid rgb(208, 208, 208);
-  background-color: #fff;
-}
-
 .modal-title{
   margin-left: 20px;
   margin-top: 10px;
@@ -258,57 +242,41 @@ ul.saved-place-entry {
   border-bottom: 1px solid rgb(208, 208, 208);
 }
 
-.save-modal-container {
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: auto;
-  max-width: 700px;
-  min-width: 400px;
-  min-height: 300px;
-  margin: 40px auto;
-  background-color: #fff;
-  border-radius: 15px;
-  position: fixed;
-  z-index: 1010;
-}
-
-.modal-pins-table table, th, td{
+.modal-table table, th, td{
   border: 2px solid black;
   padding: 10px;
 }
 
-.modal-pins-table-checkboxes {
+.modal-table-checkboxes {
   width: 60px;
 }
 
-.table-select-all {
+.modal-table-select-all {
   background-color: gray;
   border: 1px solid white;
 }
 
-.header-pin-name {
+.table-header-name {
   width: 120px
 }
 
-.header-latitude {
+.table-header-latitude {
   width: 180px;
 }
 
-.header-longitude {
+.table-header-longitude {
   width: 180px;
 }
 
-.pin-name {
+.table-row-name {
   width: 120px
 }
 
-.latitude {
+.table-row-latitude {
   width: 180px;
 }
 
-.longitude {
+.table-row-longitude {
   width: 180px;
 }
 
@@ -319,7 +287,7 @@ ul.saved-place-entry {
   overflow-x: hidden;
 }
 
-.modal-pins-table-header{
+.modal-table-header{
   background-color: gray;
   color: white;
   font-weight: 100;
@@ -343,7 +311,7 @@ ul.saved-place-entry {
   padding-top: 20px;
 }
 
-.save-modal-save-button {
+.modal-save-button {
   width: 150px;
   border: 0px;
   color: white;
@@ -352,18 +320,6 @@ ul.saved-place-entry {
 
 .hidden {
   display: none;
-}
-
-.save-modal-x-button {
-  position: absolute;
-  right: 10px;
-  top: 5px;
-  font-size: 25px;
-  border: none;
-  background: none;
-  padding: 0;
-  cursor: pointer;
-  color: rgb(125, 125, 125);
 }
 
 #about-button {
@@ -376,23 +332,24 @@ ul.saved-place-entry {
   padding-right: 15px;
   padding-left: 15px;
 }
+
 #about-info-box {
   font-size: 50px;
 }
 
-#about-info{
-
+#about-info {
   border: solid 3px black;
-
   max-height: 300px;
   max-width: 750px;
   font-size: 25px;
   padding: 3px;
 }
+
 #author-box {
   font-size: 50px;
 }
-#authors{
+
+#authors {
   border: solid 3px black;
   max-height: 300px;
   max-width: 717px;

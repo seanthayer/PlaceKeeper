@@ -1,20 +1,13 @@
-var path = require('path');
+var dotenv = require('dotenv').config({ path: `${__dirname}/PRIVATE_ENV_VARS.env` });
 var fs = require('fs');
 var express = require('express');
 var exphbs = require('express-handlebars');
 var bodyParser = require('body-parser');
 var app = express();
 
-/*
- *  IMPORTANT:
- *  The GoogleMaps API is specifically restricted to HTTP requests from
- *  'http://localhost:3000/*'. So please let Sean know if the port is changed
- *  for whatever reason, so that the port can be changed in the API dashboard as well.
- */
-var port = 3000;
-/*
- * ~ ~ ~
- */
+const API_KEY = process.env.G_MAPS_API_KEY;
+
+var port = process.env.PORT || 3000;
 
 app.engine('handlebars', exphbs({ defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
@@ -29,7 +22,7 @@ app.all("*", function (req, res, next) {
 
 app.get('/', function (req, res, next) {
 
-  res.status(200).render('homepage', { homePage: true });
+  res.status(200).render('homepage', { homePage: true, API_KEY: API_KEY });
 
 });
 

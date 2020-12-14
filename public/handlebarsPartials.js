@@ -51,12 +51,12 @@ templates['pins'] = template({"compiler":[8,">= 4.3.0"],"main":function(containe
         return undefined
     };
 
-  return "<tr class=\"modal-table-row\">\r\n    <th class=\"modal-table-checkboxes\"><input type = \"checkbox\" class=\"select-pin\"></th>\r\n    <th class=\"pin-name\">"
-    + alias4(((helper = (helper = lookupProperty(helpers,"name") || (depth0 != null ? lookupProperty(depth0,"name") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"loc":{"start":{"line":3,"column":25},"end":{"line":3,"column":33}}}) : helper)))
-    + "</th>\r\n    <th class=\"latitude\">"
-    + alias4(((helper = (helper = lookupProperty(helpers,"lat") || (depth0 != null ? lookupProperty(depth0,"lat") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lat","hash":{},"data":data,"loc":{"start":{"line":4,"column":25},"end":{"line":4,"column":32}}}) : helper)))
-    + "</th>\r\n    <th class=\"longitude\">"
-    + alias4(((helper = (helper = lookupProperty(helpers,"lng") || (depth0 != null ? lookupProperty(depth0,"lng") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lng","hash":{},"data":data,"loc":{"start":{"line":5,"column":26},"end":{"line":5,"column":33}}}) : helper)))
-    + "</th>\r\n</tr>";
+  return "<tr class=\"modal-table-row\">\r\n    <th class=\"modal-table-checkboxes save-modal\"><input type=\"checkbox\" class=\"table-row-checkbox\"></th>\r\n    <th class=\"table-row-name\">"
+    + alias4(((helper = (helper = lookupProperty(helpers,"name") || (depth0 != null ? lookupProperty(depth0,"name") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"loc":{"start":{"line":3,"column":31},"end":{"line":3,"column":39}}}) : helper)))
+    + "</th>\r\n    <th class=\"table-row-latitude\">"
+    + alias4(((helper = (helper = lookupProperty(helpers,"lat") || (depth0 != null ? lookupProperty(depth0,"lat") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lat","hash":{},"data":data,"loc":{"start":{"line":4,"column":35},"end":{"line":4,"column":42}}}) : helper)))
+    + "</th>\r\n    <th class=\"table-row-longitude\">"
+    + alias4(((helper = (helper = lookupProperty(helpers,"lng") || (depth0 != null ? lookupProperty(depth0,"lng") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lng","hash":{},"data":data,"loc":{"start":{"line":5,"column":36},"end":{"line":5,"column":43}}}) : helper)))
+    + "</th>\r\n</tr>\r\n";
 },"useData":true});
 })();

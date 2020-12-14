@@ -41,42 +41,42 @@
 
 </main>
 
-<div class="import-modal-backdrop hidden"></div>
-<div class="import-modal-container hidden">
+<div class="modal-backdrop import-modal hidden"></div>
+<div class="modal-container import-modal hidden">
 
   <div class="modal-header">
     <h2 class="modal-title">Import Map</h2>
-    <button type="button" class="import-modal-x-button">&times;</button>
+    <button type="button" class="modal-x-button import-modal">&times;</button>
   </div>
 
   <div class="modal-description">
     <p>Available Maps:</p>
   </div>
 
-  <div class="modal-body import-body">
-    <div class="import-modal-directory-container">
+  <div class="modal-body import-modal">
+    <div class="modal-directory-container import-modal">
 
     </div>
   </div>
 
   <div class="modal-footer">
-    <button type="button" class="import-modal-close-button action-button">Close</button>
+    <button type="button" class="modal-close-button action-button import-modal">Close</button>
   </div>
 
 </div>
 
-<div class="save-modal-backdrop hidden"></div>
-<div class="save-modal-container hidden">
+<div class="modal-backdrop save-modal hidden"></div>
+<div class="modal-container save-modal hidden">
 
   <div class="modal-header">
     <h2 class="modal-title">Saving Map</h2>
-    <button type="button" class="save-modal-x-button">&times;</button>
+    <button type="button" class="modal-x-button save-modal">&times;</button>
   </div>
 
   <div class="modal-input-container">
     <h1 class="modal-input-text">Map Name:</h1>
     <div class="modal-input-element">
-      <input type="text" class="save-modal-input">
+      <input type="text" class="modal-input save-modal">
     </div>
   </div>
 
@@ -85,19 +85,19 @@
   </div>
 
   <div class="modal-body">
-    <table class="modal-pins-table">
-      <tr class="modal-pins-table-header">
-        <th class="modal-pins-table-checkboxes"><input type="checkbox" class="table-select-all" onClick="toggle(this)"></th>
-        <th class="header-pin-name">Pin Name</th>
-        <th class="header-latitude">Latitude</th>
-        <th class="header-longitude">Longitude</th>
+    <table class="modal-table save-modal">
+      <tr class="modal-table-header">
+        <th class="modal-table-checkboxes save-modal"><input type="checkbox" class="modal-table-select-all save-modal" onClick="toggle(this)"></th>
+        <th class="table-header-name">Pin Name</th>
+        <th class="table-header-latitude">Latitude</th>
+        <th class="table-header-longitude">Longitude</th>
       </tr>
     </table>
   </div>
 
   <div class="modal-footer">
-    <button type="button" class="save-modal-save-button action-button">Save</button>
-    <button type="button" class="save-modal-close-button action-button">Close</button>
+    <button type="button" class="modal-save-button action-button save-modal">Save</button>
+    <button type="button" class="modal-close-button action-button save-modal">Close</button>
   </div>
 
 </div>
