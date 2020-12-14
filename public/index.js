@@ -15,9 +15,9 @@ function openImportModal() {
 
   var importModal = document.querySelector('.modal-container.import-modal');
   var importModal_BackDrop = document.querySelector('.modal-backdrop.import-modal');
-  var importModal_XButton = importModal.querySelector('.modal-x-button.import-modal');
-  var importModal_CloseButton = importModal.querySelector('.modal-close-button.import-modal');
-  var importModal_Directory = importModal.querySelector('.modal-directory-container.import-modal');
+  var importModal_XButton = importModal.querySelector('.modal-x-button');
+  var importModal_CloseButton = importModal.querySelector('.modal-close-button');
+  var importModal_Directory = importModal.querySelector('.modal-directory-container');
 
   var importModal_CloseFunc = function () {
 
@@ -48,7 +48,7 @@ function openImportModal() {
 
       importModal_Directory.querySelector(`#${uniqueID}`).addEventListener('click', function () {
 
-      importMap(item);
+        importMap(item);
 
         importModal_CloseFunc();
 
@@ -102,7 +102,7 @@ function getMapsDirectory(callback) {
 
 }
 
-function saveMap() {
+function saveMap(callback) {
 
   var saveModal = document.querySelector('.modal-container.save-modal');
   var saveModal_SelectedPins = saveModal.querySelectorAll('.table-row-checkbox:checked');
@@ -132,8 +132,7 @@ function saveMap() {
 
     writeToFile(pinData, fileName);
 
-    // hideModal();
-    // resetModal();
+    callback();
 
   } else {
 
@@ -141,16 +140,6 @@ function saveMap() {
 
   }
 
-}
-
-function resetModal(checkboxes){
-  checkboxes = document.querySelector('.modal-table-checkboxes.save-modal');
-  selectAllBox = document.querySelector('.modal-table-select-all.save-modal');
-  selectAllBox.checked = false;
-  document.querySelector('.modal-input.save-modal').value = '';
-  for (var i = 0; i < checkboxes.length; ++i){
-    checkboxes[i].checked = false;
-  }
 }
 
 function writeToFile(data, fileName) {
@@ -186,14 +175,22 @@ function writeToFile(data, fileName) {
 }
 
 //Select-all button for checkboxes
-function toggle(source) {
-  checkboxes = document.querySelectorAll('.table-row-checkbox');
-  for(var i = 0; i < checkboxes.length; ++i) {
-    checkboxes[i].checked = source.checked
-  }
+function selectAll(source) {
+
+  var saveModal = document.querySelector('.modal-container.save-modal');
+  var saveModal_Checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
+
+  saveModal_Checkboxes.forEach((item) => {
+
+    // TODO: if one checkbox is unchecked then it should uncheck the select all checkbox
+
+    item.checked = source.checked;
+
+  });
+
 }
 
-function openSaveModal(){
+function openSaveModal() {
 
   var saveModal = document.querySelector('.modal-container.save-modal');
   var saveModal_BackDrop = document.querySelector('.modal-backdrop.save-modal');
@@ -209,25 +206,38 @@ function openSaveModal(){
     saveModal_XButton.removeEventListener('click', saveModal_CloseFunc);
     saveModal_CloseButton.removeEventListener('click', saveModal_CloseFunc);
 
+    saveModal_SaveButton.removeEventListener('click', saveModal_SaveButtonFunc);
+
+    saveModal.querySelector('.modal-input').value = '';
+
+    saveModal.querySelector('.modal-table-select-all').checked = false;
+
+    saveModal.querySelectorAll('.table-row-checkbox').forEach((item) => {
+
+      item.checked = false;
+
+    });
+
+  }
+
+  var saveModal_SaveButtonFunc = function () {
+
+    saveMap(function () {
+
+      saveModal_CloseFunc();
+
+    });
+
   }
 
   saveModal.classList.remove('hidden');
   saveModal_BackDrop.classList.remove('hidden');
 
-  saveModal_XButton.addEventListener('click', hideModal);
-  saveModal_CloseButton.addEventListener('click', hideModal);
-  saveModal_SaveButton.addEventListener('click', saveMap);
+  saveModal_XButton.addEventListener('click', saveModal_CloseFunc);
+  saveModal_CloseButton.addEventListener('click', saveModal_CloseFunc);
 
-}
+  saveModal_SaveButton.addEventListener('click', saveModal_SaveButtonFunc);
 
-//Hides modal when close/exit button are clicked
-function hideModal(){
-  var selectPinsModal = document.querySelector('.modal-container.save-modal');
-  var modalBackdrop = document.querySelector('.modal-backdrop.save-modal');
-
-  selectPinsModal.classList.add('hidden');
-  modalBackdrop.classList.add('hidden');
-  resetModal();
 }
 
   //Function that sends a request to the server for adding locations

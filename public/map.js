@@ -304,7 +304,8 @@ function renderDynamicComponents(list) {
   var savedPlacesList = document.querySelector('.saved-places-list-element');
   var savedPlacesListNodes = Array.from(savedPlacesList.childNodes);
 
-  var modalTable = document.querySelector('.modal-table.save-modal');
+  var saveModal = document.querySelector('.modal-container.save-modal')
+  var modalTable = saveModal.querySelector('.modal-table');
   var modalTableRowNodes = Array.from(modalTable.querySelectorAll('.modal-table-row'));
 
   savedPlacesListNodes.forEach((node) => {

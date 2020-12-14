@@ -46,7 +46,7 @@
 
   <div class="modal-header">
     <h2 class="modal-title">Import Map</h2>
-    <button type="button" class="modal-x-button import-modal">&times;</button>
+    <button type="button" class="modal-x-button">&times;</button>
   </div>
 
   <div class="modal-description">
@@ -54,13 +54,13 @@
   </div>
 
   <div class="modal-body import-modal">
-    <div class="modal-directory-container import-modal">
+    <div class="modal-directory-container">
 
     </div>
   </div>
 
   <div class="modal-footer">
-    <button type="button" class="modal-close-button action-button import-modal">Close</button>
+    <button type="button" class="modal-close-button action-button">Close</button>
   </div>
 
 </div>
@@ -85,9 +85,9 @@
   </div>
 
   <div class="modal-body">
-    <table class="modal-table save-modal">
+    <table class="modal-table">
       <tr class="modal-table-header">
-        <th class="modal-table-checkboxes"><input type="checkbox" class="modal-table-select-all save-modal" onClick="toggle(this)"></th>
+        <th class="modal-table-checkboxes"><input type="checkbox" class="modal-table-select-all" onClick="selectAll(this)"></th>
         <th class="table-header-name">Pin Name</th>
         <th class="table-header-latitude">Latitude</th>
         <th class="table-header-longitude">Longitude</th>
