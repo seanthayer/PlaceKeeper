@@ -16,7 +16,6 @@ function Pin(pin) {
 // The API will callback 'initMap()' when finished loading
 function initMap() {
 
-  // Points to the API's 'event' namespace
   eventHandler = google.maps.event;
 
   // Creates a new Map object and inserts it into the selected div
@@ -44,23 +43,22 @@ function generateNewPinForm(event) {
 
   });
 
-  let newPin_InfoBoxHTML = Handlebars.templates.pinInfoBox();
-  let newPin_InfoBox = generatePinInfoBox(map, clickEventLatLng, newPin_InfoBoxHTML);
+  let newPin_InfoFormHTML = Handlebars.templates.pinInfoForm();
+  let newPin_InfoForm = generatePinInfoBox(map, clickEventLatLng, newPin_InfoFormHTML);
 
   // Wait for the dynamically generated infobox to be loaded
-  eventHandler.addListenerOnce(newPin_InfoBox, 'domready', function () {
+  eventHandler.addListenerOnce(newPin_InfoForm, 'domready', function () {
 
     let newPin = {
 
       marker: newPin_Marker,
-      infoBox: newPin_InfoBox,
+      infoBox: newPin_InfoForm,
       latLng: clickEventLatLng
 
     };
 
     handleNewPinForm(newPin, function () {
 
-      // After 'handleNewPinForm' callsback (i.e. is finished), we reinstate the map 'click' listener
       mapClickListener = eventHandler.addListenerOnce(map, 'click', generateNewPinForm);
 
     });
@@ -107,15 +105,15 @@ function generateReadOnlyInfoBox(event) {
 
 function handleReadOnlyInfoBox(pin, infobox) {
 
-  let infoBoxContainer = mapNode.querySelector(`.pin-infobox-readonly-container[data-latLng="${pin.latLng}"]`)
-  let buttonContainer = infoBoxContainer.querySelector('.pin-trash-button-container');
-  let trashButton = buttonContainer.querySelector('button.pin-trash-button');
+  let infoBox = mapNode.querySelector(`.pin-infobox-readonly-container[data-latLng="${pin.latLng}"]`)
+  let infoBox_ButtonContainer = infoBox.querySelector('.pin-trash-button-container');
+  let infoBox_TrashButton = infoBox_ButtonContainer.querySelector('button.pin-trash-button');
 
-  eventHandler.addDomListenerOnce(trashButton, 'click', function () {
+  eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
 
-    buttonContainer.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
+    infoBox_ButtonContainer.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
 
-    eventHandler.addDomListenerOnce(trashButton, 'click', function () {
+    eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
 
       removeMarkerAndInfoBox(pin.marker, infobox);
 
@@ -139,23 +137,24 @@ function handleReadOnlyInfoBox(pin, infobox) {
 
 function handleNewPinForm(newPinObject, callback) {
 
-  // 'pinDescField' is currently not stored anywhere, but is a placeholder for the future
+  // 'infoForm_DescField' is currently not stored anywhere, but is a placeholder for the future
 
-  var pinNameField = mapNode.querySelector('input#pin-infobox-name');
-  var pinDescField = mapNode.querySelector('textarea#pin-infobox-description');
-  var saveButton = mapNode.querySelector('.pin-infobox-buttons-container > button[name="save"]');
-  var cancelButton = mapNode.querySelector('.pin-infobox-buttons-container > button[name="cancel"]')
+  let infoForm = mapNode.querySelector('.pin-infoform-container');
+  let infoForm_NameField = infoForm.querySelector('input.pin-infoform-name');
+  let infoForm_DescField = infoForm.querySelector('textarea.pin-infoform-description');
+  let infoForm_SaveButton = infoForm.querySelector('button[name="save"]');
+  let infoForm_CancelButton = infoForm.querySelector('button[name="cancel"]');
 
-  eventHandler.addDomListener(saveButton, 'click', function () {
+  eventHandler.addDomListener(infoForm_SaveButton, 'click', function () {
 
-    if (pinNameField.value) {
+    if (infoForm_NameField.value) {
 
       newPinObject.infoBox.close();
 
       let pin_ = new Pin({
 
         marker: newPinObject.marker,
-        name: pinNameField.value,
+        name: infoForm_NameField.value,
         latLng: newPinObject.latLng
 
       });
@@ -174,7 +173,7 @@ function handleNewPinForm(newPinObject, callback) {
 
   });
 
-  eventHandler.addDomListener(cancelButton, 'click', function () {
+  eventHandler.addDomListener(infoForm_CancelButton, 'click', function () {
 
     removeMarkerAndInfoBox(newPinObject.marker, newPinObject.infoBox);
     callback();
@@ -293,12 +292,12 @@ function renderDynamicComponents(list) {
   let savedPlacesList = document.querySelector('.saved-places-list-element');
 
   let saveModal = document.querySelector('.modal-container.save-modal')
-  let modalTable = saveModal.querySelector('.modal-table');
-  let modalTableRows = modalTable.querySelectorAll('tr.modal-table-row');
+  let saveModal_ModalTable = saveModal.querySelector('.modal-table');
+  let saveModal_TableRows = saveModal_ModalTable.querySelectorAll('tr.modal-table-row');
 
   removeChildNodes(savedPlacesList);
 
-  modalTableRows.forEach((node) => {
+  saveModal_TableRows.forEach((node) => {
 
     node.parentNode.remove();
 
@@ -316,7 +315,7 @@ function renderDynamicComponents(list) {
     }
 
     let pinsHTML = Handlebars.templates.pins(context);
-    modalTable.insertAdjacentHTML('beforeend', pinsHTML);
+    saveModal_ModalTable.insertAdjacentHTML('beforeend', pinsHTML);
 
     let savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
     savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
