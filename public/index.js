@@ -204,13 +204,12 @@ function selectAll(source) {
 
 window.addEventListener('DOMContentLoaded', function () {
 
-  let saveMapButton = document.querySelector('.save-map-button');
-  saveMapButton.addEventListener('click', openSaveModal);
+  let saveMapButton;
+  let searchBarButton;
+  let importMapButton;
 
-  let searchBarButton = document.querySelector('.search-bar-button');
-  searchBarButton.addEventListener('click', doFilterUpdate);
-
-  let importMapButton = document.querySelector('.import-map-button');
-  importMapButton.addEventListener('click', openImportModal);
+  if (saveMapButton = document.querySelector('.save-map-button')) { saveMapButton.addEventListener('click', openSaveModal); }
+  if (searchBarButton = document.querySelector('.search-bar-button')) { searchBarButton.addEventListener('click', doFilterUpdate); }
+  if (importMapButton = document.querySelector('.import-map-button')) { importMapButton.addEventListener('click', openImportModal); }
 
 });
