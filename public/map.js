@@ -32,6 +32,38 @@ function initMap() {
 
 }
 
+function exportMap(data, fileName) {
+
+  let postRequest = new XMLHttpRequest();
+  let reqURL = '/exportFile';
+  let entryData = {
+
+    fileName: fileName,
+    data: data
+
+  }
+
+  postRequest.open('POST', reqURL, true);
+  postRequest.setRequestHeader('Content-Type', 'application/json');
+
+  postRequest.addEventListener('load', function(event) {
+
+    if (event.target.status != 200) {
+
+      alert('Server failed to save data!');
+
+    } else {
+
+      console.log('POST Successful');
+
+    }
+
+  });
+
+  postRequest.send(JSON.stringify(entryData));
+
+}
+
 function generateNewPinForm(event) {
 
   let clickEventLatLng = event.latLng;
@@ -67,6 +99,21 @@ function generateNewPinForm(event) {
 
 }
 
+function generatePinInfoBox(map, latLng, html) {
+
+  // 'offset' is used for the 'pixelOffset' option and must be defined by a 'Size' object
+  let offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
+  let infoBox = new google.maps.InfoWindow();
+
+  infoBox.setPosition(latLng);
+  infoBox.setContent(html);
+  infoBox.setOptions({ pixelOffset: offset });
+  infoBox.open(map);
+
+  return infoBox;
+
+}
+
 function generateReadOnlyInfoBox(event) {
 
   let eventOriginPin;
@@ -98,38 +145,6 @@ function generateReadOnlyInfoBox(event) {
   eventHandler.addListenerOnce(readOnlyInfoBox, 'domready', function () {
 
     handleReadOnlyInfoBox(eventOriginPin, readOnlyInfoBox);
-
-  });
-
-}
-
-function handleReadOnlyInfoBox(pin, infobox) {
-
-  let infoBox = mapNode.querySelector(`.pin-infobox-readonly-container[data-latLng="${pin.latLng}"]`)
-  let infoBox_ButtonContainer = infoBox.querySelector('.pin-trash-button-container');
-  let infoBox_TrashButton = infoBox_ButtonContainer.querySelector('button.pin-trash-button');
-
-  eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
-
-    infoBox_ButtonContainer.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
-
-    eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
-
-      removeMarkerAndInfoBox(pin.marker, infobox);
-
-      mapPins.splice(mapPins.indexOf(pin), 1);
-
-      renderDynamicComponents(mapPins);
-
-    });
-
-  });
-
-  eventHandler.addListenerOnce(infobox, 'closeclick', function () {
-
-    infobox.close();
-
-    pin.clickListener = eventHandler.addListenerOnce(pin.marker, 'click', generateReadOnlyInfoBox);
 
   });
 
@@ -189,25 +204,75 @@ function handleNewPinForm(newPinObject, callback) {
 
 }
 
-function removeMarkerAndInfoBox(marker, infoBox) {
+function handleReadOnlyInfoBox(pin, infobox) {
 
-  infoBox.close();
-  marker.setMap(null);
+  let infoBox = mapNode.querySelector(`.pin-infobox-readonly-container[data-latLng="${pin.latLng}"]`)
+  let infoBox_ButtonContainer = infoBox.querySelector('.pin-trash-button-container');
+  let infoBox_TrashButton = infoBox_ButtonContainer.querySelector('button.pin-trash-button');
+
+  eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
+
+    infoBox_ButtonContainer.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
+
+    eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
+
+      removeMarkerAndInfoBox(pin.marker, infobox);
+
+      mapPins.splice(mapPins.indexOf(pin), 1);
+
+      renderDynamicComponents(mapPins);
+
+    });
+
+  });
+
+  eventHandler.addListenerOnce(infobox, 'closeclick', function () {
+
+    infobox.close();
+
+    pin.clickListener = eventHandler.addListenerOnce(pin.marker, 'click', generateReadOnlyInfoBox);
+
+  });
 
 }
 
-function generatePinInfoBox(map, latLng, html) {
+function handleSaveModalInputs(callback) {
 
-  // 'offset' is used for the 'pixelOffset' option and must be defined by a 'Size' object
-  let offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
-  let infoBox = new google.maps.InfoWindow();
+  let saveModal = document.querySelector('.modal-container.save-modal');
+  let saveModal_SelectedPins = saveModal.querySelectorAll('.table-row-checkbox:checked');
+  let fileName = saveModal.querySelector('.modal-input').value;
 
-  infoBox.setPosition(latLng);
-  infoBox.setContent(html);
-  infoBox.setOptions({ pixelOffset: offset });
-  infoBox.open(map);
+  if (fileName) {
 
-  return infoBox;
+    fileName = fileName.trim().replace(/\s+/g, '-');
+
+    let pinData = [];
+
+    saveModal_SelectedPins.forEach((pin) => {
+
+      let pinTableRow = pin.parentNode.parentNode;
+
+      let pinObj = {
+
+        name: pinTableRow.querySelector('.table-row-name').textContent,
+        lat: pinTableRow.querySelector('.table-row-latitude').textContent,
+        lng: pinTableRow.querySelector('.table-row-longitude').textContent
+
+      }
+
+      pinData.push(pinObj);
+
+    });
+
+    exportMap(pinData, fileName);
+
+    callback();
+
+  } else {
+
+    alert('Please enter a file name!');
+
+  }
 
 }
 
@@ -287,6 +352,13 @@ function purgeMapPinData(list) {
 
 }
 
+function removeMarkerAndInfoBox(marker, infoBox) {
+
+  infoBox.close();
+  marker.setMap(null);
+
+}
+
 function renderDynamicComponents(list) {
 
   let savedPlacesList = document.querySelector('.saved-places-list-element');
@@ -302,7 +374,6 @@ function renderDynamicComponents(list) {
     node.parentNode.remove();
 
   });
-
 
   list.forEach((pin) => {
 

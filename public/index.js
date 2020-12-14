@@ -27,38 +27,6 @@ function doFilterUpdate() {
 
 }
 
-function exportMap(data, fileName) {
-
-  let postRequest = new XMLHttpRequest();
-  let reqURL = '/exportFile';
-  let entryData = {
-
-    fileName: fileName,
-    data: data
-
-  }
-
-  postRequest.open('POST', reqURL, true);
-  postRequest.setRequestHeader('Content-Type', 'application/json');
-
-  postRequest.addEventListener('load', function(event) {
-
-    if (event.target.status != 200) {
-
-      alert('Server failed to save data!');
-
-    } else {
-
-      console.log('POST Successful');
-
-    }
-
-  });
-
-  postRequest.send(JSON.stringify(entryData));
-
-}
-
 function getMapsDirectory(callback) {
 
   let getRequest = new XMLHttpRequest();
@@ -170,7 +138,7 @@ function openSaveModal() {
 
   let saveModal_SaveButtonFunc = function () {
 
-    saveMap(function () {
+    handleSaveModalInputs(function () {
 
       saveModal_CloseFunc();
 
@@ -212,46 +180,6 @@ function removeChildNodes(node) {
   while (node.lastChild) {
 
     node.removeChild(node.lastChild);
-
-  }
-
-}
-
-function saveMap(callback) {
-
-  let saveModal = document.querySelector('.modal-container.save-modal');
-  let saveModal_SelectedPins = saveModal.querySelectorAll('.table-row-checkbox:checked');
-  let fileName = saveModal.querySelector('.modal-input').value;
-
-  if (fileName) {
-
-    fileName = fileName.trim().replace(/\s+/g, '-');
-
-    let pinData = [];
-
-    saveModal_SelectedPins.forEach((pin) => {
-
-      let pinTableRow = pin.parentNode.parentNode;
-
-      let pinObj = {
-
-        name: pinTableRow.querySelector('.table-row-name').textContent,
-        lat: pinTableRow.querySelector('.table-row-latitude').textContent,
-        lng: pinTableRow.querySelector('.table-row-longitude').textContent
-
-      }
-
-      pinData.push(pinObj);
-
-    });
-
-    exportMap(pinData, fileName);
-
-    callback();
-
-  } else {
-
-    alert('Please enter a file name!');
 
   }
 
