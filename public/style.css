@@ -81,12 +81,6 @@ main {
   color: crimson;
 }
 
-.saved-places-container {
-  flex: 0 0;
-  max-height: 720px;
-  margin-left: 10px;
-}
-
 .search-bar-container {
   display: flex;
   padding: 5px 3px 5px 3px;
@@ -99,6 +93,12 @@ main {
 
 .search-bar-button {
   margin: 2px;
+}
+
+.saved-places-container {
+  flex: 0 0;
+  max-height: 720px;
+  margin-left: 10px;
 }
 
 .saved-places-list-container {
@@ -130,6 +130,10 @@ ul.saved-place-entry {
   padding: 15px;
 }
 
+.save-map-button {
+  padding: 15px;
+}
+
 .modal-backdrop {
   top: 0;
   bottom: 0;
@@ -156,10 +160,37 @@ ul.saved-place-entry {
   z-index: 1010;
 }
 
+.modal-header {
+  border-bottom: 1px solid rgb(208, 208, 208);
+}
+
+.modal-title {
+  margin-left: 20px;
+  margin-top: 10px;
+  font-size: 22px;
+}
+
+.modal-body {
+  margin-left: 40px;
+  margin-bottom: 10px;
+  max-height: 400px;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+
 .modal-body.import-modal {
   overflow: auto;
   overflow-x: auto;
   margin: 0px 20px 16px 20px;
+}
+
+.modal-description {
+  margin-left: 20px;
+}
+
+.modal-footer {
+  border-top: 1px solid rgb(208, 208, 208);
+  padding-top: 20px;
 }
 
 .modal-x-button {
@@ -174,40 +205,29 @@ ul.saved-place-entry {
   color: rgb(125, 125, 125);
 }
 
+.modal-save-button {
+  width: 150px;
+  border: 0px;
+  color: white;
+  background-color: rgb(0,135,189);
+}
+
 .modal-close-button {
   width: 80px;
   border: 2px solid rgb(208, 208, 208);
   background-color: #fff;
 }
 
+.action-button {
+  height: 50px;
+  float: right;
+  margin-right: 20px;
+  border-radius: 5px;
+}
+
 .modal-directory-container {
   height: 300px;
   border: 1px solid black;
-}
-
-.map-directory-entry-container {
-  display: inline-block;
-  cursor: pointer;
-  margin: 8px;
-  border: 1px solid black;
-  padding: 10px;
-}
-
-.file-title {
-  display: inline;
-  margin: 2px;
-}
-
-.fas.fa-file {
-  color: green;
-}
-
-.map-directory-entry-container:hover .fas.fa-file {
-  color: lightgreen;
-}
-
-.save-map-button {
-  padding: 15px;
 }
 
 .modal-input-container {
@@ -224,27 +244,42 @@ ul.saved-place-entry {
   font-size: 22px;
 }
 
-.modal-description {
-  margin-left: 20px;
+.map-directory-entry-container {
+  display: inline-block;
+  cursor: pointer;
+  margin: 8px;
+  border: 1px solid black;
+  padding: 10px;
 }
 
-.modal-body {
-  margin-left: 40px;
+.fas.fa-file {
+  color: green;
 }
 
-.modal-title{
-  margin-left: 20px;
-  margin-top: 10px;
-  font-size: 22px;
+.map-directory-entry-container:hover .fas.fa-file {
+  color: lightgreen;
 }
 
-.modal-header {
-  border-bottom: 1px solid rgb(208, 208, 208);
+.file-title {
+  display: inline;
+  margin: 2px;
 }
 
 .modal-table table, th, td{
   border: 2px solid black;
   padding: 10px;
+}
+
+.modal-table-header {
+  background-color: gray;
+  color: white;
+  font-weight: 100;
+  font-size: 14px;
+}
+
+.modal-table-row {
+  background-color: rgb(208, 208, 208);
+  color: black;
 }
 
 .modal-table-checkboxes {
@@ -266,56 +301,6 @@ ul.saved-place-entry {
 
 .table-header-longitude {
   width: 180px;
-}
-
-.table-row-name {
-  width: 120px
-}
-
-.table-row-latitude {
-  width: 180px;
-}
-
-.table-row-longitude {
-  width: 180px;
-}
-
-.modal-body {
-  margin-bottom: 10px;
-  max-height: 400px;
-  overflow: scroll;
-  overflow-x: hidden;
-}
-
-.modal-table-header{
-  background-color: gray;
-  color: white;
-  font-weight: 100;
-  font-size: 14px;
-}
-
-.modal-table-row{
-  background-color: rgb(208, 208, 208);
-  color: black;
-}
-
-.action-button {
-  height: 50px;
-  float: right;
-  margin-right: 20px;
-  border-radius: 5px;
-}
-
-.modal-footer {
-  border-top: 1px solid rgb(208, 208, 208);
-  padding-top: 20px;
-}
-
-.modal-save-button {
-  width: 150px;
-  border: 0px;
-  color: white;
-  background-color: rgb(0,135,189);
 }
 
 .hidden {
