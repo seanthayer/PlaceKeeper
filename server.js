@@ -66,7 +66,7 @@ app.post('/exportFile', function (req, res) {
 
 app.get('/getMapsDirectory', function (req, res) {
 
-  var map_data_dir = fs.readdirSync('./data/');
+  let map_data_dir = fs.readdirSync('./data/');
 
   if (map_data_dir) {
 

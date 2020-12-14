@@ -1,20 +1,16 @@
 function doFilterUpdate() {
 
-  var savedPlacesList = document.querySelector('.saved-places-list-element');
-  var savedPlacesListArray = Array.from(savedPlacesList.childNodes);
-  var filter = { text: document.querySelector('.search-bar-input').value.trim() }
+  let savedPlacesList = document.querySelector('.saved-places-list-element');
+  let savedPlacesListArray = Array.from(savedPlacesList.childNodes);
+  let filter = { text: document.querySelector('.search-bar-input').value.trim() }
 
-  savedPlacesListArray.forEach((node) => {
-
-    node.parentNode.removeChild(node);
-
-  });
+  removeChildNodes(savedPlacesList);
 
   mapPins.forEach((pin) => {
 
     if (pinPassesFilter(pin, filter)) {
 
-      var context = {
+      let context = {
 
         name: pin.name,
         lat: pin.latLng.lat(),
@@ -22,7 +18,7 @@ function doFilterUpdate() {
 
       }
 
-      var savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
+      let savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
       savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
 
     }
@@ -33,9 +29,9 @@ function doFilterUpdate() {
 
 function exportMap(data, fileName) {
 
-  var postRequest = new XMLHttpRequest();
-  var reqURL = '/exportFile';
-  var entryData = {
+  let postRequest = new XMLHttpRequest();
+  let reqURL = '/exportFile';
+  let entryData = {
 
     fileName: fileName,
     data: data
@@ -65,8 +61,8 @@ function exportMap(data, fileName) {
 
 function getMapsDirectory(callback) {
 
-  var getRequest = new XMLHttpRequest();
-  var reqURL = '/getMapsDirectory';
+  let getRequest = new XMLHttpRequest();
+  let reqURL = '/getMapsDirectory';
 
   getRequest.open('GET', reqURL);
   getRequest.setRequestHeader('Content-Type', 'application/json');
@@ -75,9 +71,9 @@ function getMapsDirectory(callback) {
 
     if (event.target.status === 200) {
 
-      var data = JSON.parse(event.target.response);
+      let data = JSON.parse(event.target.response);
 
-      for (var i = 0; i < data.length; i++) {
+      for (let i = 0; i < data.length; i++) {
 
         data[i] = data[i].split('.')[0];
 
@@ -95,13 +91,13 @@ function getMapsDirectory(callback) {
 
 function openImportModal() {
 
-  var importModal = document.querySelector('.modal-container.import-modal');
-  var importModal_BackDrop = document.querySelector('.modal-backdrop.import-modal');
-  var importModal_XButton = importModal.querySelector('.modal-x-button');
-  var importModal_CloseButton = importModal.querySelector('.modal-close-button');
-  var importModal_Directory = importModal.querySelector('.modal-directory-container');
+  let importModal = document.querySelector('.modal-container.import-modal');
+  let importModal_BackDrop = document.querySelector('.modal-backdrop.import-modal');
+  let importModal_XButton = importModal.querySelector('.modal-x-button');
+  let importModal_CloseButton = importModal.querySelector('.modal-close-button');
+  let importModal_Directory = importModal.querySelector('.modal-directory-container');
 
-  var importModal_CloseFunc = function () {
+  let importModal_CloseFunc = function () {
 
     importModal.classList.add('hidden');
     importModal_BackDrop.classList.add('hidden');
@@ -123,8 +119,8 @@ function openImportModal() {
 
     data.forEach((item, i) => {
 
-      var uniqueID = item + i;
-      var directoryEntry = `<div class="map-directory-entry-container" id="${uniqueID}"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`;
+      let uniqueID = item + i;
+      let directoryEntry = `<div class="map-directory-entry-container" id="${uniqueID}"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`;
 
       importModal_Directory.insertAdjacentHTML('beforeend', directoryEntry);
 
@@ -144,13 +140,13 @@ function openImportModal() {
 
 function openSaveModal() {
 
-  var saveModal = document.querySelector('.modal-container.save-modal');
-  var saveModal_BackDrop = document.querySelector('.modal-backdrop.save-modal');
-  var saveModal_XButton = saveModal.querySelector('.modal-x-button');
-  var saveModal_CloseButton = saveModal.querySelector('.modal-close-button');
-  var saveModal_SaveButton = saveModal.querySelector('.modal-save-button');
+  let saveModal = document.querySelector('.modal-container.save-modal');
+  let saveModal_BackDrop = document.querySelector('.modal-backdrop.save-modal');
+  let saveModal_XButton = saveModal.querySelector('.modal-x-button');
+  let saveModal_CloseButton = saveModal.querySelector('.modal-close-button');
+  let saveModal_SaveButton = saveModal.querySelector('.modal-save-button');
 
-  var saveModal_CloseFunc = function () {
+  let saveModal_CloseFunc = function () {
 
     saveModal.classList.add('hidden');
     saveModal_BackDrop.classList.add('hidden');
@@ -172,7 +168,7 @@ function openSaveModal() {
 
   }
 
-  var saveModal_SaveButtonFunc = function () {
+  let saveModal_SaveButtonFunc = function () {
 
     saveMap(function () {
 
@@ -196,8 +192,8 @@ function pinPassesFilter(pin, filter) {
 
   if (filter.text) {
 
-    var pinName = pin.name.toLowerCase();
-    var filterText = filter.text.toLowerCase();
+    let pinName = pin.name.toLowerCase();
+    let filterText = filter.text.toLowerCase();
 
     if (pinName.indexOf(filterText) === -1) {
 
@@ -213,7 +209,7 @@ function pinPassesFilter(pin, filter) {
 
 function removeChildNodes(node) {
 
-  var node_ = Array.from(node.childNodes);
+  let node_ = Array.from(node.childNodes);
 
   node_.forEach((childNode) => {
 
@@ -225,21 +221,21 @@ function removeChildNodes(node) {
 
 function saveMap(callback) {
 
-  var saveModal = document.querySelector('.modal-container.save-modal');
-  var saveModal_SelectedPins = saveModal.querySelectorAll('.table-row-checkbox:checked');
-  var fileName = saveModal.querySelector('.modal-input').value;
+  let saveModal = document.querySelector('.modal-container.save-modal');
+  let saveModal_SelectedPins = saveModal.querySelectorAll('.table-row-checkbox:checked');
+  let fileName = saveModal.querySelector('.modal-input').value;
 
   if (fileName) {
 
     fileName = fileName.trim().replace(/\s+/g, '-');
 
-    var pinData = [];
+    let pinData = [];
 
     saveModal_SelectedPins.forEach((pin) => {
 
-      var pinTableRow = pin.parentNode.parentNode;
+      let pinTableRow = pin.parentNode.parentNode;
 
-      var pinObj = {
+      let pinObj = {
 
         name: pinTableRow.querySelector('.table-row-name').textContent,
         lat: pinTableRow.querySelector('.table-row-latitude').textContent,
@@ -267,8 +263,8 @@ function selectAll(source) {
 
   //Select-all button for checkboxes
 
-  var saveModal = document.querySelector('.modal-container.save-modal');
-  var saveModal_Checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
+  let saveModal = document.querySelector('.modal-container.save-modal');
+  let saveModal_Checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
 
   saveModal_Checkboxes.forEach((item) => {
 
@@ -282,13 +278,13 @@ function selectAll(source) {
 
 window.addEventListener('DOMContentLoaded', function () {
 
-  var saveMapButton = document.querySelector('.save-map-button');
+  let saveMapButton = document.querySelector('.save-map-button');
   saveMapButton.addEventListener('click', openSaveModal);
 
-  var searchBarButton = document.querySelector('.search-bar-button');
+  let searchBarButton = document.querySelector('.search-bar-button');
   searchBarButton.addEventListener('click', doFilterUpdate);
 
-  var importMapButton = document.querySelector('.import-map-button');
+  let importMapButton = document.querySelector('.import-map-button');
   importMapButton.addEventListener('click', openImportModal);
 
 });

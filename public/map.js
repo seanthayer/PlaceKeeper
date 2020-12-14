@@ -302,17 +302,12 @@ function purgeMapPinData(list) {
 function renderDynamicComponents(list) {
 
   var savedPlacesList = document.querySelector('.saved-places-list-element');
-  var savedPlacesListNodes = Array.from(savedPlacesList.childNodes);
 
   var saveModal = document.querySelector('.modal-container.save-modal')
   var modalTable = saveModal.querySelector('.modal-table');
   var modalTableRowNodes = Array.from(modalTable.querySelectorAll('.modal-table-row'));
 
-  savedPlacesListNodes.forEach((node) => {
-
-    node.parentNode.removeChild(node);
-
-  });
+  removeChildNodes(savedPlacesList);
 
   modalTableRowNodes.forEach((node) => {
 
