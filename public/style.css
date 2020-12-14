@@ -265,7 +265,8 @@ ul.saved-place-entry {
   margin: 2px;
 }
 
-.modal-table table, th, td{
+.modal-table table, th, td {
+  text-align: center;
   border: 2px solid black;
   padding: 10px;
 }

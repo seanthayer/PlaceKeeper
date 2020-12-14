@@ -37,8 +37,8 @@ templates['pinInfoBoxReadOnly'] = template({"compiler":[8,">= 4.3.0"],"main":fun
     + alias4(((helper = (helper = lookupProperty(helpers,"lat") || (depth0 != null ? lookupProperty(depth0,"lat") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lat","hash":{},"data":data,"loc":{"start":{"line":1,"column":54},"end":{"line":1,"column":61}}}) : helper)))
     + "\" data-lng=\""
     + alias4(((helper = (helper = lookupProperty(helpers,"lng") || (depth0 != null ? lookupProperty(depth0,"lng") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lng","hash":{},"data":data,"loc":{"start":{"line":1,"column":73},"end":{"line":1,"column":80}}}) : helper)))
-    + "\" data-id=\""
-    + alias4(((helper = (helper = lookupProperty(helpers,"uniqueID") || (depth0 != null ? lookupProperty(depth0,"uniqueID") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"uniqueID","hash":{},"data":data,"loc":{"start":{"line":1,"column":91},"end":{"line":1,"column":103}}}) : helper)))
+    + "\" data-latLng=\""
+    + alias4(((helper = (helper = lookupProperty(helpers,"latLng") || (depth0 != null ? lookupProperty(depth0,"latLng") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"latLng","hash":{},"data":data,"loc":{"start":{"line":1,"column":95},"end":{"line":1,"column":105}}}) : helper)))
     + "\">\r\n  <h2 class=\"pin-infobox-readonly-title\">"
     + alias4(((helper = (helper = lookupProperty(helpers,"name") || (depth0 != null ? lookupProperty(depth0,"name") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"loc":{"start":{"line":2,"column":41},"end":{"line":2,"column":49}}}) : helper)))
     + "</h2>\r\n  <div class=\"pin-trash-button-container\">\r\n    <button type=\"button\" name=\"pin-trash-button\" class=\"pin-trash-button\"><i class=\"far fa-trash-alt\"></i></button>\r\n  </div>\r\n</div>\r\n";
@@ -51,12 +51,12 @@ templates['pins'] = template({"compiler":[8,">= 4.3.0"],"main":function(containe
         return undefined
     };
 
-  return "<tr class=\"modal-table-row\">\r\n    <th class=\"modal-table-checkboxes save-modal\"><input type=\"checkbox\" class=\"table-row-checkbox\"></th>\r\n    <th class=\"table-row-name\">"
+  return "<tr class=\"modal-table-row\">\r\n    <td class=\"modal-table-checkboxes\"><input type=\"checkbox\" class=\"table-row-checkbox\"></td>\r\n    <td class=\"table-row-name\">"
     + alias4(((helper = (helper = lookupProperty(helpers,"name") || (depth0 != null ? lookupProperty(depth0,"name") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"loc":{"start":{"line":3,"column":31},"end":{"line":3,"column":39}}}) : helper)))
-    + "</th>\r\n    <th class=\"table-row-latitude\">"
+    + "</td>\r\n    <td class=\"table-row-latitude\">"
     + alias4(((helper = (helper = lookupProperty(helpers,"lat") || (depth0 != null ? lookupProperty(depth0,"lat") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lat","hash":{},"data":data,"loc":{"start":{"line":4,"column":35},"end":{"line":4,"column":42}}}) : helper)))
-    + "</th>\r\n    <th class=\"table-row-longitude\">"
+    + "</td>\r\n    <td class=\"table-row-longitude\">"
     + alias4(((helper = (helper = lookupProperty(helpers,"lng") || (depth0 != null ? lookupProperty(depth0,"lng") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lng","hash":{},"data":data,"loc":{"start":{"line":5,"column":36},"end":{"line":5,"column":43}}}) : helper)))
-    + "</th>\r\n</tr>\r\n";
+    + "</td>\r\n</tr>\r\n";
 },"useData":true});
 })();

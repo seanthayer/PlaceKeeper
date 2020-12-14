@@ -4,11 +4,11 @@ var mapClickListener;
 var eventHandler;
 var mapPins = [];
 
-function Pin(marker, pinData) {
+function Pin(pin) {
 
-  this.marker = marker;
-  this.name = pinData.name;
-  this.latLng = pinData.latLng;
+  this.marker = pin.marker;
+  this.name = pin.name;
+  this.latLng = pin.latLng;
   this.clickListener = eventHandler.addListenerOnce(this.marker, 'click', generateReadOnlyInfoBox);
 
 }
@@ -19,47 +19,42 @@ function initMap() {
   // Points to the API's 'event' namespace
   eventHandler = google.maps.event;
 
-  // Creates a new Map object inserting it into <div id="map"></div>
-  map = new google.maps.Map(document.getElementById('map'), {
+  // Creates a new Map object and inserts it into the selected div
+  map = new google.maps.Map(document.querySelector('#map'), {
 
-    // Each Map object must have a center defined with a latitude & longitude pair, and a zoom level
     center: { lat: 43.815136416911436, lng: -120.6398112171833 },
     zoom: 5,
     clickableIcons: false
 
   });
 
-  // Adds a 'click' listener on the map, and calls for the creation of a new pin
+  // Adds a 'click' listener on the map, and calls for the creation of a new pin form
   mapClickListener = eventHandler.addListenerOnce(map, 'click', generateNewPinForm);
 
 }
 
 function generateNewPinForm(event) {
 
-  // Listeners pass the 'event' parameter allowing us to get the coords of the event
-  var clickEventCoords = event.latLng;
+  var clickEventLatLng = event.latLng;
 
-  // Now the marker is generated
-  var newPinMarker = new google.maps.Marker({
+  var newPin_Marker = new google.maps.Marker({
 
-    position: clickEventCoords,
+    position: clickEventLatLng,
     map: map
 
   });
 
-  // And the infobox
-  var newPinInfoBoxHTML = Handlebars.templates.pinInfoBox();
-  var newPinInfoBox = generatePinInfoBox(map, clickEventCoords, newPinInfoBoxHTML);
+  var newPin_InfoBoxHTML = Handlebars.templates.pinInfoBox();
+  var newPin_InfoBox = generatePinInfoBox(map, clickEventLatLng, newPin_InfoBoxHTML);
 
-  // Wait for the dynamically generated infobox to be 'domready' (i.e. ready to be accessed within the DOM)
-  eventHandler.addListenerOnce(newPinInfoBox, 'domready', function () {
+  // Wait for the dynamically generated infobox to be loaded
+  eventHandler.addListenerOnce(newPin_InfoBox, 'domready', function () {
 
-    // Now we package everything together and send it off to be handled
     var newPin = {
 
-      marker: newPinMarker,
-      infoBox: newPinInfoBox,
-      coords: clickEventCoords
+      marker: newPin_Marker,
+      infoBox: newPin_InfoBox,
+      latLng: clickEventLatLng
 
     };
 
@@ -76,20 +71,17 @@ function generateNewPinForm(event) {
 
 function generateReadOnlyInfoBox(event) {
 
-  // Abandon all hope, ye who enter here
-
   var eventOriginPin;
-  var eventOriginPinIndex;
 
-  for (var i = 0; i < mapPins.length; i++) {
+  mapPins.forEach((pin) => {
 
-    if (mapPins[i].latLng === event.latLng) {
+    if (pin.latLng === event.latLng) {
 
-      eventOriginPin = mapPins[i];
+      eventOriginPin = pin;
 
     }
 
-  }
+  });
 
   map.panTo(eventOriginPin.latLng);
 
@@ -98,7 +90,7 @@ function generateReadOnlyInfoBox(event) {
     name: eventOriginPin.name,
     lat: eventOriginPin.latLng.lat(),
     lng: eventOriginPin.latLng.lng(),
-    uniqueID: eventOriginPin.latLng
+    latLng: eventOriginPin.latLng
 
   }
 
@@ -115,9 +107,7 @@ function generateReadOnlyInfoBox(event) {
 
 function handleReadOnlyInfoBox(pin, infobox) {
 
-  // AVERT THINE EYES LEST THEY BURN INTO ASH
-
-  var infoBoxContainer = mapNode.querySelector(`.pin-infobox-readonly-container[data-id="${pin.latLng}"]`)
+  var infoBoxContainer = mapNode.querySelector(`.pin-infobox-readonly-container[data-latLng="${pin.latLng}"]`)
   var buttonContainer = infoBoxContainer.querySelector('.pin-trash-button-container');
   var trashButton = buttonContainer.querySelector('button.pin-trash-button');
 
@@ -156,18 +146,17 @@ function handleNewPinForm(newPinObject, callback) {
   var saveButton = mapNode.querySelector('.pin-infobox-buttons-container > button[name="save"]');
   var cancelButton = mapNode.querySelector('.pin-infobox-buttons-container > button[name="cancel"]')
 
-  // The Google API allows us to add event listeners on DOM elements through it, much like the native JS '.addEventListener()'
   eventHandler.addDomListener(saveButton, 'click', function () {
 
-    // A name is required for a new pin
     if (pinNameField.value) {
 
       newPinObject.infoBox.close();
 
-      var pin_ = new Pin(newPinObject.marker, {
+      var pin_ = new Pin({
 
+        marker: newPinObject.marker,
         name: pinNameField.value,
-        latLng: newPinObject.coords
+        latLng: newPinObject.latLng
 
       });
 
@@ -185,7 +174,6 @@ function handleNewPinForm(newPinObject, callback) {
 
   });
 
-  // Self explanatory listeners for 'cancelButton' and the infobox's 'x' button
   eventHandler.addDomListener(cancelButton, 'click', function () {
 
     removeMarkerAndInfoBox(newPinObject.marker, newPinObject.infoBox);
@@ -209,13 +197,13 @@ function removeMarkerAndInfoBox(marker, infoBox) {
 
 }
 
-function generatePinInfoBox(map, coords, html) {
+function generatePinInfoBox(map, latLng, html) {
 
   // 'offset' is used for the 'pixelOffset' option and must be defined by a 'Size' object
   var offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
   var infoBox = new google.maps.InfoWindow();
 
-  infoBox.setPosition(coords);
+  infoBox.setPosition(latLng);
   infoBox.setContent(html);
   infoBox.setOptions({ pixelOffset: offset });
   infoBox.open(map);
@@ -255,8 +243,9 @@ function importMap(mapName) {
 
         });
 
-        var pin_ = new Pin(marker, {
+        var pin_ = new Pin({
 
+          marker: marker,
           name: pin.name,
           latLng: latLngObj
 
@@ -305,13 +294,13 @@ function renderDynamicComponents(list) {
 
   var saveModal = document.querySelector('.modal-container.save-modal')
   var modalTable = saveModal.querySelector('.modal-table');
-  var modalTableRowNodes = Array.from(modalTable.querySelectorAll('.modal-table-row'));
+  var modalTableRows = modalTable.querySelectorAll('tr.modal-table-row');
 
   removeChildNodes(savedPlacesList);
 
-  modalTableRowNodes.forEach((node) => {
+  modalTableRows.forEach((node) => {
 
-    node.parentNode.removeChild(node);
+    node.parentNode.remove();
 
   });
 

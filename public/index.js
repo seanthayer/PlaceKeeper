@@ -209,13 +209,11 @@ function pinPassesFilter(pin, filter) {
 
 function removeChildNodes(node) {
 
-  let node_ = Array.from(node.childNodes);
+  while (node.lastChild) {
 
-  node_.forEach((childNode) => {
+    node.removeChild(node.lastChild);
 
-    node.removeChild(childNode);
-
-  });
+  }
 
 }
 
