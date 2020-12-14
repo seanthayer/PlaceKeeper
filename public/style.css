@@ -162,7 +162,7 @@ ul.saved-place-entry {
   margin: 0px 20px 16px 20px;
 }
 
-.import-modal-hide-button {
+.import-modal-x-button {
   position: absolute;
   right: 10px;
   top: 5px;
@@ -175,11 +175,7 @@ ul.saved-place-entry {
 }
 
 .import-modal-close-button {
-  height: 50px;
   width: 80px;
-  float: right;
-  margin-right: 20px;
-  border-radius: 5px;
   border: 2px solid rgb(208, 208, 208);
   background-color: #fff;
 }
@@ -210,20 +206,20 @@ ul.saved-place-entry {
   color: lightgreen;
 }
 
-#select-pins-button {
+.save-map-button {
   padding: 15px;
 }
 
-.modal-search-bar-container {
+.modal-input-container {
   display: flex;
 }
 
-#modal-search-bar-input {
+.save-modal-input {
   margin-top: 18px;
   margin-left: 5px;
 }
 
-.modal-search-bar-text {
+.modal-input-text {
   margin-left: 40px;
   font-size: 22px;
 }
@@ -236,7 +232,7 @@ ul.saved-place-entry {
   margin-left: 40px;
 }
 
-#modal-backdrop {
+.save-modal-backdrop {
   top: 0;
   bottom: 0;
   left: 0;
@@ -244,6 +240,12 @@ ul.saved-place-entry {
   position: fixed;
   z-index: 1000;
   background-color: rgba(0,0,0,0.85);
+}
+
+.save-modal-close-button {
+  width: 80px;
+  border: 2px solid rgb(208, 208, 208);
+  background-color: #fff;
 }
 
 .modal-title{
@@ -256,7 +258,7 @@ ul.saved-place-entry {
   border-bottom: 1px solid rgb(208, 208, 208);
 }
 
-#select-pins-modal {
+.save-modal-container {
   top: 0;
   bottom: 0;
   left: 0;
@@ -272,16 +274,16 @@ ul.saved-place-entry {
   z-index: 1010;
 }
 
-.modal-pin-table table, th, td{
+.modal-pins-table table, th, td{
   border: 2px solid black;
   padding: 10px;
 }
 
-.modal-table-checkboxes {
+.modal-pins-table-checkboxes {
   width: 60px;
 }
 
-#select-all {
+.table-select-all {
   background-color: gray;
   border: 1px solid white;
 }
@@ -317,12 +319,11 @@ ul.saved-place-entry {
   overflow-x: hidden;
 }
 
-.modal-table-header{
+.modal-pins-table-header{
   background-color: gray;
   color: white;
   font-weight: 100;
   font-size: 14px;
-
 }
 
 .modal-table-row{
@@ -342,12 +343,7 @@ ul.saved-place-entry {
   padding-top: 20px;
 }
 
-#modal-cancel {
-  width: 80px;
-  border: 2px solid rgb(208, 208, 208);
-  background-color: #fff;
-}
-#modal-accept {
+.save-modal-save-button {
   width: 150px;
   border: 0px;
   color: white;
@@ -358,7 +354,7 @@ ul.saved-place-entry {
   display: none;
 }
 
-#modal-close {
+.save-modal-x-button {
   position: absolute;
   right: 10px;
   top: 5px;
@@ -369,6 +365,7 @@ ul.saved-place-entry {
   cursor: pointer;
   color: rgb(125, 125, 125);
 }
+
 #about-button {
   position: relative;
   top: 13px;

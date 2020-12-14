@@ -1,7 +1,7 @@
 {
-  "name": "final-project-team-1",
+  "name": "PlaceKeeper",
   "version": "1.0.0",
-  "description": "description",
+  "description": "PlaceKeeper is an application which utilizes the Google Maps JavaScript API to allow the user to store points of interest.",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/osu-cs290-f20/final-project-team-1.git"
+    "url": "git+https://github.com/seanthayer/PlaceKeeper.git"
   },
-  "author": "",
+  "author": "Sean Thayer",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/osu-cs290-f20/final-project-team-1/issues"
+    "url": "https://github.com/seanthayer/PlaceKeeper/issues"
   },
-  "homepage": "https://github.com/osu-cs290-f20/final-project-team-1#readme",
+  "homepage": "https://github.com/seanthayer/PlaceKeeper#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
@@ -28,7 +28,6 @@
     "handlebars": "^4.7.6"
   },
   "devDependencies": {
-    "nodemon": "^2.0.6",
-    "lite-server": "^2.6.1"
+    "nodemon": "^2.0.6"
   }
 }

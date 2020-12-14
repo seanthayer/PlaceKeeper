@@ -1,33 +1,21 @@
-/*
- * Wait until the DOM content is loaded, and then hook up UI interactions, etc.
- */
 window.addEventListener('DOMContentLoaded', function () {
-  var selectPinsButton = document.getElementById('select-pins-button');
-  if (selectPinsButton){
-    selectPinsButton.addEventListener('click', showModal);
-  }
 
-  var hideModalButton = document.getElementsByClassName('modal-hide-button');
-  for(var i = 0; i < hideModalButton.length; ++i){
-    hideModalButton[i].addEventListener('click', hideModal);
-  }
+  var saveMapButton = document.querySelector('.save-map-button');
+  saveMapButton.addEventListener('click', showModal);
 
-  var saveModalButton = document.getElementById('modal-accept');
-  if (saveModalButton){
-    saveModalButton.addEventListener('click', savePins);
-  }
+  var saveModal_XButton = document.querySelector('.save-modal-x-button');
+  var saveModal_CloseButton = document.querySelector('.save-modal-close-button');
+  saveModal_XButton.addEventListener('click', hideModal);
+  saveModal_CloseButton.addEventListener('click', hideModal);
 
-  var searchBarButton = document.getElementById('search-bar-button');
-  if(searchBarButton){
-	  searchBarButton.addEventListener('click', doFilterUpdate)
-  }
+  var saveModal_SaveButton = document.querySelector('.save-modal-save-button');
+  saveModal_SaveButton.addEventListener('click', savePins);
+
+  var searchBarButton = document.querySelector('.search-bar-button');
+  searchBarButton.addEventListener('click', doFilterUpdate);
 
   var importMapButton = document.querySelector('.import-map-button');
-  if (importMapButton) {
-
-    importMapButton.addEventListener('click', openImportModal);
-
-  }
+  importMapButton.addEventListener('click', openImportModal);
 
 });
 
@@ -35,7 +23,7 @@ function openImportModal() {
 
   var modalBackdrop = document.querySelector('.import-modal-backdrop');
   var importModal = document.querySelector('.import-modal-container');
-  var importModal_XButton = importModal.querySelector('.import-modal-hide-button');
+  var importModal_XButton = importModal.querySelector('.import-modal-x-button');
   var importModal_CloseButton = importModal.querySelector('.import-modal-close-button');
   var importModal_Directory = importModal.querySelector('.import-modal-directory-container');
 
@@ -127,7 +115,7 @@ function savePins(){
   pin_names = document.getElementsByClassName('pin-name');
   pin_lats = document.getElementsByClassName('latitude');
   pin_longs = document.getElementsByClassName('longitude');
-  file_name = document.getElementById('modal-search-bar-input').value;
+  file_name = document.querySelector('.save-modal-input').value;
 
   if (file_name) {
 
@@ -160,9 +148,9 @@ function savePins(){
 
 function resetModal(checkboxes){
   checkboxes = document.getElementsByClassName('select-pin');
-  selectAllBox = document.getElementById('select-all');
+  selectAllBox = document.querySelector('.table-select-all');
   selectAllBox.checked = false;
-  document.getElementById('modal-search-bar-input').value = '';
+  document.querySelector('.save-modal-input').value = '';
   for (var i = 0; i < checkboxes.length; ++i){
     checkboxes[i].checked = false;
   }
@@ -202,8 +190,8 @@ function toggle(source) {
 
 //Shows the modal when the button to select pins is clicked
 function showModal(){
-  var selectPinsModal = document.getElementById('select-pins-modal');
-  var modalBackdrop = document.getElementById('modal-backdrop');
+  var selectPinsModal = document.querySelector('.save-modal-container');
+  var modalBackdrop = document.querySelector('.save-modal-backdrop');
 
   selectPinsModal.classList.remove('hidden');
   modalBackdrop.classList.remove('hidden');
@@ -212,8 +200,8 @@ function showModal(){
 
 //Hides modal when close/exit button are clicked
 function hideModal(){
-  var selectPinsModal = document.getElementById('select-pins-modal');
-  var modalBackdrop = document.getElementById('modal-backdrop');
+  var selectPinsModal = document.querySelector('.save-modal-container');
+  var modalBackdrop = document.querySelector('.save-modal-backdrop');
 
   selectPinsModal.classList.add('hidden');
   modalBackdrop.classList.add('hidden');
@@ -267,7 +255,7 @@ function hideModal(){
   function doFilterUpdate(){
 
 	      var filter = {
-				text: document.getElementById('filter-text').value.trim()
+				text: document.querySelector('.search-bar-input').value.trim()
 			}
 
 			var pinContainer = document.querySelector('.saved-places-list-element');
