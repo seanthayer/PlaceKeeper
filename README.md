@@ -1,20 +1,5 @@
 ## PlaceKeeper
 
-## General Roadmap
-
-### Format & Design
-* [ ] Create another page
-
-### Front-end Functionality
-* [ ] Implement selecting list item and panning to pin on map
-* [ ] Implement client side deletion of a list item from the saved places list. This should also remove it from the map embed.
-
-### Back-end Functionality
-
-
-### GoogleMaps Embed
-
-
 ### Completed Features
 <details><summary><ins>Completed</ins> ↴</summary>
   ✓ Build basic 404 page                                                                            <br>
