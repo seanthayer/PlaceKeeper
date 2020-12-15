@@ -1,5 +1,5 @@
 <main>
-  
+
   <div class="content-container">
 
     <section class="map-container">
@@ -12,13 +12,10 @@
             <button type="button" class="import-map-button">Import Map</button>
         </div>
 
-        <div class="pin-select-container">
-            <button type="button" id="select-pins-button">Save Map</button>
+        <div class="save-map-element">
+            <button type="button" class="save-map-button">Save Map</button>
         </div>
 
-        <div class="about-link-button">
-            <a id="about-button" href="/about">About Page</a>
-        </div>
       </div>
 
     </section>
@@ -27,13 +24,14 @@
 
       <div class="search-bar-container">
         <div class="search-bar-element">
-          <input type="text" name="filter-text" id="filter-text" class="search-bar-input">
+          <input type="text" name="filter-text" class="search-bar-input">
         </div>
-        <button id="search-bar-button" class="search-bar-button">Search</button>
+        <button class="search-bar-button">Search</button>
       </div>
 
-      <div id="saved-places-list-container" class="saved-places-list-container">
+      <div class="saved-places-list-container">
         <ul class="saved-places-list-element">
+
         </ul>
       </div>
 
@@ -43,66 +41,63 @@
 
 </main>
 
-<div class="import-modal-backdrop hidden"></div>
-<div class="import-modal-container hidden">
+<div class="modal-backdrop import-modal hidden"></div>
+<div class="modal-container import-modal hidden">
+
   <div class="modal-header">
     <h2 class="modal-title">Import Map</h2>
-    <button type="button" class="import-modal-hide-button">&times;</button>
+    <button type="button" class="modal-x-button">&times;</button>
   </div>
 
   <div class="modal-description">
     <p>Available Maps:</p>
   </div>
 
-  <div class="modal-body import-body">
-    <div class="import-modal-directory-container">
+  <div class="modal-body import-modal">
+    <div class="modal-directory-container">
 
     </div>
   </div>
 
   <div class="modal-footer">
-    <button type="button" class="import-modal-close-button">Close</button>
+    <button type="button" class="modal-close-button action-button">Close</button>
   </div>
 
 </div>
 
-<div id="modal-backdrop" class="hidden">
-    <div id="select-pins-modal" class="hidden">
-      <div class="modal-header">
-        <h2 class="modal-title">Saving Map</h2>
-        <button type="button" id="modal-close" class="modal-hide-button">&times;</button>
-      </div>
+<div class="modal-backdrop save-modal hidden"></div>
+<div class="modal-container save-modal hidden">
 
-      <div class="modal-search-bar-container">
-        <h1 class="modal-search-bar-text">Map Name:</h1>
-        <div class="modal-search-bar-element">
-          <input type="text" id="modal-search-bar-input">
-        </div>
-      </div>
+  <div class="modal-header">
+    <h2 class="modal-title">Saving Map</h2>
+    <button type="button" class="modal-x-button">&times;</button>
+  </div>
 
-      <div class="modal-description">
-        <p>You're about to save the following locations:</p>
-      </div>
-
-      <div class="modal-body">
-        <table class="modal-pin-table">
-          <tr class="modal-table-header">
-            <th class="modal-table-checkboxes"><input type = "checkbox" id = "select-all" onClick="toggle(this)"></th>
-            <th class="header-pin-name">Pin Name</th>
-            <th class="header-latitude">Latitude</th>
-            <th class="header-longitude">Longitude</th>
-          </tr>
-          {{#each static_import}}
-            {{> pins}}
-          {{/each}}
-
-        </table>
-      </div>
-
-      <div class="modal-footer">
-          <button type="button" id="modal-accept" class="action-button">Save</button>
-          <button type="button" id="modal-cancel" class="modal-hide-button action-button">Close</button>
-      </div>
-
+  <div class="modal-input-container">
+    <h1 class="modal-input-text">Map Name:</h1>
+    <div class="modal-input-element">
+      <input type="text" class="modal-input">
     </div>
+  </div>
+
+  <div class="modal-description">
+    <p>You're about to save the following locations:</p>
+  </div>
+
+  <div class="modal-body">
+    <table class="modal-table">
+      <tr class="modal-table-header">
+        <th class="modal-table-checkboxes"><input type="checkbox" class="modal-table-select-all"></th>
+        <th class="table-header-name">Pin Name</th>
+        <th class="table-header-latitude">Latitude</th>
+        <th class="table-header-longitude">Longitude</th>
+      </tr>
+    </table>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="modal-save-button action-button">Save</button>
+    <button type="button" class="modal-close-button action-button">Close</button>
+  </div>
+
 </div>

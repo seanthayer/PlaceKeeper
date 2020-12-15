@@ -1,14 +1,14 @@
 var map;
 var mapNode = document.querySelector('#map');
 var mapClickListener;
-var eventHandler;
 var mapPins = [];
+var eventHandler;
 
-function Pin(marker, pinData) {
+function Pin(pin) {
 
-  this.marker = marker;
-  this.name = pinData.name;
-  this.latLng = pinData.latLng;
+  this.marker = pin.marker;
+  this.name = pin.name;
+  this.latLng = pin.latLng;
   this.clickListener = eventHandler.addListenerOnce(this.marker, 'click', generateReadOnlyInfoBox);
 
 }
@@ -16,56 +16,81 @@ function Pin(marker, pinData) {
 // The API will callback 'initMap()' when finished loading
 function initMap() {
 
-  // Points to the API's 'event' namespace
   eventHandler = google.maps.event;
 
-  // Creates a new Map object inserting it into <div id="map"></div>
-  map = new google.maps.Map(document.getElementById('map'), {
+  // Creates a new Map object and inserts it into the selected div
+  map = new google.maps.Map(document.querySelector('#map'), {
 
-    // Each Map object must have a center defined with a latitude & longitude pair, and a zoom level
     center: { lat: 43.815136416911436, lng: -120.6398112171833 },
     zoom: 5,
     clickableIcons: false
 
   });
 
-  // Adds a 'click' listener on the map, and calls for the creation of a new pin
+  // Adds a 'click' listener on the map, and calls for the creation of a new pin form
   mapClickListener = eventHandler.addListenerOnce(map, 'click', generateNewPinForm);
+
+}
+
+function exportMap(data, fileName) {
+
+  let postRequest = new XMLHttpRequest();
+  let reqURL = '/exportFile';
+  let entryData = {
+
+    fileName: fileName,
+    data: data
+
+  }
+
+  postRequest.open('POST', reqURL, true);
+  postRequest.setRequestHeader('Content-Type', 'application/json');
+
+  postRequest.addEventListener('load', function(event) {
+
+    if (event.target.status != 200) {
+
+      alert('Server failed to save data!');
+
+    } else {
+
+      console.log('POST Successful');
+
+    }
+
+  });
+
+  postRequest.send(JSON.stringify(entryData));
 
 }
 
 function generateNewPinForm(event) {
 
-  // Listeners pass the 'event' parameter allowing us to get the coords of the event
-  var clickEventCoords = event.latLng;
+  let clickEventLatLng = event.latLng;
 
-  // Now the marker is generated
-  var newPinMarker = new google.maps.Marker({
+  let newPin_Marker = new google.maps.Marker({
 
-    position: clickEventCoords,
+    position: clickEventLatLng,
     map: map
 
   });
 
-  // And the infobox
-  var newPinInfoBoxHTML = Handlebars.templates.pinInfoBox();
-  var newPinInfoBox = generatePinInfoBox(map, clickEventCoords, newPinInfoBoxHTML);
+  let newPin_InfoFormHTML = Handlebars.templates.pinInfoForm();
+  let newPin_InfoForm = generatePinInfoBox(map, clickEventLatLng, newPin_InfoFormHTML);
 
-  // Wait for the dynamically generated infobox to be 'domready' (i.e. ready to be accessed within the DOM)
-  eventHandler.addListenerOnce(newPinInfoBox, 'domready', function () {
+  // Wait for the dynamically generated infobox to be loaded
+  eventHandler.addListenerOnce(newPin_InfoForm, 'domready', function () {
 
-    // Now we package everything together and send it off to be handled
-    var newPin = {
+    let newPin = {
 
-      marker: newPinMarker,
-      infoBox: newPinInfoBox,
-      coords: clickEventCoords
+      marker: newPin_Marker,
+      infoBox: newPin_InfoForm,
+      latLng: clickEventLatLng
 
     };
 
     handleNewPinForm(newPin, function () {
 
-      // After 'handleNewPinForm' callsback (i.e. is finished), we reinstate the map 'click' listener
       mapClickListener = eventHandler.addListenerOnce(map, 'click', generateNewPinForm);
 
     });
@@ -74,36 +99,48 @@ function generateNewPinForm(event) {
 
 }
 
+function generatePinInfoBox(map, latLng, html) {
+
+  // 'offset' is used for the 'pixelOffset' option and must be defined by a 'Size' object
+  let offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
+  let infoBox = new google.maps.InfoWindow();
+
+  infoBox.setPosition(latLng);
+  infoBox.setContent(html);
+  infoBox.setOptions({ pixelOffset: offset });
+  infoBox.open(map);
+
+  return infoBox;
+
+}
+
 function generateReadOnlyInfoBox(event) {
 
-  // Abandon all hope, ye who enter here
+  let eventOriginPin;
 
-  var eventOriginPin;
-  var eventOriginPinIndex;
+  mapPins.forEach((pin) => {
 
-  for (var i = 0; i < mapPins.length; i++) {
+    if (pin.latLng === event.latLng) {
 
-    if (mapPins[i].latLng === event.latLng) {
-
-      eventOriginPin = mapPins[i];
+      eventOriginPin = pin;
 
     }
 
-  }
+  });
 
   map.panTo(eventOriginPin.latLng);
 
-  var context = {
+  let context = {
 
     name: eventOriginPin.name,
     lat: eventOriginPin.latLng.lat(),
     lng: eventOriginPin.latLng.lng(),
-    uniqueID: eventOriginPin.latLng
+    latLng: eventOriginPin.latLng
 
   }
 
-  var readOnlyInfoBoxHTML = Handlebars.templates.pinInfoBoxReadOnly(context);
-  var readOnlyInfoBox = generatePinInfoBox(map, eventOriginPin.latLng, readOnlyInfoBoxHTML);
+  let readOnlyInfoBoxHTML = Handlebars.templates.pinInfoBoxReadOnly(context);
+  let readOnlyInfoBox = generatePinInfoBox(map, eventOriginPin.latLng, readOnlyInfoBoxHTML);
 
   eventHandler.addListenerOnce(readOnlyInfoBox, 'domready', function () {
 
@@ -113,19 +150,71 @@ function generateReadOnlyInfoBox(event) {
 
 }
 
+function handleNewPinForm(newPinObject, callback) {
+
+  // 'infoForm_DescField' is currently not stored anywhere, but is a placeholder for the future
+
+  let infoForm = mapNode.querySelector('.pin-infoform-container');
+  let infoForm_NameField = infoForm.querySelector('input.pin-infoform-name');
+  let infoForm_DescField = infoForm.querySelector('textarea.pin-infoform-description');
+  let infoForm_SaveButton = infoForm.querySelector('button[name="save"]');
+  let infoForm_CancelButton = infoForm.querySelector('button[name="cancel"]');
+
+  eventHandler.addDomListener(infoForm_SaveButton, 'click', function () {
+
+    if (infoForm_NameField.value) {
+
+      newPinObject.infoBox.close();
+
+      let pin_ = new Pin({
+
+        marker: newPinObject.marker,
+        name: infoForm_NameField.value,
+        latLng: newPinObject.latLng
+
+      });
+
+      mapPins.push(pin_);
+
+      renderDynamicComponents(mapPins);
+
+      callback();
+
+    } else {
+
+      alert('You must enter a name for a new pin!');
+
+    }
+
+  });
+
+  eventHandler.addDomListener(infoForm_CancelButton, 'click', function () {
+
+    removeMarkerAndInfoBox(newPinObject.marker, newPinObject.infoBox);
+    callback();
+
+  });
+
+  eventHandler.addListener(newPinObject.infoBox, 'closeclick', function () {
+
+    removeMarkerAndInfoBox(newPinObject.marker, newPinObject.infoBox);
+    callback();
+
+  });
+
+}
+
 function handleReadOnlyInfoBox(pin, infobox) {
 
-  // AVERT THINE EYES LEST THEY BURN INTO ASH
+  let infoBox = mapNode.querySelector(`.pin-infobox-readonly-container[data-latLng="${pin.latLng}"]`)
+  let infoBox_ButtonContainer = infoBox.querySelector('.pin-trash-button-container');
+  let infoBox_TrashButton = infoBox_ButtonContainer.querySelector('button.pin-trash-button');
 
-  var infoBoxContainer = mapNode.querySelector(`.pin-infobox-readonly-container[data-id="${pin.latLng}"]`)
-  var buttonContainer = infoBoxContainer.querySelector('.pin-trash-button-container');
-  var trashButton = buttonContainer.querySelector('button.pin-trash-button');
+  eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
 
-  eventHandler.addDomListenerOnce(trashButton, 'click', function () {
+    infoBox_ButtonContainer.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
 
-    buttonContainer.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
-
-    eventHandler.addDomListenerOnce(trashButton, 'click', function () {
+    eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
 
       removeMarkerAndInfoBox(pin.marker, infobox);
 
@@ -147,148 +236,106 @@ function handleReadOnlyInfoBox(pin, infobox) {
 
 }
 
-function handleNewPinForm(newPinObject, callback) {
+function handleSaveModalInputs(callback) {
 
-  // 'pinDescField' is currently not stored anywhere, but is a placeholder for the future
+  let saveModal = document.querySelector('.modal-container.save-modal');
+  let saveModal_SelectedPins = saveModal.querySelectorAll('.table-row-checkbox:checked');
+  let fileName = saveModal.querySelector('.modal-input').value;
 
-  var pinNameField = mapNode.querySelector('input#pin-infobox-name');
-  var pinDescField = mapNode.querySelector('textarea#pin-infobox-description');
-  var saveButton = mapNode.querySelector('.pin-infobox-buttons-container > button[name="save"]');
-  var cancelButton = mapNode.querySelector('.pin-infobox-buttons-container > button[name="cancel"]')
+  if (fileName) {
 
-  // The Google API allows us to add event listeners on DOM elements through it, much like the native JS '.addEventListener()'
-  eventHandler.addDomListener(saveButton, 'click', function () {
+    fileName = fileName.trim().replace(/\s+/g, '-');
 
-    // A name is required for a new pin
-    if (pinNameField.value) {
+    let pinData = [];
 
-      newPinObject.infoBox.close();
+    saveModal_SelectedPins.forEach((pin) => {
 
-      var pin_ = new Pin(newPinObject.marker, {
+      let pinTableRow = pin.parentNode.parentNode;
 
-        name: pinNameField.value,
-        latLng: newPinObject.coords
+      let pinObj = {
 
-      });
+        name: pinTableRow.querySelector('.table-row-name').textContent,
+        lat: pinTableRow.querySelector('.table-row-latitude').textContent,
+        lng: pinTableRow.querySelector('.table-row-longitude').textContent
 
-      mapPins.push(pin_);
+      }
 
-      renderDynamicComponents(mapPins);
+      pinData.push(pinObj);
 
-      callback();
+    });
 
-    } else {
+    exportMap(pinData, fileName);
 
-      alert('You must enter a name for a new pin!');
-
-    }
-
-  });
-
-  // Self explanatory listeners for 'cancelButton' and the infobox's 'x' button
-  eventHandler.addDomListener(cancelButton, 'click', function () {
-
-    removeMarkerAndInfoBox(newPinObject.marker, newPinObject.infoBox);
     callback();
 
-  });
+  } else {
 
-  eventHandler.addListener(newPinObject.infoBox, 'closeclick', function () {
+    alert('Please enter a file name!');
 
-    removeMarkerAndInfoBox(newPinObject.marker, newPinObject.infoBox);
-    callback();
-
-  });
-
-}
-
-function removeMarkerAndInfoBox(marker, infoBox) {
-
-  infoBox.close();
-  marker.setMap(null);
-
-}
-
-function generatePinInfoBox(map, coords, html) {
-
-  // 'offset' is used for the 'pixelOffset' option and must be defined by a 'Size' object
-  var offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
-  var infoBox = new google.maps.InfoWindow();
-
-  infoBox.setPosition(coords);
-  infoBox.setContent(html);
-  infoBox.setOptions({ pixelOffset: offset });
-  infoBox.open(map);
-
-  return infoBox;
+  }
 
 }
 
 function importMap(mapName) {
 
-  var getRequest = new XMLHttpRequest();
-  var reqURL = '/importMap/' + mapName;
+  fetch('/importMap/' + mapName).then(function (res) {
 
-  getRequest.open('GET', reqURL);
-  getRequest.setRequestHeader('Content-Type', 'application/json');
+    if (res.ok) {
 
-  getRequest.addEventListener('load', function(event) {
-
-    if (event.target.status === 200) {
-
-      purgeMapPinData(mapPins);
-
-      var importMap;
-
-      importMap = JSON.parse(event.target.response);
-
-      importMap.forEach((pin) => {
-
-        var coords = { lat: parseFloat(pin.lat), lng: parseFloat(pin.lng) };
-
-        var latLngObj = new google.maps.LatLng(coords);
-
-        var marker = new google.maps.Marker({
-
-          position: latLngObj,
-          map: map
-
-        });
-
-        var pin_ = new Pin(marker, {
-
-          name: pin.name,
-          latLng: latLngObj
-
-        });
-
-        mapPins.push(pin_);
-
-      });
-
-      renderDynamicComponents(mapPins);
-
-    } else if (event.target.status === 404) {
-
-      alert('Map file not found!');
+      return res.json();
 
     } else {
 
-      alert('Error requesting file!');
+      console.error(`[ERROR] Resource (${mapName}) not found`);
+
+      throw res.status;
 
     }
 
-  });
+  }).then(function (importMap) {
 
-  getRequest.send();
+    purgeMapPinData(mapPins);
+
+    importMap.forEach((pin) => {
+
+      let coords = { lat: parseFloat(pin.lat), lng: parseFloat(pin.lng) };
+
+      let latLngObj = new google.maps.LatLng(coords);
+
+      let marker = new google.maps.Marker({
+
+        position: latLngObj,
+        map: map
+
+      });
+
+      let pin_ = new Pin({
+
+        marker: marker,
+        name: pin.name,
+        latLng: latLngObj
+
+      });
+
+      mapPins.push(pin_);
+
+    });
+
+    renderDynamicComponents(mapPins);
+
+  }).catch(function (err) {
+
+    console.error('[ERROR] ' + err);
+
+  });
 
 }
 
 function purgeMapPinData(list) {
 
-  var n = list.length - 1;
+  let n = list.length - 1;
 
-  for (var pin = n; pin >= 0; pin--) {
+  for (let pin = n; pin >= 0; pin--) {
 
     list[pin].marker.setMap(null);
     list.pop();
@@ -299,30 +346,32 @@ function purgeMapPinData(list) {
 
 }
 
+function removeMarkerAndInfoBox(marker, infoBox) {
+
+  infoBox.close();
+  marker.setMap(null);
+
+}
+
 function renderDynamicComponents(list) {
 
-  var savedPlacesList = document.querySelector('.saved-places-list-element');
-  var savedPlacesListNodes = Array.from(savedPlacesList.childNodes);
+  let savedPlacesList = document.querySelector('.saved-places-list-element');
 
-  var modalTable = document.querySelector('.modal-pin-table');
-  var modalTableRowNodes = Array.from(modalTable.querySelectorAll('.modal-table-row'));
+  let saveModal = document.querySelector('.modal-container.save-modal')
+  let saveModal_ModalTable = saveModal.querySelector('.modal-table');
+  let saveModal_TableRows = saveModal_ModalTable.querySelectorAll('tr.modal-table-row');
 
-  savedPlacesListNodes.forEach((node) => {
+  removeChildNodes(savedPlacesList);
 
-    node.parentNode.removeChild(node);
+  saveModal_TableRows.forEach((node) => {
 
-  });
-
-  modalTableRowNodes.forEach((node) => {
-
-    node.parentNode.removeChild(node);
+    node.parentNode.remove();
 
   });
-
 
   list.forEach((pin) => {
 
-    var context = {
+    let context = {
 
       name: pin.name,
       lat: pin.latLng.lat(),
@@ -330,14 +379,10 @@ function renderDynamicComponents(list) {
 
     }
 
-    // Input new pin to modal
-    var pinsHTML = Handlebars.templates.pins(context);
-    var pinsList = document.getElementsByClassName('modal-pin-table');
-    pinsList[0].insertAdjacentHTML('beforeend', pinsHTML);
+    let pinsHTML = Handlebars.templates.pinTableRow(context);
+    saveModal_ModalTable.insertAdjacentHTML('beforeend', pinsHTML);
 
-    // Generate a 'saved-place-entry' using Handlebars and the data from the pin. Then close the infobox (leaving the marker) and callback
-    var savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
-
+    let savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
     savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
 
   });

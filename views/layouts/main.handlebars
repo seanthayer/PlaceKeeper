@@ -1,29 +1,38 @@
 <!DOCTYPE html>
 <html>
+
   <head>
+
     <meta charset="utf-8">
     <title>PlaceKeeper</title>
 
-    <!-- Fonts: ("Roboto" and "Roboto Slab"). -->
     <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Slab:100" rel="stylesheet">
-
-    <!-- This 3rd-party stylesheet incorporates SVG icons from Font Awesome: http://fontawesome.com/. -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css" crossorigin="anonymous">
-
     <link rel="stylesheet" href="/style.css">
 
-    <!-- Include Handlebars from a CDN -->
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js" charset="utf-8" defer></script>
-
     <script src="/handlebarsPartials.js" charset="utf-8" defer></script>
     <script src="/index.js" charset="utf-8" defer></script>
 
     {{#if homePage}}
+
       <script src="/map.js" charset="utf-8" defer></script>
-      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD_OCPs2EO5gnBABRpMDdbEZzdH7OeESC4&callback=initMap&v=3.42.9" charset="utf-8" defer></script>
+
+      <!-- API key is redacted in public releases -->
+      {{#if API_KEY}}
+
+        <script src="https://maps.googleapis.com/maps/api/js?key={{ API_KEY }}&callback=initMap&v=3.42.9" charset="utf-8" defer></script>
+
+      {{else}}
+
+        <script src="https://maps.googleapis.com/maps/api/js?callback=initMap&v=3.42.9" charset="utf-8" defer></script>
+
+      {{/if}}
+
     {{/if}}
 
   </head>
+
   <body>
 
     <header>
@@ -37,4 +46,5 @@
     {{{body}}}
 
   </body>
+
 </html>

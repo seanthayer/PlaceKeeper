@@ -1,48 +1,77 @@
-/*
- * Wait until the DOM content is loaded, and then hook up UI interactions, etc.
- */
-window.addEventListener('DOMContentLoaded', function () {
-  var selectPinsButton = document.getElementById('select-pins-button');
-  if (selectPinsButton){
-    selectPinsButton.addEventListener('click', showModal);
-  }
+function doFilterUpdate() {
 
-  var hideModalButton = document.getElementsByClassName('modal-hide-button');
-  for(var i = 0; i < hideModalButton.length; ++i){
-    hideModalButton[i].addEventListener('click', hideModal);
-  }
+  let savedPlacesList = document.querySelector('.saved-places-list-element');
+  let filter = { text: document.querySelector('.search-bar-input').value.trim() }
 
-  var saveModalButton = document.getElementById('modal-accept');
-  if (saveModalButton){
-    saveModalButton.addEventListener('click', savePins);
-  }
+  removeChildNodes(savedPlacesList);
 
-  var searchBarButton = document.getElementById('search-bar-button');
-  if(searchBarButton){
-	  searchBarButton.addEventListener('click', doFilterUpdate)
-  }
+  mapPins.forEach((pin) => {
 
-  var importMapButton = document.querySelector('.import-map-button');
-  if (importMapButton) {
+    if (pinPassesFilter(pin, filter)) {
 
-    importMapButton.addEventListener('click', openImportModal);
+      let context = {
 
-  }
+        name: pin.name,
+        lat: pin.latLng.lat(),
+        lng: pin.latLng.lng()
 
-});
+      }
+
+      let savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
+      savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
+
+    }
+
+  });
+
+}
+
+function getMapsDirectory(callback) {
+
+  fetch('/getMapsDirectory').then(function (res) {
+
+    if (res.ok) {
+
+      return res.json();
+
+    } else {
+
+      console.error(`[ERROR] Data directory not found`);
+
+      throw res.status;
+
+    }
+
+  }).then(function (data) {
+
+    for (let i = 0; i < data.length; i++) {
+
+      data[i] = data[i].split('.')[0];
+
+    }
+
+    callback(data);
+
+  }).catch(function (err) {
+
+    console.error('[ERROR] ' + err);
+
+  });
+
+}
 
 function openImportModal() {
 
-  var modalBackdrop = document.querySelector('.import-modal-backdrop');
-  var importModal = document.querySelector('.import-modal-container');
-  var importModal_XButton = importModal.querySelector('.import-modal-hide-button');
-  var importModal_CloseButton = importModal.querySelector('.import-modal-close-button');
-  var importModal_Directory = importModal.querySelector('.import-modal-directory-container');
+  let importModal = document.querySelector('.modal-container.import-modal');
+  let importModal_BackDrop = document.querySelector('.modal-backdrop.import-modal');
+  let importModal_XButton = importModal.querySelector('.modal-x-button');
+  let importModal_CloseButton = importModal.querySelector('.modal-close-button');
+  let importModal_Directory = importModal.querySelector('.modal-directory-container');
 
-  var importModal_CloseFunc = function () {
+  let importModal_CloseFunc = function () {
 
-    modalBackdrop.classList.add('hidden');
     importModal.classList.add('hidden');
+    importModal_BackDrop.classList.add('hidden');
 
     removeChildNodes(importModal_Directory);
 
@@ -51,8 +80,8 @@ function openImportModal() {
 
   }
 
-  modalBackdrop.classList.remove('hidden');
   importModal.classList.remove('hidden');
+  importModal_BackDrop.classList.remove('hidden');
 
   importModal_XButton.addEventListener('click', importModal_CloseFunc);
   importModal_CloseButton.addEventListener('click', importModal_CloseFunc);
@@ -61,14 +90,14 @@ function openImportModal() {
 
     data.forEach((item, i) => {
 
-      var uniqueID = item + i;
-      var directoryEntry = `<div class="map-directory-entry-container" id="${uniqueID}"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`;
+      let uniqueID = item + i;
+      let directoryEntry = `<div class="map-directory-entry-container" id="${uniqueID}"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`;
 
       importModal_Directory.insertAdjacentHTML('beforeend', directoryEntry);
 
       importModal_Directory.querySelector(`#${uniqueID}`).addEventListener('click', function () {
 
-      importMap(item);
+        importMap(item);
 
         importModal_CloseFunc();
 
@@ -80,213 +109,144 @@ function openImportModal() {
 
 }
 
-function removeChildNodes(node) {
+function openSaveModal() {
 
-  var node_ = Array.from(node.childNodes);
+  let saveModal = document.querySelector('.modal-container.save-modal');
+  let saveModal_BackDrop = document.querySelector('.modal-backdrop.save-modal');
+  let saveModal_XButton = saveModal.querySelector('.modal-x-button');
+  let saveModal_CloseButton = saveModal.querySelector('.modal-close-button');
+  let saveModal_SaveButton = saveModal.querySelector('.modal-save-button');
+  let saveModal_SelectAllCheckbox = saveModal.querySelector('.modal-table-select-all');
+  let saveModal_Checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
 
-  node_.forEach((childNode) => {
+  let saveModal_CloseFunc = function () {
 
-    node.removeChild(childNode);
+    // Hides modal, removes listeners, and resets inputs
 
-  });
+    saveModal.classList.add('hidden');
+    saveModal_BackDrop.classList.add('hidden');
 
-}
+    saveModal_XButton.removeEventListener('click', saveModal_CloseFunc);
+    saveModal_CloseButton.removeEventListener('click', saveModal_CloseFunc);
 
-function getMapsDirectory(callback) {
+    saveModal_SaveButton.removeEventListener('click', saveModal_SaveButtonFunc);
 
-  var getRequest = new XMLHttpRequest();
-  var reqURL = '/getMapsDirectory';
+    saveModal_SelectAllCheckbox.removeEventListener('click', saveModal_SelectAllFunc);
 
-  getRequest.open('GET', reqURL);
-  getRequest.setRequestHeader('Content-Type', 'application/json');
+    saveModal_Checkboxes.forEach((checkbox) => {
 
-  getRequest.addEventListener('load', function(event) {
+      checkbox.removeEventListener('change', saveModal_CheckboxChangeListenerFunc);
 
-    if (event.target.status === 200) {
-
-      var data = JSON.parse(event.target.response);
-
-      for (var i = 0; i < data.length; i++) {
-
-        data[i] = data[i].split('.')[0];
-
-      }
-
-      callback(data);
-
-    }
-
-  });
-
-  getRequest.send();
-
-}
-
-function savePins(){
-  checkboxes = document.getElementsByClassName('select-pin');
-  pin_names = document.getElementsByClassName('pin-name');
-  pin_lats = document.getElementsByClassName('latitude');
-  pin_longs = document.getElementsByClassName('longitude');
-  file_name = document.getElementById('modal-search-bar-input').value;
-
-  if (file_name) {
-
-    file_name = file_name.trim().replace(/\s+/g, '-');
-
-    checkbox_data = []
-    for(var i = 0; i < checkboxes.length; ++i) {
-      if(checkboxes[i].checked){
-        name = pin_names[i].textContent
-        lat =  pin_lats[i].textContent
-        longs = pin_longs[i].textContent
-        jVar = { "name":name, "lat":lat, "lng":longs};
-
-        checkbox_data.push(jVar)
-      }
-
-    }
-    writeToFile(checkbox_data, file_name)
-
-    hideModal();
-    resetModal();
-
-  } else {
-
-    alert('Please enter a file name!');
-
-  }
-
-}
-
-function resetModal(checkboxes){
-  checkboxes = document.getElementsByClassName('select-pin');
-  selectAllBox = document.getElementById('select-all');
-  selectAllBox.checked = false;
-  document.getElementById('modal-search-bar-input').value = '';
-  for (var i = 0; i < checkboxes.length; ++i){
-    checkboxes[i].checked = false;
-  }
-}
-function writeToFile(jsonData, file_name){
-  let postRequest = new XMLHttpRequest();
-  let reqURL = '/exportFile';
-  postRequest.open('POST', reqURL, true);
-  postRequest.setRequestHeader('Content-Type','application/json');
-
-  postRequest.addEventListener('load', function(event) {
-    if (event.target.status != 200){
-      console.log("Pins Error")
-      var message = event.target.response;
-      alert("Error saving Pins: ", message);
-    } else {
-        console.log("Request successful");
-      }
-  });
-
-  file_name = `data/${file_name}.json`
-  console.log(file_name)
-
-  let obj = {"data": jsonData, "file": file_name};
-  obj = JSON.stringify(obj)
-  console.log(obj)
-  postRequest.send(obj);
-}
-
-//Select-all button for checkboxes
-function toggle(source) {
-  checkboxes = document.getElementsByClassName('select-pin');
-  for(var i = 0; i < checkboxes.length; ++i) {
-    checkboxes[i].checked = source.checked
-  }
-}
-
-//Shows the modal when the button to select pins is clicked
-function showModal(){
-  var selectPinsModal = document.getElementById('select-pins-modal');
-  var modalBackdrop = document.getElementById('modal-backdrop');
-
-  selectPinsModal.classList.remove('hidden');
-  modalBackdrop.classList.remove('hidden');
-
-}
-
-//Hides modal when close/exit button are clicked
-function hideModal(){
-  var selectPinsModal = document.getElementById('select-pins-modal');
-  var modalBackdrop = document.getElementById('modal-backdrop');
-
-  selectPinsModal.classList.add('hidden');
-  modalBackdrop.classList.add('hidden');
-  resetModal();
-}
-
-  //Function that sends a request to the server for adding locations
-  function addPin(name, lat, long) {
-    var postRequest = XMLHttpRequest.open();
-    postRequest.open('POST', '/addPin');
-
-    var pinObject = {
-      name: name,
-      lat: Lat,
-      long: Long
-    };
-    var requestBody = JSON.stringify(pinObject);
-    postRequest.setRequestHeader(
-      'Content-Type', 'application/json'
-    );
-    postRequest.addEventListener('load', function (event) {
-      if (event.target.status != 200) {
-        var message = event.target.response;
-        alert("Error storing Pin data: ", message);
-      } else {
-        //Add pin data here
-        console.log("Request was successful");
-      }
     });
 
-    postRequest.send(requestBody);
+    saveModal.querySelector('.modal-input').value = '';
+
+    saveModal.querySelector('.modal-table-select-all').checked = false;
+
+    saveModal.querySelectorAll('.table-row-checkbox').forEach((item) => {
+
+      item.checked = false;
+
+    });
+
+  } // End 'saveModal_CloseFunc'
+
+  let saveModal_SaveButtonFunc = function () {
+
+    handleSaveModalInputs(function () {
+
+      saveModal_CloseFunc();
+
+    });
+
+  } // End 'saveModal_SaveButtonFunc'
+
+  let saveModal_SelectAllFunc = function () {
+
+    // Adds a toggle functionality for 'saveModal_SelectAllCheckbox'
+
+    saveModal_Checkboxes.forEach((item) => {
+
+      item.checked = saveModal_SelectAllCheckbox.checked;
+
+    });
+
+  } // End 'saveModal_SelectAllFunc'
+
+  let saveModal_CheckboxChangeListenerFunc = function () {
+
+    // Listens for a change on any table row checkbox, and flips the header pin if (all) || (not all) checkboxes are checked
+
+    let checkboxes_Total = saveModal_Checkboxes.length;
+    let checkboxes_Checked = saveModal.querySelectorAll('.table-row-checkbox:checked').length;
+
+    if (checkboxes_Total === checkboxes_Checked) {
+
+      saveModal_SelectAllCheckbox.checked = true;
+
+    } else {
+
+      saveModal_SelectAllCheckbox.checked = false;
+
+    }
+
+  } // End 'saveModal_CheckboxChangeListenerFunc'
+
+  saveModal.classList.remove('hidden');
+  saveModal_BackDrop.classList.remove('hidden');
+
+  saveModal_XButton.addEventListener('click', saveModal_CloseFunc);
+  saveModal_CloseButton.addEventListener('click', saveModal_CloseFunc);
+
+  saveModal_SaveButton.addEventListener('click', saveModal_SaveButtonFunc);
+
+  saveModal_SelectAllCheckbox.addEventListener('click', saveModal_SelectAllFunc);
+
+  saveModal_Checkboxes.forEach((checkbox) => {
+
+    checkbox.addEventListener('change', saveModal_CheckboxChangeListenerFunc);
+
+  });
+
+}
+
+function pinPassesFilter(pin, filter) {
+
+  if (filter.text) {
+
+    let pinName = pin.name.toLowerCase();
+    let filterText = filter.text.toLowerCase();
+
+    if (pinName.indexOf(filterText) === -1) {
+
+      return false;
+
+    }
+
   }
 
+  return true;
 
-  //Function that checks if a certain pin matches the filter request
-  //returns true or false
-  function pinPassesFilter(pin, filter){
+}
 
-  		if (filter.text){
-      	var pinName = pin.name.toLowerCase();
-  			var filterText = filter.text.toLowerCase();
-         if (pinName.indexOf(filterText) === -1){
-				return false;
-  			}
-  		}
+function removeChildNodes(node) {
 
-  		return true;
+  while (node.lastChild) {
+
+    node.removeChild(node.lastChild);
+
   }
 
-  //Updates pin results
-  function doFilterUpdate(){
+}
 
-	      var filter = {
-				text: document.getElementById('filter-text').value.trim()
-			}
+window.addEventListener('DOMContentLoaded', function () {
 
-			var pinContainer = document.querySelector('.saved-places-list-element');
-			while (pinContainer.lastChild){
-				pinContainer.removeChild(pinContainer.lastChild);
-			}
-			var i;
-			for(i = 0; i < mapPins.length; i++){
-				if(pinPassesFilter(mapPins[i], filter)){
-					var pinArgs = {
-						name: mapPins[i].name,
-						lat: mapPins[i].latLng.lat(),
-						lng: mapPins[i].latLng.lng()
-					}
-					var pinHTML = Handlebars.templates.savedPlaceEntry(pinArgs);
-					var entrySection = document.querySelector('.saved-places-list-element');
-					entrySection.insertAdjacentHTML('beforeend', pinHTML);
-				}
-			}
-	}
+  let saveMapButton;
+  let searchBarButton;
+  let importMapButton;
 
-  //Add event listener to button
+  if (saveMapButton = document.querySelector('.save-map-button')) { saveMapButton.addEventListener('click', openSaveModal); }
+  if (searchBarButton = document.querySelector('.search-bar-button')) { searchBarButton.addEventListener('click', doFilterUpdate); }
+  if (importMapButton = document.querySelector('.import-map-button')) { importMapButton.addEventListener('click', openImportModal); }
+
+});

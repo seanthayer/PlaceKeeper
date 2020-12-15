@@ -43,16 +43,16 @@ main {
   border: 1px solid black;
 }
 
-.pin-infobox-title {
+.pin-infoform-title {
   text-align: center;
   margin: 5px;
 }
 
-#pin-infobox-name {
+.pin-infoform-name {
   font-family: 'Roboto';
 }
 
-#pin-infobox-description {
+.pin-infoform-description {
   font-family: 'Roboto';
   min-width: 210px;
   min-height: 60px;
@@ -60,7 +60,7 @@ main {
   max-height: 60px;
 }
 
-.pin-infobox-buttons-container {
+.pin-infoform-buttons-container {
   display: flex;
   justify-content: space-between;
   margin: 8px 12px 4px 12px;
@@ -81,12 +81,6 @@ main {
   color: crimson;
 }
 
-.saved-places-container {
-  flex: 0 0;
-  max-height: 720px;
-  margin-left: 10px;
-}
-
 .search-bar-container {
   display: flex;
   padding: 5px 3px 5px 3px;
@@ -99,6 +93,12 @@ main {
 
 .search-bar-button {
   margin: 2px;
+}
+
+.saved-places-container {
+  flex: 0 0;
+  max-height: 720px;
+  margin-left: 10px;
 }
 
 .saved-places-list-container {
@@ -130,7 +130,11 @@ ul.saved-place-entry {
   padding: 15px;
 }
 
-.import-modal-backdrop {
+.save-map-button {
+  padding: 15px;
+}
+
+.modal-backdrop {
   top: 0;
   bottom: 0;
   left: 0;
@@ -140,7 +144,7 @@ ul.saved-place-entry {
   background-color: rgba(0,0,0,0.85);
 }
 
-.import-modal-container {
+.modal-container {
   top: 0;
   bottom: 0;
   left: 0;
@@ -156,13 +160,40 @@ ul.saved-place-entry {
   z-index: 1010;
 }
 
-.modal-body.import-body {
+.modal-header {
+  border-bottom: 1px solid rgb(208, 208, 208);
+}
+
+.modal-title {
+  margin-left: 20px;
+  margin-top: 10px;
+  font-size: 22px;
+}
+
+.modal-body {
+  margin-left: 40px;
+  margin-bottom: 10px;
+  max-height: 400px;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+
+.modal-body.import-modal {
   overflow: auto;
   overflow-x: auto;
   margin: 0px 20px 16px 20px;
 }
 
-.import-modal-hide-button {
+.modal-description {
+  margin-left: 20px;
+}
+
+.modal-footer {
+  border-top: 1px solid rgb(208, 208, 208);
+  padding-top: 20px;
+}
+
+.modal-x-button {
   position: absolute;
   right: 10px;
   top: 5px;
@@ -174,19 +205,43 @@ ul.saved-place-entry {
   color: rgb(125, 125, 125);
 }
 
-.import-modal-close-button {
-  height: 50px;
+.modal-save-button {
+  width: 150px;
+  border: 0px;
+  color: white;
+  background-color: rgb(0,135,189);
+}
+
+.modal-close-button {
   width: 80px;
-  float: right;
-  margin-right: 20px;
-  border-radius: 5px;
   border: 2px solid rgb(208, 208, 208);
   background-color: #fff;
 }
 
-.import-modal-directory-container {
+.action-button {
+  height: 50px;
+  float: right;
+  margin-right: 20px;
+  border-radius: 5px;
+}
+
+.modal-directory-container {
   height: 300px;
   border: 1px solid black;
+}
+
+.modal-input-container {
+  display: flex;
+}
+
+.modal-input {
+  margin-top: 18px;
+  margin-left: 5px;
+}
+
+.modal-input-text {
+  margin-left: 40px;
+  font-size: 22px;
 }
 
 .map-directory-entry-container {
@@ -197,11 +252,6 @@ ul.saved-place-entry {
   padding: 10px;
 }
 
-.file-title {
-  display: inline;
-  margin: 2px;
-}
-
 .fas.fa-file {
   color: green;
 }
@@ -210,196 +260,50 @@ ul.saved-place-entry {
   color: lightgreen;
 }
 
-#select-pins-button {
-  padding: 15px;
+.file-title {
+  display: inline;
+  margin: 2px;
 }
 
-.modal-search-bar-container {
-  display: flex;
-}
-
-#modal-search-bar-input {
-  margin-top: 18px;
-  margin-left: 5px;
-}
-
-.modal-search-bar-text {
-  margin-left: 40px;
-  font-size: 22px;
-}
-
-.modal-description {
-  margin-left: 20px;
-}
-
-.modal-body {
-  margin-left: 40px;
-}
-
-#modal-backdrop {
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  position: fixed;
-  z-index: 1000;
-  background-color: rgba(0,0,0,0.85);
-}
-
-.modal-title{
-  margin-left: 20px;
-  margin-top: 10px;
-  font-size: 22px;
-}
-
-.modal-header {
-  border-bottom: 1px solid rgb(208, 208, 208);
-}
-
-#select-pins-modal {
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: auto;
-  max-width: 700px;
-  min-width: 400px;
-  min-height: 300px;
-  margin: 40px auto;
-  background-color: #fff;
-  border-radius: 15px;
-  position: fixed;
-  z-index: 1010;
-}
-
-.modal-pin-table table, th, td{
+.modal-table table, th, td {
+  text-align: center;
   border: 2px solid black;
   padding: 10px;
+}
+
+.modal-table-header {
+  background-color: gray;
+  color: white;
+  font-weight: 100;
+  font-size: 14px;
+}
+
+.modal-table-row {
+  background-color: rgb(208, 208, 208);
+  color: black;
 }
 
 .modal-table-checkboxes {
   width: 60px;
 }
 
-#select-all {
+.modal-table-select-all {
   background-color: gray;
   border: 1px solid white;
 }
 
-.header-pin-name {
+.table-header-name {
   width: 120px
 }
 
-.header-latitude {
+.table-header-latitude {
   width: 180px;
 }
 
-.header-longitude {
+.table-header-longitude {
   width: 180px;
-}
-
-.pin-name {
-  width: 120px
-}
-
-.latitude {
-  width: 180px;
-}
-
-.longitude {
-  width: 180px;
-}
-
-.modal-body {
-  margin-bottom: 10px;
-  max-height: 400px;
-  overflow: scroll;
-  overflow-x: hidden;
-}
-
-.modal-table-header{
-  background-color: gray;
-  color: white;
-  font-weight: 100;
-  font-size: 14px;
-
-}
-
-.modal-table-row{
-  background-color: rgb(208, 208, 208);
-  color: black;
-}
-
-.action-button {
-  height: 50px;
-  float: right;
-  margin-right: 20px;
-  border-radius: 5px;
-}
-
-.modal-footer {
-  border-top: 1px solid rgb(208, 208, 208);
-  padding-top: 20px;
-}
-
-#modal-cancel {
-  width: 80px;
-  border: 2px solid rgb(208, 208, 208);
-  background-color: #fff;
-}
-#modal-accept {
-  width: 150px;
-  border: 0px;
-  color: white;
-  background-color: rgb(0,135,189);
 }
 
 .hidden {
   display: none;
-}
-
-#modal-close {
-  position: absolute;
-  right: 10px;
-  top: 5px;
-  font-size: 25px;
-  border: none;
-  background: none;
-  padding: 0;
-  cursor: pointer;
-  color: rgb(125, 125, 125);
-}
-#about-button {
-  position: relative;
-  top: 13px;
-  border: grey solid 1px;
-  background: rgb(240,240,240);
-  padding-top: 14px;
-  padding-bottom: 17px;
-  padding-right: 15px;
-  padding-left: 15px;
-}
-#about-info-box {
-  font-size: 50px;
-}
-
-#about-info{
-
-  border: solid 3px black;
-
-  max-height: 300px;
-  max-width: 750px;
-  font-size: 25px;
-  padding: 3px;
-}
-#author-box {
-  font-size: 50px;
-}
-#authors{
-  border: solid 3px black;
-  max-height: 300px;
-  max-width: 717px;
-  font-size: 25px;
-  padding-top: 3px;
-  padding-bottom: 3px;
 }
