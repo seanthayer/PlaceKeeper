@@ -1,7 +1,6 @@
 function doFilterUpdate() {
 
   let savedPlacesList = document.querySelector('.saved-places-list-element');
-  let savedPlacesListArray = Array.from(savedPlacesList.childNodes);
   let filter = { text: document.querySelector('.search-bar-input').value.trim() }
 
   removeChildNodes(savedPlacesList);
@@ -113,8 +112,12 @@ function openSaveModal() {
   let saveModal_XButton = saveModal.querySelector('.modal-x-button');
   let saveModal_CloseButton = saveModal.querySelector('.modal-close-button');
   let saveModal_SaveButton = saveModal.querySelector('.modal-save-button');
+  let saveModal_SelectAllCheckbox = saveModal.querySelector('.modal-table-select-all');
+  let saveModal_Checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
 
   let saveModal_CloseFunc = function () {
+
+    // Hides modal, removes listeners, and resets inputs
 
     saveModal.classList.add('hidden');
     saveModal_BackDrop.classList.add('hidden');
@@ -123,6 +126,14 @@ function openSaveModal() {
     saveModal_CloseButton.removeEventListener('click', saveModal_CloseFunc);
 
     saveModal_SaveButton.removeEventListener('click', saveModal_SaveButtonFunc);
+
+    saveModal_SelectAllCheckbox.removeEventListener('click', saveModal_SelectAllFunc);
+
+    saveModal_Checkboxes.forEach((checkbox) => {
+
+      checkbox.removeEventListener('change', saveModal_CheckboxChangeListenerFunc);
+
+    });
 
     saveModal.querySelector('.modal-input').value = '';
 
@@ -134,7 +145,7 @@ function openSaveModal() {
 
     });
 
-  }
+  } // End 'saveModal_CloseFunc'
 
   let saveModal_SaveButtonFunc = function () {
 
@@ -144,7 +155,38 @@ function openSaveModal() {
 
     });
 
-  }
+  } // End 'saveModal_SaveButtonFunc'
+
+  let saveModal_SelectAllFunc = function () {
+
+    // Adds a toggle functionality for 'saveModal_SelectAllCheckbox'
+
+    saveModal_Checkboxes.forEach((item) => {
+
+      item.checked = saveModal_SelectAllCheckbox.checked;
+
+    });
+
+  } // End 'saveModal_SelectAllFunc'
+
+  let saveModal_CheckboxChangeListenerFunc = function () {
+
+    // Listens for a change on any table row checkbox, and flips the header pin if (all) || (not all) checkboxes are checked
+
+    let checkboxes_Total = saveModal_Checkboxes.length;
+    let checkboxes_Checked = saveModal.querySelectorAll('.table-row-checkbox:checked').length;
+
+    if (checkboxes_Total === checkboxes_Checked) {
+
+      saveModal_SelectAllCheckbox.checked = true;
+
+    } else {
+
+      saveModal_SelectAllCheckbox.checked = false;
+
+    }
+
+  } // End 'saveModal_CheckboxChangeListenerFunc'
 
   saveModal.classList.remove('hidden');
   saveModal_BackDrop.classList.remove('hidden');
@@ -153,6 +195,14 @@ function openSaveModal() {
   saveModal_CloseButton.addEventListener('click', saveModal_CloseFunc);
 
   saveModal_SaveButton.addEventListener('click', saveModal_SaveButtonFunc);
+
+  saveModal_SelectAllCheckbox.addEventListener('click', saveModal_SelectAllFunc);
+
+  saveModal_Checkboxes.forEach((checkbox) => {
+
+    checkbox.addEventListener('change', saveModal_CheckboxChangeListenerFunc);
+
+  });
 
 }
 
@@ -182,23 +232,6 @@ function removeChildNodes(node) {
     node.removeChild(node.lastChild);
 
   }
-
-}
-
-function selectAll(source) {
-
-  //Select-all button for checkboxes
-
-  let saveModal = document.querySelector('.modal-container.save-modal');
-  let saveModal_Checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
-
-  saveModal_Checkboxes.forEach((item) => {
-
-    // TODO: if one checkbox is unchecked then it should uncheck the select all checkbox
-
-    item.checked = source.checked;
-
-  });
 
 }
 
