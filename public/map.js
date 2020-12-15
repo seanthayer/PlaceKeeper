@@ -278,62 +278,56 @@ function handleSaveModalInputs(callback) {
 
 function importMap(mapName) {
 
-  let getRequest = new XMLHttpRequest();
-  let reqURL = '/importMap/' + mapName;
+  fetch('/importMap/' + mapName).then(function (res) {
 
-  getRequest.open('GET', reqURL);
-  getRequest.setRequestHeader('Content-Type', 'application/json');
+    if (res.ok) {
 
-  getRequest.addEventListener('load', function(event) {
-
-    if (event.target.status === 200) {
-
-      purgeMapPinData(mapPins);
-
-      let importMap;
-
-      importMap = JSON.parse(event.target.response);
-
-      importMap.forEach((pin) => {
-
-        let coords = { lat: parseFloat(pin.lat), lng: parseFloat(pin.lng) };
-
-        let latLngObj = new google.maps.LatLng(coords);
-
-        let marker = new google.maps.Marker({
-
-          position: latLngObj,
-          map: map
-
-        });
-
-        let pin_ = new Pin({
-
-          marker: marker,
-          name: pin.name,
-          latLng: latLngObj
-
-        });
-
-        mapPins.push(pin_);
-
-      });
-
-      renderDynamicComponents(mapPins);
-
-    } else if (event.target.status === 404) {
-
-      alert('Map file not found!');
+      return res.json();
 
     } else {
 
-      alert('Error requesting file!');
+      console.error(`[ERROR] Resource (${mapName}) not found`);
+
+      throw res.status;
 
     }
 
-  });
+  }).then(function (importMap) {
 
-  getRequest.send();
+    purgeMapPinData(mapPins);
+
+    importMap.forEach((pin) => {
+
+      let coords = { lat: parseFloat(pin.lat), lng: parseFloat(pin.lng) };
+
+      let latLngObj = new google.maps.LatLng(coords);
+
+      let marker = new google.maps.Marker({
+
+        position: latLngObj,
+        map: map
+
+      });
+
+      let pin_ = new Pin({
+
+        marker: marker,
+        name: pin.name,
+        latLng: latLngObj
+
+      });
+
+      mapPins.push(pin_);
+
+    });
+
+    renderDynamicComponents(mapPins);
+
+  }).catch(function (err) {
+
+    console.error('[ERROR] ' + err);
+
+  });
 
 }
 

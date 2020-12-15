@@ -28,31 +28,35 @@ function doFilterUpdate() {
 
 function getMapsDirectory(callback) {
 
-  let getRequest = new XMLHttpRequest();
-  let reqURL = '/getMapsDirectory';
+  fetch('/getMapsDirectory').then(function (res) {
 
-  getRequest.open('GET', reqURL);
-  getRequest.setRequestHeader('Content-Type', 'application/json');
+    if (res.ok) {
 
-  getRequest.addEventListener('load', function(event) {
+      return res.json();
 
-    if (event.target.status === 200) {
+    } else {
 
-      let data = JSON.parse(event.target.response);
+      console.error(`[ERROR] Data directory not found`);
 
-      for (let i = 0; i < data.length; i++) {
-
-        data[i] = data[i].split('.')[0];
-
-      }
-
-      callback(data);
+      throw res.status;
 
     }
 
-  });
+  }).then(function (data) {
 
-  getRequest.send();
+    for (let i = 0; i < data.length; i++) {
+
+      data[i] = data[i].split('.')[0];
+
+    }
+
+    callback(data);
+
+  }).catch(function (err) {
+
+    console.error('[ERROR] ' + err);
+
+  });
 
 }
 

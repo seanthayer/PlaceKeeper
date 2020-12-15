@@ -58,40 +58,56 @@ app.post('/exportFile', function (req, res) {
 
 });
 
-app.get('/getMapsDirectory', function (req, res) {
+app.get('/getMapsDirectory', function (req, res, next) {
 
-  let map_data_dir = fs.readdirSync('./data/');
+	if (req.header('Referer')) {
 
-  if (map_data_dir) {
+		let map_data_dir = fs.readdirSync('./data/');
 
-    res.status(200).send(map_data_dir);
+		if (map_data_dir) {
 
-  } else {
+			res.status(200).send(map_data_dir);
 
-    res.status(404).send();
+		} else {
 
-  }
+			res.sendStatus(404);
+
+		}
+
+	} else {
+
+		next();
+
+	}
 
 });
 
-app.get('/importMap/:map_name', function (req, res) {
+app.get('/importMap/:map_name', function (req, res, next) {
 
-  let map_data_dir = fs.readdirSync('./data/');
-  let map_file_name = req.params.map_name + '.json';
+	if (req.header('Referer')) {
 
-  let match_index = map_data_dir.indexOf(map_file_name);
+		let map_data_dir = fs.readdirSync('./data/');
+		let map_file_name = req.params.map_name + '.json';
 
-  if (match_index != -1) {
+		let match_index = map_data_dir.indexOf(map_file_name);
 
-    let importMap = require('./data/' + map_data_dir[match_index]);
+		if (match_index != -1) {
 
-    res.status(200).send(importMap);
+			let importMap = require('./data/' + map_data_dir[match_index]);
 
-  } else {
+			res.status(200).send(importMap);
 
-    res.status(404).send('File not found!');
+		} else {
 
-  }
+			res.sendStatus(404);
+
+		}
+
+	} else {
+
+		next();
+
+	}
 
 });
 
