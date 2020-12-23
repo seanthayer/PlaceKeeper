@@ -1,4 +1,4 @@
-const dotenv = require('dotenv').config({ path: `${__dirname}/PRIVATE_ENV_VARS.env` });
+const dotenv = require('dotenv').config({ path: `${__dirname}/ENV_VARS.env` });
 const fs = require('fs');
 const express = require('express');
 const exphbs = require('express-handlebars');
