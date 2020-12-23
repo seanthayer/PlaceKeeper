@@ -1,5 +1,23 @@
 ## PlaceKeeper
 
+### Running the prototype locally
+
+1. Be sure to have Node.js installed (along with npm, of course)
+
+2. Clone the repository to your local machine
+
+3. Within the repo's directory, run `npm install --production` from GitBash or the Linux terminal
+
+    * If you have a GoogleMaps API Key, then create a `ENV_VARS.env` file in the repo's root dir, and within that file create a var `G_MAPS_API_KEY` set equal to your API Key. It will be automatically embedded when the server boots. (Note that this is not secure for public facing applications.)
+    
+    * If you do not have a GoogleMaps API Key, then the map embed will simply be started in development mode when the server boots.
+
+4. After the dependencies are installed, run `npm start`
+
+5. The server will begin listening on env var 'PORT' if specified, or 3000 if not.
+
+6. Access the specified port in a web browser: `localhost:{PORT}`
+
 ### Completed Features
 <details><summary><ins>Completed</ins> ↴</summary>
   ✓ Build basic 404 page                                                                            <br>
