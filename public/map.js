@@ -34,8 +34,6 @@ function initMap() {
 
 function exportMap(data, fileName) {
 
-  let postRequest = new XMLHttpRequest();
-  let reqURL = '/exportFile';
   let entryData = {
 
     fileName: fileName,
@@ -43,24 +41,25 @@ function exportMap(data, fileName) {
 
   }
 
-  postRequest.open('POST', reqURL, true);
-  postRequest.setRequestHeader('Content-Type', 'application/json');
+  let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
 
-  postRequest.addEventListener('load', function(event) {
+  let requestPOST = new Request('/exportFile', { method: 'POST', headers: requestHEADER, body: JSON.stringify(entryData) });
 
-    if (event.target.status != 200) {
+  fetch(requestPOST).then(function (res) {
 
-      alert('Server failed to save data!');
+    if (res.ok) {
+
+      console.log('POST Successful');
 
     } else {
 
-      console.log('POST Successful');
+      console.warn('[WARN] ' + res.status);
+
+      alert('Error saving map data!');
 
     }
 
   });
-
-  postRequest.send(JSON.stringify(entryData));
 
 }
 
@@ -278,7 +277,13 @@ function handleSaveModalInputs(callback) {
 
 function importMap(mapName) {
 
-  fetch('/importMap/' + mapName).then(function (res) {
+  let mapURL = '/importMap/' + mapName;
+
+  let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
+
+  let requestGET = new Request(mapURL, { method: 'GET', headers: requestHEADER });
+
+  fetch(requestGET).then(function (res) {
 
     if (res.ok) {
 

@@ -28,7 +28,11 @@ function doFilterUpdate() {
 
 function getMapsDirectory(callback) {
 
-  fetch('/getMapsDirectory').then(function (res) {
+  let requestHEADER = new Headers({ 'Content-Type': 'text/html'});
+
+  let requestGET = new Request('/getMapsDirectory', { method: 'GET', headers: requestHEADER });
+
+  fetch(requestGET).then(function (res) {
 
     if (res.ok) {
 
