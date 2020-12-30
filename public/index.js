@@ -2,6 +2,8 @@ function doFilterUpdate() {
 
   let savedPlacesList = document.querySelector('.saved-places-list-element');
   let filter = { text: document.querySelector('.search-bar-input').value.trim() }
+  let filteredEntryList = [];
+
 
   removeChildNodes(savedPlacesList);
 
@@ -9,20 +11,15 @@ function doFilterUpdate() {
 
     if (pinPassesFilter(pin, filter)) {
 
-      let context = {
-
-        name: pin.name,
-        lat: pin.latLng.lat(),
-        lng: pin.latLng.lng()
-
-      }
-
-      let savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
-      savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
+      filteredEntryList.push(pin);
 
     }
 
   });
+
+  renderDynamicComponents(filteredEntryList);
+
+  document.querySelector('.search-bar-input').value = '';
 
 }
 

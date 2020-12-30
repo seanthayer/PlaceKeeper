@@ -13,6 +13,11 @@ main {
   margin: 25px;
 }
 
+/* .gm-style .gm-style-iw {
+  font-weight: revert;
+  font-size: revert;
+} */
+
 .site-title {
   display: inline-block;
   font-family: 'Roboto Slab';
@@ -70,6 +75,12 @@ main {
 .pin-infobox-readonly-title {
   text-align: center;
   margin: 5px 0px 5px 0px;
+}
+
+.pin-infobox-readonly-description {
+  border: 1px solid black;
+  padding: 10px;
+  text-align: center;
 }
 
 .trash-button-container {

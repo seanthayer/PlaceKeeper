@@ -11,6 +11,7 @@ function Pin(pin) {
   this.latLng = pin.latLng;
   this.clickListener = eventHandler.addListenerOnce(this.marker, 'click', generateReadOnlyInfoBox);
   this.infoBox = null;
+  this.description = null;
 
 }
 
@@ -33,7 +34,7 @@ function initMap() {
 
 }
 
-function exportMap(data, fileName) {
+function exportMap(fileName, data) {
 
   let entryData = {
 
@@ -133,11 +134,11 @@ function generateReadOnlyInfoBox(event) {
   let context = {
 
     name: eventOriginPin.name,
-    lat: eventOriginPin.latLng.lat(),
-    lng: eventOriginPin.latLng.lng(),
     latLng: eventOriginPin.latLng
 
   }
+
+  if (eventOriginPin.description) context.description = eventOriginPin.description;
 
   let readOnlyInfoBoxHTML = Handlebars.templates.pinInfoBoxReadOnly(context);
   let readOnlyInfoBox = generatePinInfoBox(map, eventOriginPin.latLng, readOnlyInfoBoxHTML);
@@ -153,8 +154,6 @@ function generateReadOnlyInfoBox(event) {
 }
 
 function handleNewPinForm(newPinObject, callback) {
-
-  // 'infoForm_DescField' is currently not stored anywhere, but is a placeholder for the future
 
   let infoForm = mapNode.querySelector('.pin-infoform-container');
   let infoForm_NameField = infoForm.querySelector('input.pin-infoform-name');
@@ -175,6 +174,8 @@ function handleNewPinForm(newPinObject, callback) {
         latLng: newPinObject.latLng
 
       });
+
+      if (infoForm_DescField.value) pin_.description = infoForm_DescField.value;
 
       mapPins.push(pin_);
 
@@ -219,7 +220,6 @@ function handleReadOnlyInfoBox(pin) {
     eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
 
       removeMarkerAndInfoBox(pin.marker, pin.infoBox);
-      pin.infoBox = null;
 
       mapPins.splice(mapPins.indexOf(pin), 1);
 
@@ -257,17 +257,19 @@ function handleSaveModalInputs(callback) {
 
       let pinObj = {
 
-        name: pinTableRow.querySelector('.table-row-name').textContent,
-        lat: pinTableRow.querySelector('.table-row-latitude').textContent,
-        lng: pinTableRow.querySelector('.table-row-longitude').textContent
+        name: pinTableRow.dataset.name,
+        lat: pinTableRow.dataset.lat,
+        lng: pinTableRow.dataset.lng
 
       }
+
+      if (pinTableRow.dataset.description) pinObj.description = pinTableRow.dataset.description;
 
       pinData.push(pinObj);
 
     });
 
-    exportMap(pinData, fileName);
+    exportMap(fileName, pinData);
 
     callback();
 
@@ -326,6 +328,8 @@ function importMap(mapName) {
 
       });
 
+      if (pin.description) pin_.description = pin.description;
+
       mapPins.push(pin_);
 
     });
@@ -347,6 +351,9 @@ function purgeMapPinData(list) {
   for (let pin = n; pin >= 0; pin--) {
 
     list[pin].marker.setMap(null);
+
+    if (list[pin].infoBox) list[pin].infoBox.close();
+
     list.pop();
 
   }
@@ -359,7 +366,7 @@ function removeMarkerAndInfoBox(marker, infoBox=null) {
 
   marker.setMap(null);
 
-  if (infoBox) { infoBox.close(); }
+  if (infoBox) infoBox.close();
 
 }
 
@@ -384,6 +391,7 @@ function renderDynamicComponents(list) {
     let context = {
 
       name: pin.name,
+      description: pin.description,
       latLng: pin.latLng,
       lat: pin.latLng.lat(),
       lng: pin.latLng.lng()
@@ -406,7 +414,6 @@ function renderDynamicComponents(list) {
       eventHandler.addDomListenerOnce(trashButton, 'click', function () {
 
         removeMarkerAndInfoBox(pin.marker, pin.infoBox);
-        pin.infoBox = null;
 
         mapPins.splice(mapPins.indexOf(pin), 1);
 

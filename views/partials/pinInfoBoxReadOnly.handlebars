@@ -1,6 +1,17 @@
 <div class="pin-infobox-readonly-container" data-latLng="{{latLng}}">
+
   <h2 class="pin-infobox-readonly-title">{{name}}</h2>
+
+  {{#if description}}
+
+    <div class="pin-infobox-readonly-description">
+      <p>{{description}}</p>
+    </div>
+
+  {{/if}}
+
   <div class="trash-button-container">
     <button type="button" name="trash-button" class="trash-button"><i class="far fa-trash-alt"></i></button>
   </div>
+
 </div>
