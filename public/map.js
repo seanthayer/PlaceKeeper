@@ -10,6 +10,7 @@ function Pin(pin) {
   this.name = pin.name;
   this.latLng = pin.latLng;
   this.clickListener = eventHandler.addListenerOnce(this.marker, 'click', generateReadOnlyInfoBox);
+  this.infoBox = null;
 
 }
 
@@ -141,9 +142,11 @@ function generateReadOnlyInfoBox(event) {
   let readOnlyInfoBoxHTML = Handlebars.templates.pinInfoBoxReadOnly(context);
   let readOnlyInfoBox = generatePinInfoBox(map, eventOriginPin.latLng, readOnlyInfoBoxHTML);
 
+  eventOriginPin.infoBox = readOnlyInfoBox;
+
   eventHandler.addListenerOnce(readOnlyInfoBox, 'domready', function () {
 
-    handleReadOnlyInfoBox(eventOriginPin, readOnlyInfoBox);
+    handleReadOnlyInfoBox(eventOriginPin);
 
   });
 
@@ -203,11 +206,11 @@ function handleNewPinForm(newPinObject, callback) {
 
 }
 
-function handleReadOnlyInfoBox(pin, infobox) {
+function handleReadOnlyInfoBox(pin) {
 
   let infoBox = mapNode.querySelector(`.pin-infobox-readonly-container[data-latLng="${pin.latLng}"]`)
-  let infoBox_ButtonContainer = infoBox.querySelector('.pin-trash-button-container');
-  let infoBox_TrashButton = infoBox_ButtonContainer.querySelector('button.pin-trash-button');
+  let infoBox_ButtonContainer = infoBox.querySelector('.trash-button-container');
+  let infoBox_TrashButton = infoBox_ButtonContainer.querySelector('button.trash-button');
 
   eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
 
@@ -215,7 +218,8 @@ function handleReadOnlyInfoBox(pin, infobox) {
 
     eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
 
-      removeMarkerAndInfoBox(pin.marker, infobox);
+      removeMarkerAndInfoBox(pin.marker, pin.infoBox);
+      pin.infoBox = null;
 
       mapPins.splice(mapPins.indexOf(pin), 1);
 
@@ -225,9 +229,9 @@ function handleReadOnlyInfoBox(pin, infobox) {
 
   });
 
-  eventHandler.addListenerOnce(infobox, 'closeclick', function () {
+  eventHandler.addListenerOnce(pin.infoBox, 'closeclick', function () {
 
-    infobox.close();
+    pin.infoBox.close();
 
     pin.clickListener = eventHandler.addListenerOnce(pin.marker, 'click', generateReadOnlyInfoBox);
 
@@ -351,10 +355,11 @@ function purgeMapPinData(list) {
 
 }
 
-function removeMarkerAndInfoBox(marker, infoBox) {
+function removeMarkerAndInfoBox(marker, infoBox=null) {
 
-  infoBox.close();
   marker.setMap(null);
+
+  if (infoBox) { infoBox.close(); }
 
 }
 
@@ -379,6 +384,7 @@ function renderDynamicComponents(list) {
     let context = {
 
       name: pin.name,
+      latLng: pin.latLng,
       lat: pin.latLng.lat(),
       lng: pin.latLng.lng()
 
@@ -389,6 +395,26 @@ function renderDynamicComponents(list) {
 
     let savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
     savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
+
+    let currentEntry = savedPlacesList.querySelector(`[data-latLng="${pin.latLng}"]`);
+    let trashButton = currentEntry.querySelector('button.trash-button');
+
+    eventHandler.addDomListenerOnce(trashButton, 'click', function () {
+
+      trashButton.parentNode.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
+
+      eventHandler.addDomListenerOnce(trashButton, 'click', function () {
+
+        removeMarkerAndInfoBox(pin.marker, pin.infoBox);
+        pin.infoBox = null;
+
+        mapPins.splice(mapPins.indexOf(pin), 1);
+
+        renderDynamicComponents(mapPins);
+
+      });
+
+    });
 
   });
 

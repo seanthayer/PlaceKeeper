@@ -28,7 +28,7 @@ function doFilterUpdate() {
 
 function getMapsDirectory(callback) {
 
-  let requestHEADER = new Headers({ 'Content-Type': 'text/html'});
+  let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
 
   let requestGET = new Request('/getMapsDirectory', { method: 'GET', headers: requestHEADER });
 

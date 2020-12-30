@@ -1,5 +1,6 @@
 body {
   margin: 0;
+  background: darkgrey;
 }
 
 header {
@@ -71,7 +72,8 @@ main {
   margin: 5px 0px 5px 0px;
 }
 
-.pin-trash-button-container {
+.trash-button-container {
+  margin-top: 10px;
   color: crimson;
   font-size: 12px;
   text-align: right;
@@ -85,6 +87,7 @@ main {
   display: flex;
   padding: 5px 3px 5px 3px;
   border: 1px solid black;
+  border-radius: 5px;
 }
 
 .search-bar-element {
@@ -97,26 +100,30 @@ main {
 
 .saved-places-container {
   flex: 0 0;
-  max-height: 720px;
   margin-left: 10px;
 }
 
 .saved-places-list-container {
-  max-height: 720px;
+  max-height: 666px;
+  height: 666px;
+  margin-top: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
   overflow: auto;
 }
 
 ul.saved-places-list-element {
-  max-height: 720px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 ul.saved-place-entry {
-  margin: 5px;
+  margin: 10px 15px 10px 15px;
   padding: 10px;
   border: 1px solid black;
+  border-radius: 5px;
+  background: white;
   list-style: none;
 }
 
