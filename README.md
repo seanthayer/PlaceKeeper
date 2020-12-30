@@ -19,7 +19,16 @@
 6. Access the specified port in a web browser: `localhost:{PORT}`
 
 ### Completed Features
-<details><summary><ins>Completed</ins> ↴</summary>
+
+<details><summary><ins>[ List ]</ins> ↴</summary>
+   
+  <br>
+   
+  <strong>Second Implementation [ In Progress ]</strong>                                            <br>
+  ✓ Implement optional pin description functionality                                                <br>
+  ✓ Implement removing pin via saved place list                                                     <br>
+   
+  <strong>First Implementation</strong>                                                             <br>
   ✓ Build basic 404 page                                                                            <br>
   ✓ Build basic Homepage                                                                            <br>
   ✓ Apply basic CSS styling                                                                         <br>
@@ -47,4 +56,5 @@
   ✓ Implement deleting pin from map directly                                                        <br>
   ✓ Create a link to /about                                                                         <br>
   ✓ Style /about                                                                                    <br>
+  
 </details>
