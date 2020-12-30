@@ -1,12 +1,15 @@
 body {
   margin: 0;
-  background: darkgrey;
+  background: #181818;
 }
 
 header {
   display: flex;
   justify-content: space-between;
+  min-width: 881px;
   border-bottom: 3px solid black;
+  background-image: url('/img/background_header-bg.png');
+  background-color: white;
 }
 
 main {
@@ -22,12 +25,19 @@ main {
   display: inline-block;
   font-family: 'Roboto Slab';
   font-size: 56px;
-  margin: 47px 100px 62px 20px;
+  margin: 47px 20px 62px 20px;
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 0 10px 0 10px;
+  background: white;
 }
 
 .header-image-container {
   display: flex;
-  margin: 5px 25px 5px 100px;
+  margin: 5px 25px 5px 25px;
+  border: 1px solid black;
+  border-radius: 10%;
+  background: white;
 }
 
 .content-container {
