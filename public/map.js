@@ -391,12 +391,13 @@ function renderDynamicComponents(list) {
     let context = {
 
       name: pin.name,
-      description: pin.description,
       latLng: pin.latLng,
       lat: pin.latLng.lat(),
       lng: pin.latLng.lng()
 
     }
+
+    if (pin.description) context.description = pin.description;
 
     let pinsHTML = Handlebars.templates.pinTableRow(context);
     saveModal_ModalTable.insertAdjacentHTML('beforeend', pinsHTML);
