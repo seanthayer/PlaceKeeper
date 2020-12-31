@@ -7,7 +7,7 @@ header {
   display: flex;
   justify-content: space-between;
   min-width: 881px;
-  border-bottom: 3px solid black;
+  border-bottom: 2px solid black;
   background-image: url('/img/background_header-bg.png');
   background-color: white;
 }
@@ -25,7 +25,7 @@ main {
   display: inline-block;
   font-family: 'Roboto Slab';
   font-size: 56px;
-  margin: 47px 20px 62px 20px;
+  margin: 47px 20px 49px 25px;
   border: 1px solid black;
   border-radius: 10px;
   padding: 0 10px 0 10px;
@@ -34,6 +34,8 @@ main {
 
 .header-image-container {
   display: flex;
+  height: 160px;
+  width: 180px;
   margin: 5px 25px 5px 25px;
   border: 1px solid black;
   border-radius: 10px;
@@ -101,7 +103,12 @@ main {
   text-align: right;
 }
 
+.trash-button {
+  padding: 0;
+}
+
 .far.fa-trash-alt {
+  margin: -5px;
   color: crimson;
 }
 
