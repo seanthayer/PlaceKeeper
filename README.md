@@ -9,7 +9,7 @@
 3. Within the repo's directory, run `npm install --production` from GitBash or the Linux terminal
 
     * If you have a GoogleMaps API Key, then create a `ENV_VARS.env` file in the repo's root dir, and within that file create a var `G_MAPS_API_KEY` set equal to your API Key. It will be automatically embedded when the server boots. (Note that this is not secure for public facing applications.)
-    
+
     * If you do not have a GoogleMaps API Key, then the map embed will simply be started in development mode when the server boots.
 
 4. After the dependencies are installed, run `npm start`
@@ -21,13 +21,14 @@
 ### Completed Features
 
 <details><summary><ins>[ List ]</ins> ↴</summary>
-   
+
   <br>
-   
+
   <strong>Second Implementation [ In Progress ]</strong>                                            <br>
+  ✓ Implement panning to pin on map from button in the list entry                                   <br>
   ✓ Implement optional pin description functionality                                                <br>
   ✓ Implement removing pin via saved place list                                                     <br>
-   
+
   <strong>First Implementation</strong>                                                             <br>
   ✓ Build basic 404 page                                                                            <br>
   ✓ Build basic Homepage                                                                            <br>
@@ -56,5 +57,5 @@
   ✓ Implement deleting pin from map directly                                                        <br>
   ✓ Create a link to /about                                                                         <br>
   ✓ Style /about                                                                                    <br>
-  
+
 </details>
