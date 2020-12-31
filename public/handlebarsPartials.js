@@ -14,10 +14,10 @@ templates['savedPlaceEntry'] = template({"compiler":[8,">= 4.3.0"],"main":functi
     + alias4(((helper = (helper = lookupProperty(helpers,"latLng") || (depth0 != null ? lookupProperty(depth0,"latLng") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"latLng","hash":{},"data":data,"loc":{"start":{"line":1,"column":60},"end":{"line":1,"column":70}}}) : helper)))
     + "\">\n\n  <h5 class=\"saved-place-entry-title\">"
     + alias4(((helper = (helper = lookupProperty(helpers,"name") || (depth0 != null ? lookupProperty(depth0,"name") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"loc":{"start":{"line":3,"column":38},"end":{"line":3,"column":46}}}) : helper)))
-    + "</h5>\n  <button name=\"saved-place-entry-latLng\" class=\"saved-place-entry-latLng\">("
-    + alias4(((helper = (helper = lookupProperty(helpers,"lat") || (depth0 != null ? lookupProperty(depth0,"lat") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lat","hash":{},"data":data,"loc":{"start":{"line":4,"column":76},"end":{"line":4,"column":83}}}) : helper)))
+    + "</h5>\n  <button type=\"button\" name=\"saved-place-entry-latLng\" class=\"saved-place-entry-latLng\">("
+    + alias4(((helper = (helper = lookupProperty(helpers,"lat") || (depth0 != null ? lookupProperty(depth0,"lat") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lat","hash":{},"data":data,"loc":{"start":{"line":4,"column":90},"end":{"line":4,"column":97}}}) : helper)))
     + ", "
-    + alias4(((helper = (helper = lookupProperty(helpers,"lng") || (depth0 != null ? lookupProperty(depth0,"lng") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lng","hash":{},"data":data,"loc":{"start":{"line":4,"column":85},"end":{"line":4,"column":92}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"lng") || (depth0 != null ? lookupProperty(depth0,"lng") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lng","hash":{},"data":data,"loc":{"start":{"line":4,"column":99},"end":{"line":4,"column":106}}}) : helper)))
     + ")</button>\n\n  <div class=\"trash-button-container\">\n    <button type=\"button\" name=\"trash-button\" class=\"trash-button\"><i class=\"far fa-trash-alt\"></i></button>\n  </div>\n\n</div>\n";
 },"useData":true});
 templates['pinInfoForm'] = template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {

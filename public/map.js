@@ -406,7 +406,14 @@ function renderDynamicComponents(list) {
     savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
 
     let currentEntry = savedPlacesList.querySelector(`[data-latLng="${pin.latLng}"]`);
+    let latLngButton = currentEntry.querySelector('button.saved-place-entry-latLng')
     let trashButton = currentEntry.querySelector('button.trash-button');
+
+    eventHandler.addDomListener(latLngButton, 'click', function () {
+
+      map.panTo(pin.latLng);
+
+    });
 
     eventHandler.addDomListenerOnce(trashButton, 'click', function () {
 
