@@ -1,11 +1,10 @@
-<ul class="saved-place-entry" name="{{name}}" data-latLng="{{latLng}}">
+<div class="saved-place-entry" name="{{name}}" data-latLng="{{latLng}}">
 
-  <li>Place: {{name}}</li>
-  <li>Lat: {{lat}}</li>
-  <li>Lng: {{lng}}</li>
+  <h5 class="saved-place-entry-title">{{name}}</h5>
+  <button name="saved-place-entry-latLng" class="saved-place-entry-latLng">({{lat}}, {{lng}})</button>
 
   <div class="trash-button-container">
     <button type="button" name="trash-button" class="trash-button"><i class="far fa-trash-alt"></i></button>
   </div>
 
-</ul>
+</div>
