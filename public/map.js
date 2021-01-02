@@ -1,8 +1,169 @@
 var map;
 var mapNode = document.querySelector('#map');
 var mapClickListener;
-var mapPins = [];
 var eventHandler;
+
+var renderHandler = {
+
+  currentRenderList: [],
+
+  primaryMapList: [],
+
+  setNewPrimaryMap: function (newMap) {
+
+    this.primaryMapList.forEach((pin) => {
+
+      removeMarkerAndInfoBox(pin.marker, pin.infoBox);
+
+    });
+
+    this.currentRenderList = [];
+    this.renderComponents(newMap);
+    this.primaryMapList = newMap;
+
+  },
+
+  rerenderMap: function () {
+
+    this.renderComponents(this.primaryMapList);
+
+  },
+
+  renderComponents: function (newRenderList, renderOptions = {mapEmbed: true, placesList: true}) {
+
+    if (renderOptions.mapEmbed || renderOptions.mapEmbed === undefined) {
+
+      let setIntersect = [];
+
+      for (let i = 0; i < this.currentRenderList.length; i++) {
+
+        for (let  j = 0; j < newRenderList.length; j++) {
+
+          let currentPin_latLng = this.currentRenderList[i].latLng.toString();
+          let newPin_latLng = newRenderList[j].latLng.toString();
+
+          if (currentPin_latLng === newPin_latLng) {
+
+            setIntersect.push(currentPin_latLng);
+
+          }
+
+        }
+
+      }
+
+      let renderSubDiff = this.currentRenderList.filter(pin => !setIntersect.includes(pin.latLng.toString()) );
+      let renderAddDiff = newRenderList.filter(pin => !setIntersect.includes(pin.latLng.toString()) );
+
+      console.log('Intersect: ', setIntersect);
+      console.log('Sub diff: ', renderSubDiff);
+      console.log('Add diff: ', renderAddDiff);
+
+      renderSubDiff.forEach((pin) => {
+
+        removeMarkerAndInfoBox(pin.marker, pin.infoBox);
+
+      });
+
+      renderAddDiff.forEach((pin) => {
+
+        pin.marker.setMap(map);
+
+      });
+
+    }
+
+    if (renderOptions.placesList || renderOptions.placesList === undefined) {
+
+      let savedPlacesList = document.querySelector('.saved-places-list-element');
+
+      removeChildNodes(savedPlacesList);
+
+      newRenderList.forEach((pin) => {
+
+        let context = {
+
+          name: pin.name,
+          latLng: pin.latLng,
+          lat: pin.latLng.lat(),
+          lng: pin.latLng.lng()
+
+        }
+
+        if (pin.description) context.description = pin.description;
+
+        let savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
+        savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
+
+        let listEntry = savedPlacesList.querySelector(`[data-latLng="${pin.latLng}"]`);
+        let latLngButton = listEntry.querySelector('button.saved-place-entry-latLng')
+        let trashButton = listEntry.querySelector('button.trash-button');
+
+        eventHandler.addDomListener(latLngButton, 'click', function () {
+
+          map.panTo(pin.latLng);
+
+        });
+
+        eventHandler.addDomListenerOnce(trashButton, 'click', function () {
+
+          trashButton.parentNode.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
+
+          eventHandler.addDomListenerOnce(trashButton, 'click', function () {
+
+            let primaryMap = renderHandler.primaryMapList;
+
+            removeMarkerAndInfoBox(pin.marker, pin.infoBox);
+
+            savedPlacesList.removeChild(listEntry);
+
+            primaryMap.splice(primaryMap.indexOf(pin), 1);
+
+          });
+
+        });
+
+      });
+
+    }
+
+    this.currentRenderList = newRenderList;
+
+  },
+
+  renderSaveModal: function () {
+
+    let saveModal = document.querySelector('.modal-container.save-modal')
+    let saveModal_ModalTable = saveModal.querySelector('.modal-table');
+    let saveModal_TableRows = saveModal_ModalTable.querySelectorAll('tr.modal-table-row');
+
+    saveModal_TableRows.forEach((node) => {
+
+      // TODO: What does this even select?
+      node.parentNode.remove();
+
+    });
+
+    this.primaryMapList.forEach((pin) => {
+
+      let context = {
+
+        name: pin.name,
+        lat: pin.latLng.lat(),
+        lng: pin.latLng.lng()
+
+      }
+
+      if (pin.description) context.description = pin.description;
+
+      let pinsHTML = Handlebars.templates.pinTableRow(context);
+      saveModal_ModalTable.insertAdjacentHTML('beforeend', pinsHTML);
+
+    });
+
+  }
+
+}
 
 function Pin(pin) {
 
@@ -119,7 +280,7 @@ function generateReadOnlyInfoBox(event) {
 
   let eventOriginPin;
 
-  mapPins.forEach((pin) => {
+  renderHandler.currentRenderList.forEach((pin) => {
 
     if (pin.latLng === event.latLng) {
 
@@ -163,6 +324,8 @@ function handleNewPinForm(newPinObject, callback) {
 
   eventHandler.addDomListener(infoForm_SaveButton, 'click', function () {
 
+    let primaryMap = renderHandler.primaryMapList;
+
     if (infoForm_NameField.value) {
 
       newPinObject.infoBox.close();
@@ -177,9 +340,11 @@ function handleNewPinForm(newPinObject, callback) {
 
       if (infoForm_DescField.value) pin_.description = infoForm_DescField.value;
 
-      mapPins.push(pin_);
+      primaryMap.push(pin_);
 
-      renderDynamicComponents(mapPins);
+      clearFilterPins();
+
+      renderHandler.rerenderMap();
 
       callback();
 
@@ -219,11 +384,15 @@ function handleReadOnlyInfoBox(pin) {
 
     eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
 
+      let primaryMap = renderHandler.primaryMapList;
+      let savedPlacesList = document.querySelector('.saved-places-list-element');
+      let listEntry = savedPlacesList.querySelector(`[data-latLng="${pin.latLng}"]`);
+
       removeMarkerAndInfoBox(pin.marker, pin.infoBox);
 
-      mapPins.splice(mapPins.indexOf(pin), 1);
+      savedPlacesList.removeChild(listEntry);
 
-      renderDynamicComponents(mapPins);
+      primaryMap.splice(primaryMap.indexOf(pin), 1);
 
     });
 
@@ -303,38 +472,38 @@ function importMap(mapName) {
 
     }
 
-  }).then(function (importMap) {
+  }).then(function (importData) {
 
-    purgeMapPinData(mapPins);
+    let importMap = [];
 
-    importMap.forEach((pin) => {
+    importData.forEach((entry) => {
 
-      let coords = { lat: parseFloat(pin.lat), lng: parseFloat(pin.lng) };
+      let coords = { lat: parseFloat(entry.lat), lng: parseFloat(entry.lng) };
 
-      let latLngObj = new google.maps.LatLng(coords);
+      let newLatLng = new google.maps.LatLng(coords);
 
       let marker = new google.maps.Marker({
 
-        position: latLngObj,
-        map: map
+        position: newLatLng,
+        map: null
 
       });
 
       let pin_ = new Pin({
 
         marker: marker,
-        name: pin.name,
-        latLng: latLngObj
+        name: entry.name,
+        latLng: newLatLng
 
       });
 
-      if (pin.description) pin_.description = pin.description;
+      if (entry.description) pin_.description = entry.description;
 
-      mapPins.push(pin_);
+      importMap.push(pin_);
 
     });
 
-    renderDynamicComponents(mapPins);
+    renderHandler.setNewPrimaryMap(importMap);
 
   }).catch(function (err) {
 
@@ -344,93 +513,10 @@ function importMap(mapName) {
 
 }
 
-function purgeMapPinData(list) {
-
-  let n = list.length - 1;
-
-  for (let pin = n; pin >= 0; pin--) {
-
-    list[pin].marker.setMap(null);
-
-    if (list[pin].infoBox) list[pin].infoBox.close();
-
-    list.pop();
-
-  }
-
-  renderDynamicComponents(list);
-
-}
-
 function removeMarkerAndInfoBox(marker, infoBox=null) {
 
   marker.setMap(null);
 
   if (infoBox) infoBox.close();
-
-}
-
-function renderDynamicComponents(list) {
-
-  let savedPlacesList = document.querySelector('.saved-places-list-element');
-
-  let saveModal = document.querySelector('.modal-container.save-modal')
-  let saveModal_ModalTable = saveModal.querySelector('.modal-table');
-  let saveModal_TableRows = saveModal_ModalTable.querySelectorAll('tr.modal-table-row');
-
-  removeChildNodes(savedPlacesList);
-
-  saveModal_TableRows.forEach((node) => {
-
-    node.parentNode.remove();
-
-  });
-
-  list.forEach((pin) => {
-
-    let context = {
-
-      name: pin.name,
-      latLng: pin.latLng,
-      lat: pin.latLng.lat(),
-      lng: pin.latLng.lng()
-
-    }
-
-    if (pin.description) context.description = pin.description;
-
-    let pinsHTML = Handlebars.templates.pinTableRow(context);
-    saveModal_ModalTable.insertAdjacentHTML('beforeend', pinsHTML);
-
-    let savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
-    savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
-
-    let currentEntry = savedPlacesList.querySelector(`[data-latLng="${pin.latLng}"]`);
-    let latLngButton = currentEntry.querySelector('button.saved-place-entry-latLng')
-    let trashButton = currentEntry.querySelector('button.trash-button');
-
-    eventHandler.addDomListener(latLngButton, 'click', function () {
-
-      map.panTo(pin.latLng);
-
-    });
-
-    eventHandler.addDomListenerOnce(trashButton, 'click', function () {
-
-      trashButton.parentNode.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
-
-      eventHandler.addDomListenerOnce(trashButton, 'click', function () {
-
-        removeMarkerAndInfoBox(pin.marker, pin.infoBox);
-
-        mapPins.splice(mapPins.indexOf(pin), 1);
-
-        renderDynamicComponents(mapPins);
-
-      });
-
-    });
-
-  });
 
 }

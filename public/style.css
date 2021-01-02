@@ -142,6 +142,33 @@ main {
   background: white;
 }
 
+.saved-places-filter-info {
+  display: inline-block;
+  position: absolute;
+  margin: 0;
+  border: 1px solid black;
+  border-top: 0;
+  background: crimson;
+  font-family: 'Roboto';
+  font-size: 12px;
+  font-weight: lighter;
+}
+
+.filter-pin {
+  display: inline-block;
+  padding: 5px 0px 0px 5px;
+}
+
+.fas.fa-times-circle {
+  vertical-align: top;
+  margin: 6px 5px 4px 2px;
+}
+
+.fas.fa-times-circle:hover {
+  cursor: pointer;
+  color: floralwhite;
+}
+
 .saved-places-list-container {
   max-height: 642px;
   height: 642px;

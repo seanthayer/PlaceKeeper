@@ -1,4 +1,4 @@
-<div class="saved-place-entry" name="{{name}}" data-latLng="{{latLng}}">
+<div class="saved-place-entry" name="{{name}}" {{#if description }} data-description="{{description}}" {{/if}} data-latLng="{{latLng}}">
 
   <h5 class="saved-place-entry-title">{{name}}</h5>
   <button type="button" name="saved-place-entry-latLng" class="saved-place-entry-latLng">({{lat}}, {{lng}})</button>

@@ -1,25 +1,70 @@
+function clearFilterPins() {
+
+  let filterInfoBox = document.querySelector('.saved-places-filter-info');
+
+  removeChildNodes(filterInfoBox);
+
+  if (!filterInfoBox.classList.contains('hidden')) {
+
+    filterInfoBox.classList.add('hidden');
+
+  }
+
+}
+
+function createFilterPin(filter) {
+
+  let filterInfoBox = document.querySelector('.saved-places-filter-info');
+  filterInfoBox.classList.remove('hidden');
+
+  let filterPin = document.createElement('div');
+  filterPin.classList.add('filter-pin-container');
+
+  filterPin.insertAdjacentHTML('afterbegin', `<span class="filter-pin">Filtering for: "${filter.text}</span>"`);
+  filterPin.insertAdjacentHTML('beforeend', `<i class="fas fa-times-circle"></i>`);
+
+  filterInfoBox.appendChild(filterPin);
+
+
+  let filterPin_XButton = filterPin.querySelector('.fas.fa-times-circle');
+
+  filterPin_XButton.addEventListener('click', function () {
+
+    clearFilterPins();
+
+    renderHandler.rerenderMap();
+
+  }, { once: true });
+
+}
+
 function doFilterUpdate() {
 
-  let savedPlacesList = document.querySelector('.saved-places-list-element');
   let filter = { text: document.querySelector('.search-bar-input').value.trim() }
-  let filteredEntryList = [];
 
+  if (filter.text) {
 
-  removeChildNodes(savedPlacesList);
+    let filterMap = [];
+    let primaryMap = renderHandler.primaryMapList;
+    let savedPlacesList = document.querySelector('.saved-places-list-element');
 
-  mapPins.forEach((pin) => {
+    removeChildNodes(savedPlacesList);
 
-    if (pinPassesFilter(pin, filter)) {
+    primaryMap.forEach((pin) => {
 
-      filteredEntryList.push(pin);
+      if ( pinPassesFilter(pin, filter) ) filterMap.push(pin);
 
-    }
+    });
 
-  });
+    clearFilterPins();
 
-  renderDynamicComponents(filteredEntryList);
+    renderHandler.renderComponents(filterMap);
 
-  document.querySelector('.search-bar-input').value = '';
+    createFilterPin(filter);
+
+    document.querySelector('.search-bar-input').value = '';
+
+  }
 
 }
 
@@ -98,6 +143,8 @@ function openImportModal() {
 
       importModal_Directory.querySelector(`#${uniqueID}`).addEventListener('click', function () {
 
+        clearFilterPins();
+
         importMap(item);
 
         importModal_CloseFunc();
@@ -118,7 +165,7 @@ function openSaveModal() {
   let saveModal_CloseButton = saveModal.querySelector('.modal-close-button');
   let saveModal_SaveButton = saveModal.querySelector('.modal-save-button');
   let saveModal_SelectAllCheckbox = saveModal.querySelector('.modal-table-select-all');
-  let saveModal_Checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
+  let saveModal_Checkboxes;
 
   let saveModal_CloseFunc = function () {
 
@@ -193,6 +240,10 @@ function openSaveModal() {
 
   } // End 'saveModal_CheckboxChangeListenerFunc'
 
+  renderHandler.renderSaveModal();
+
+  saveModal_Checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
+
   saveModal.classList.remove('hidden');
   saveModal_BackDrop.classList.remove('hidden');
 
@@ -204,6 +255,8 @@ function openSaveModal() {
   saveModal_SelectAllCheckbox.addEventListener('click', saveModal_SelectAllFunc);
 
   saveModal_Checkboxes.forEach((checkbox) => {
+
+    console.log('event listener');
 
     checkbox.addEventListener('change', saveModal_CheckboxChangeListenerFunc);
 
