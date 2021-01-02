@@ -1,63 +1,70 @@
-function doFilterUpdate() {
+function clearFilterPins() {
 
-  let savedPlacesList = document.querySelector('.saved-places-list-element');
-  let filter = { text: document.querySelector('.search-bar-input').value.trim() }
-  let filteredEntryList = [];
+  let filterInfoBox = document.querySelector('.saved-places-filter-info');
 
+  removeChildNodes(filterInfoBox);
 
-  removeChildNodes(savedPlacesList);
+  if (!filterInfoBox.classList.contains('hidden')) {
 
-  mapPins.forEach((pin) => {
+    filterInfoBox.classList.add('hidden');
 
-    if (pinPassesFilter(pin, filter)) {
-
-      filteredEntryList.push(pin);
-
-    }
-
-  });
-
-  renderDynamicComponents(filteredEntryList);
-
-  document.querySelector('.search-bar-input').value = '';
+  }
 
 }
 
-function getMapsDirectory(callback) {
+function createFilterPin(filter) {
 
-  let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
+  let filterInfoBox = document.querySelector('.saved-places-filter-info');
+  filterInfoBox.classList.remove('hidden');
 
-  let requestGET = new Request('/getMapsDirectory', { method: 'GET', headers: requestHEADER });
+  let filterPin = document.createElement('div');
+  filterPin.classList.add('filter-pin-container');
 
-  fetch(requestGET).then(function (res) {
+  filterPin.insertAdjacentHTML('afterbegin', `<span class="filter-pin">Filtering for: "${filter.text}</span>"`);
+  filterPin.insertAdjacentHTML('beforeend', `<i class="fas fa-times-circle"></i>`);
 
-    if (res.ok) {
+  filterInfoBox.appendChild(filterPin);
 
-      return res.json();
 
-    } else {
+  let filterPin_XButton = filterPin.querySelector('.fas.fa-times-circle');
 
-      console.error(`[ERROR] Data directory not found`);
+  filterPin_XButton.addEventListener('click', function () {
 
-      throw res.status;
+    clearFilterPins();
 
-    }
+    renderHandler.rerenderMap();
 
-  }).then(function (data) {
+  }, { once: true });
 
-    for (let i = 0; i < data.length; i++) {
+}
 
-      data[i] = data[i].split('.')[0];
+function doFilterUpdate() {
 
-    }
+  let filter = { text: document.querySelector('.search-bar-input').value.trim() }
 
-    callback(data);
+  if (filter.text) {
 
-  }).catch(function (err) {
+    let filterMap = [];
+    let primaryMap = renderHandler.primaryMapList;
+    let savedPlacesList = document.querySelector('.saved-places-list-element');
 
-    console.error('[ERROR] ' + err);
+    removeChildNodes(savedPlacesList);
 
-  });
+    primaryMap.forEach((pin) => {
+
+      if ( pinPassesFilter(pin, filter) ) filterMap.push(pin);
+
+    });
+
+    clearFilterPins();
+
+    renderHandler.renderComponents(filterMap);
+
+    createFilterPin(filter);
+
+    document.querySelector('.search-bar-input').value = '';
+
+  }
 
 }
 
@@ -87,7 +94,7 @@ function openImportModal() {
   importModal_XButton.addEventListener('click', importModal_CloseFunc);
   importModal_CloseButton.addEventListener('click', importModal_CloseFunc);
 
-  getMapsDirectory(function (data) {
+  renderHandler.getMapsDirectory(function (data) {
 
     data.forEach((item, i) => {
 
@@ -97,6 +104,8 @@ function openImportModal() {
       importModal_Directory.insertAdjacentHTML('beforeend', directoryEntry);
 
       importModal_Directory.querySelector(`#${uniqueID}`).addEventListener('click', function () {
+
+        clearFilterPins();
 
         importMap(item);
 
@@ -118,7 +127,7 @@ function openSaveModal() {
   let saveModal_CloseButton = saveModal.querySelector('.modal-close-button');
   let saveModal_SaveButton = saveModal.querySelector('.modal-save-button');
   let saveModal_SelectAllCheckbox = saveModal.querySelector('.modal-table-select-all');
-  let saveModal_Checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
+  let saveModal_Checkboxes;
 
   let saveModal_CloseFunc = function () {
 
@@ -193,6 +202,10 @@ function openSaveModal() {
 
   } // End 'saveModal_CheckboxChangeListenerFunc'
 
+  renderHandler.renderSaveModal();
+
+  saveModal_Checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
+
   saveModal.classList.remove('hidden');
   saveModal_BackDrop.classList.remove('hidden');
 
@@ -204,6 +217,8 @@ function openSaveModal() {
   saveModal_SelectAllCheckbox.addEventListener('click', saveModal_SelectAllFunc);
 
   saveModal_Checkboxes.forEach((checkbox) => {
+
+    console.log('event listener');
 
     checkbox.addEventListener('change', saveModal_CheckboxChangeListenerFunc);
 
