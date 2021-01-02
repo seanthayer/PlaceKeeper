@@ -29,6 +29,44 @@ var renderHandler = {
 
   },
 
+  getMapsDirectory: function (callback) {
+
+    let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
+
+    let requestGET = new Request('/getMapsDirectory', { method: 'GET', headers: requestHEADER });
+
+    fetch(requestGET).then(function (res) {
+
+      if (res.ok) {
+
+        return res.json();
+
+      } else {
+
+        console.error(`[ERROR] Data directory not found`);
+
+        throw res.status;
+
+      }
+
+    }).then(function (data) {
+
+      for (let i = 0; i < data.length; i++) {
+
+        data[i] = data[i].split('.')[0];
+
+      }
+
+      callback(data);
+
+    }).catch(function (err) {
+
+      console.error('[ERROR] ' + err);
+
+    });
+
+  },
+
   renderComponents: function (newRenderList, renderOptions = {mapEmbed: true, placesList: true}) {
 
     if (renderOptions.mapEmbed || renderOptions.mapEmbed === undefined) {
