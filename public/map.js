@@ -1,7 +1,7 @@
 var map;
 var mapNode = document.querySelector('#map');
 var mapClickListener;
-var eventHandler;
+var gMaps_eventHandler;
 
 var commsHandler = {
 
@@ -55,7 +55,7 @@ var renderHandler = {
 
     this.primaryMapList.forEach((pin) => {
 
-      removeMarkerAndInfoBox(pin.marker, pin.infoBox);
+      hidePin(pin);
 
     });
 
@@ -103,13 +103,13 @@ var renderHandler = {
 
     renderSubDiff.forEach((pin) => {
 
-      removeMarkerAndInfoBox(pin.marker, pin.infoBox);
+      hidePin(pin);
 
     });
 
     renderAddDiff.forEach((pin) => {
 
-      pin.marker.setMap(map);
+      showPin(pin);
 
     });
 
@@ -141,21 +141,21 @@ var renderHandler = {
       let latLngButton = listEntry.querySelector('button.saved-place-entry-latLng')
       let trashButton = listEntry.querySelector('button.trash-button');
 
-      eventHandler.addDomListener(latLngButton, 'click', function () {
+      gMaps_eventHandler.addDomListener(latLngButton, 'click', function () {
 
         map.panTo(pin.latLng);
 
       });
 
-      eventHandler.addDomListenerOnce(trashButton, 'click', function () {
+      gMaps_eventHandler.addDomListenerOnce(trashButton, 'click', function () {
 
         trashButton.parentNode.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
 
-        eventHandler.addDomListenerOnce(trashButton, 'click', function () {
+        gMaps_eventHandler.addDomListenerOnce(trashButton, 'click', function () {
 
           let primaryMap = renderHandler.primaryMapList;
 
-          removeMarkerAndInfoBox(pin.marker, pin.infoBox);
+          hidePin(pin);
 
           savedPlacesList.removeChild(listEntry);
 
@@ -236,7 +236,7 @@ function Pin(pin) {
   this.marker = pin.marker;
   this.name = pin.name;
   this.latLng = pin.latLng;
-  this.clickListener = eventHandler.addListenerOnce(this.marker, 'click', generateReadOnlyInfoBox);
+  this.clickListener = null;
   this.infoBox = null;
   this.description = null;
 
@@ -245,7 +245,7 @@ function Pin(pin) {
 // The API will callback 'initMap()' when finished loading
 function initMap() {
 
-  eventHandler = google.maps.event;
+  gMaps_eventHandler = google.maps.event;
 
   // Creates a new Map object and inserts it into the selected div
   map = new google.maps.Map(document.querySelector('#map'), {
@@ -257,7 +257,7 @@ function initMap() {
   });
 
   // Adds a 'click' listener on the map, and calls for the creation of a new pin form
-  mapClickListener = eventHandler.addListenerOnce(map, 'click', generateNewPinForm);
+  mapClickListener = gMaps_eventHandler.addListenerOnce(map, 'click', generateNewPinForm);
 
 }
 
@@ -307,7 +307,7 @@ function generateNewPinForm(event) {
   let newPin_InfoForm = generatePinInfoBox(map, clickEventLatLng, newPin_InfoFormHTML);
 
   // Wait for the dynamically generated infobox to be loaded
-  eventHandler.addListenerOnce(newPin_InfoForm, 'domready', function () {
+  gMaps_eventHandler.addListenerOnce(newPin_InfoForm, 'domready', function () {
 
     let newPin = {
 
@@ -319,7 +319,7 @@ function generateNewPinForm(event) {
 
     handleNewPinForm(newPin, function () {
 
-      mapClickListener = eventHandler.addListenerOnce(map, 'click', generateNewPinForm);
+      mapClickListener = gMaps_eventHandler.addListenerOnce(map, 'click', generateNewPinForm);
 
     });
 
@@ -372,7 +372,7 @@ function generateReadOnlyInfoBox(event) {
 
   eventOriginPin.infoBox = readOnlyInfoBox;
 
-  eventHandler.addListenerOnce(readOnlyInfoBox, 'domready', function () {
+  gMaps_eventHandler.addListenerOnce(readOnlyInfoBox, 'domready', function () {
 
     handleReadOnlyInfoBox(eventOriginPin);
 
@@ -388,7 +388,7 @@ function handleNewPinForm(newPinObject, callback) {
   let infoForm_SaveButton = infoForm.querySelector('button[name="save"]');
   let infoForm_CancelButton = infoForm.querySelector('button[name="cancel"]');
 
-  eventHandler.addDomListener(infoForm_SaveButton, 'click', function () {
+  gMaps_eventHandler.addDomListener(infoForm_SaveButton, 'click', function () {
 
     let primaryMap = renderHandler.primaryMapList;
 
@@ -404,7 +404,10 @@ function handleNewPinForm(newPinObject, callback) {
 
       });
 
+      pin_.clickListener = gMaps_eventHandler.addListenerOnce(pin_.marker, 'click', generateReadOnlyInfoBox);
+
       if (infoForm_DescField.value) pin_.description = infoForm_DescField.value;
+
 
       primaryMap.push(pin_);
 
@@ -422,16 +425,16 @@ function handleNewPinForm(newPinObject, callback) {
 
   });
 
-  eventHandler.addDomListener(infoForm_CancelButton, 'click', function () {
+  gMaps_eventHandler.addDomListener(infoForm_CancelButton, 'click', function () {
 
-    removeMarkerAndInfoBox(newPinObject.marker, newPinObject.infoBox);
+    hidePin(newPinObject);
     callback();
 
   });
 
-  eventHandler.addListener(newPinObject.infoBox, 'closeclick', function () {
+  gMaps_eventHandler.addListener(newPinObject.infoBox, 'closeclick', function () {
 
-    removeMarkerAndInfoBox(newPinObject.marker, newPinObject.infoBox);
+    hidePin(newPinObject);
     callback();
 
   });
@@ -444,17 +447,17 @@ function handleReadOnlyInfoBox(pin) {
   let infoBox_ButtonContainer = infoBox.querySelector('.trash-button-container');
   let infoBox_TrashButton = infoBox_ButtonContainer.querySelector('button.trash-button');
 
-  eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
+  gMaps_eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
 
     infoBox_ButtonContainer.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
 
-    eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
+    gMaps_eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
 
       let primaryMap = renderHandler.primaryMapList;
       let savedPlacesList = document.querySelector('.saved-places-list-element');
       let listEntry = savedPlacesList.querySelector(`[data-latLng="${pin.latLng}"]`);
 
-      removeMarkerAndInfoBox(pin.marker, pin.infoBox);
+      hidePin(pin);
 
       savedPlacesList.removeChild(listEntry);
 
@@ -464,11 +467,11 @@ function handleReadOnlyInfoBox(pin) {
 
   });
 
-  eventHandler.addListenerOnce(pin.infoBox, 'closeclick', function () {
+  gMaps_eventHandler.addListenerOnce(pin.infoBox, 'closeclick', function () {
 
     pin.infoBox.close();
 
-    pin.clickListener = eventHandler.addListenerOnce(pin.marker, 'click', generateReadOnlyInfoBox);
+    pin.clickListener = gMaps_eventHandler.addListenerOnce(pin.marker, 'click', generateReadOnlyInfoBox);
 
   });
 
@@ -579,10 +582,20 @@ function importMap(mapName) {
 
 }
 
-function removeMarkerAndInfoBox(marker, infoBox=null) {
+function hidePin(pin) {
 
-  marker.setMap(null);
+  pin.marker.setMap(null);
 
-  if (infoBox) infoBox.close();
+  if (pin.clickListener) pin.clickListener.remove();
+
+  if (pin.infoBox) pin.infoBox.close();
+
+}
+
+function showPin(pin) {
+
+  pin.marker.setMap(map);
+
+  pin.clickListener = gMaps_eventHandler.addListenerOnce(pin.marker, 'click', generateReadOnlyInfoBox);
 
 }
