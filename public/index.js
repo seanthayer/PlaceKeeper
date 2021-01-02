@@ -32,7 +32,7 @@ function createFilterPin(filter) {
 
     clearFilterPins();
 
-    renderHandler.rerenderMap();
+    renderHandler.rerenderMap(g_mapEmbed);
 
   }, { once: true });
 
@@ -58,7 +58,7 @@ function doFilterUpdate() {
 
     clearFilterPins();
 
-    renderHandler.renderComponents(filterMap);
+    renderHandler.renderComponents(filterMap, g_mapEmbed);
 
     createFilterPin(filter);
 
@@ -104,7 +104,7 @@ function openImportModal() {
 
         clearFilterPins();
 
-        importMap(mapName);
+        importMap(mapName, g_mapEmbed);
 
         importModal_CloseFunc();
 

@@ -1,235 +1,8 @@
-var map;
-var mapNode = document.querySelector('#map');
-var mapClickListener;
-var gMaps_eventHandler;
-
-var commsHandler = {
-
-  getMapsDirectory: function (callback) {
-
-    let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
-
-    let requestGET = new Request('/getMapsDirectory', { method: 'GET', headers: requestHEADER });
-
-    fetch(requestGET).then(function (res) {
-
-      if (res.ok) {
-
-        return res.json();
-
-      } else {
-
-        console.error(`[ERROR] Data directory not found`);
-
-        throw res.status;
-
-      }
-
-    }).then(function (data) {
-
-      for (let i = 0; i < data.length; i++) {
-
-        data[i] = data[i].split('.')[0];
-
-      }
-
-      callback(data);
-
-    }).catch(function (err) {
-
-      console.error('[ERROR] ' + err);
-
-    });
-
-  }
-
-}
-
-var renderHandler = {
-
-  currentRenderList: [],
-
-  primaryMapList: [],
-
-  setNewPrimaryMap: function (newMap) {
-
-    this.primaryMapList.forEach((pin) => {
-
-      hidePin(pin);
-
-    });
-
-    this.currentRenderList = [];
-    this.renderComponents(newMap);
-    this.primaryMapList = newMap;
-
-  },
-
-  rerenderMap: function () {
-
-    this.renderComponents(this.primaryMapList);
-
-  },
-
-  renderComponents: function (newRenderList) {
-
-    // Begin map render
-
-    let setIntersect = [];
-
-    for (let i = 0; i < this.currentRenderList.length; i++) {
-
-      for (let  j = 0; j < newRenderList.length; j++) {
-
-        let currentPin_latLng = this.currentRenderList[i].latLng.toString();
-        let newPin_latLng = newRenderList[j].latLng.toString();
-
-        if (currentPin_latLng === newPin_latLng) {
-
-          setIntersect.push(currentPin_latLng);
-
-        }
-
-      }
-
-    }
-
-    let renderSubDiff = this.currentRenderList.filter(pin => !setIntersect.includes(pin.latLng.toString()) );
-    let renderAddDiff = newRenderList.filter(pin => !setIntersect.includes(pin.latLng.toString()) );
-
-    console.log('Intersect: ', setIntersect);
-    console.log('Sub diff: ', renderSubDiff);
-    console.log('Add diff: ', renderAddDiff);
-
-    renderSubDiff.forEach((pin) => {
-
-      hidePin(pin);
-
-    });
-
-    renderAddDiff.forEach((pin) => {
-
-      showPin(pin);
-
-    });
-
-    // End map render
-
-    // Begin placesList render
-
-    let savedPlacesList = document.querySelector('.saved-places-list-element');
-
-    removeChildNodes(savedPlacesList);
-
-    newRenderList.forEach((pin) => {
-
-      let context = {
-
-        name: pin.name,
-        latLng: pin.latLng,
-        lat: pin.latLng.lat(),
-        lng: pin.latLng.lng()
-
-      }
-
-      if (pin.description) context.description = pin.description;
-
-      let savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
-      savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
-
-      let listEntry = savedPlacesList.querySelector(`[data-latLng="${pin.latLng}"]`);
-      let latLngButton = listEntry.querySelector('button.saved-place-entry-latLng')
-      let trashButton = listEntry.querySelector('button.trash-button');
-
-      gMaps_eventHandler.addDomListener(latLngButton, 'click', function () {
-
-        map.panTo(pin.latLng);
-
-      });
-
-      gMaps_eventHandler.addDomListenerOnce(trashButton, 'click', function () {
-
-        trashButton.parentNode.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
-
-        gMaps_eventHandler.addDomListenerOnce(trashButton, 'click', function () {
-
-          let primaryMap = renderHandler.primaryMapList;
-
-          hidePin(pin);
-
-          savedPlacesList.removeChild(listEntry);
-
-          primaryMap.splice(primaryMap.indexOf(pin), 1);
-
-        });
-
-      });
-
-    });
-
-    // End placesList render
-
-    this.currentRenderList = newRenderList;
-
-  },
-
-  renderSaveModal: function () {
-
-    let saveModal = document.querySelector('.modal-container.save-modal')
-    let saveModal_ModalTable = saveModal.querySelector('.modal-table');
-    let saveModal_TableRows = saveModal_ModalTable.querySelectorAll('tr.modal-table-row');
-
-    saveModal_TableRows.forEach((node) => {
-
-      // TODO: What does this even select?
-      node.parentNode.remove();
-
-    });
-
-    this.primaryMapList.forEach((pin) => {
-
-      let context = {
-
-        name: pin.name,
-        lat: pin.latLng.lat(),
-        lng: pin.latLng.lng()
-
-      }
-
-      if (pin.description) context.description = pin.description;
-
-      let pinsHTML = Handlebars.templates.pinTableRow(context);
-      saveModal_ModalTable.insertAdjacentHTML('beforeend', pinsHTML);
-
-    });
-
-  },
-
-  renderImportModal: function (callback) {
-
-    // This function deals with 'commsHandler' and requires a callback to ensure data availability.
-
-    let importModal = document.querySelector('.modal-container.import-modal');
-    let importModal_Directory = importModal.querySelector('.modal-directory-container');
-
-    commsHandler.getMapsDirectory(function (data) {
-
-      data.forEach((item, i) => {
-
-        let uniqueID = item + '.' + i;
-        let directoryEntry = `<div class="map-directory-entry-container" data-id="${uniqueID}"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`;
-
-        importModal_Directory.insertAdjacentHTML('beforeend', directoryEntry);
-
-      });
-
-      callback();
-
-    });
-
-  }
-
-}
+// 'g_' prefix denotes a global variable
+
+var g_mapNode;
+var g_mapEventHandler;
+var g_mapEmbed;
 
 function Pin(pin) {
 
@@ -245,10 +18,12 @@ function Pin(pin) {
 // The API will callback 'initMap()' when finished loading
 function initMap() {
 
-  gMaps_eventHandler = google.maps.event;
+  g_mapNode = document.querySelector('#map');
+
+  g_mapEventHandler = google.maps.event;
 
   // Creates a new Map object and inserts it into the selected div
-  map = new google.maps.Map(document.querySelector('#map'), {
+  g_mapEmbed = new google.maps.Map(document.querySelector('#map'), {
 
     center: { lat: 43.815136416911436, lng: -120.6398112171833 },
     zoom: 5,
@@ -257,7 +32,7 @@ function initMap() {
   });
 
   // Adds a 'click' listener on the map, and calls for the creation of a new pin form
-  mapClickListener = gMaps_eventHandler.addListenerOnce(map, 'click', generateNewPinForm);
+  g_mapEventHandler.addListenerOnce(g_mapEmbed, 'click', generateNewPinForm);
 
 }
 
@@ -299,15 +74,15 @@ function generateNewPinForm(event) {
   let newPin_Marker = new google.maps.Marker({
 
     position: clickEventLatLng,
-    map: map
+    map: g_mapEmbed
 
   });
 
   let newPin_InfoFormHTML = Handlebars.templates.pinInfoForm();
-  let newPin_InfoForm = generatePinInfoBox(map, clickEventLatLng, newPin_InfoFormHTML);
+  let newPin_InfoForm = generatePinInfoBox(clickEventLatLng, newPin_InfoFormHTML, g_mapEmbed);
 
   // Wait for the dynamically generated infobox to be loaded
-  gMaps_eventHandler.addListenerOnce(newPin_InfoForm, 'domready', function () {
+  g_mapEventHandler.addListenerOnce(newPin_InfoForm, 'domready', function () {
 
     let newPin = {
 
@@ -319,7 +94,7 @@ function generateNewPinForm(event) {
 
     handleNewPinForm(newPin, function () {
 
-      mapClickListener = gMaps_eventHandler.addListenerOnce(map, 'click', generateNewPinForm);
+      g_mapEventHandler.addListenerOnce(g_mapEmbed, 'click', generateNewPinForm);
 
     });
 
@@ -327,7 +102,7 @@ function generateNewPinForm(event) {
 
 }
 
-function generatePinInfoBox(map, latLng, html) {
+function generatePinInfoBox(latLng, html, mapEmbed) {
 
   // 'offset' is used for the 'pixelOffset' option and must be defined by a 'Size' object
   let offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
@@ -336,7 +111,7 @@ function generatePinInfoBox(map, latLng, html) {
   infoBox.setPosition(latLng);
   infoBox.setContent(html);
   infoBox.setOptions({ pixelOffset: offset });
-  infoBox.open(map);
+  infoBox.open(mapEmbed);
 
   return infoBox;
 
@@ -356,7 +131,7 @@ function generateReadOnlyInfoBox(event) {
 
   });
 
-  map.panTo(eventOriginPin.latLng);
+  g_mapEmbed.panTo(eventOriginPin.latLng);
 
   let context = {
 
@@ -368,11 +143,11 @@ function generateReadOnlyInfoBox(event) {
   if (eventOriginPin.description) context.description = eventOriginPin.description;
 
   let readOnlyInfoBoxHTML = Handlebars.templates.pinInfoBoxReadOnly(context);
-  let readOnlyInfoBox = generatePinInfoBox(map, eventOriginPin.latLng, readOnlyInfoBoxHTML);
+  let readOnlyInfoBox = generatePinInfoBox(eventOriginPin.latLng, readOnlyInfoBoxHTML, g_mapEmbed);
 
   eventOriginPin.infoBox = readOnlyInfoBox;
 
-  gMaps_eventHandler.addListenerOnce(readOnlyInfoBox, 'domready', function () {
+  g_mapEventHandler.addListenerOnce(readOnlyInfoBox, 'domready', function () {
 
     handleReadOnlyInfoBox(eventOriginPin);
 
@@ -382,13 +157,13 @@ function generateReadOnlyInfoBox(event) {
 
 function handleNewPinForm(newPinObject, callback) {
 
-  let infoForm = mapNode.querySelector('.pin-infoform-container');
+  let infoForm = g_mapNode.querySelector('.pin-infoform-container');
   let infoForm_NameField = infoForm.querySelector('input.pin-infoform-name');
   let infoForm_DescField = infoForm.querySelector('textarea.pin-infoform-description');
   let infoForm_SaveButton = infoForm.querySelector('button[name="save"]');
   let infoForm_CancelButton = infoForm.querySelector('button[name="cancel"]');
 
-  gMaps_eventHandler.addDomListener(infoForm_SaveButton, 'click', function () {
+  g_mapEventHandler.addDomListener(infoForm_SaveButton, 'click', function () {
 
     let primaryMap = renderHandler.primaryMapList;
 
@@ -396,7 +171,7 @@ function handleNewPinForm(newPinObject, callback) {
 
       newPinObject.infoBox.close();
 
-      let pin_ = new Pin({
+      let _pin = new Pin({
 
         marker: newPinObject.marker,
         name: infoForm_NameField.value,
@@ -404,16 +179,16 @@ function handleNewPinForm(newPinObject, callback) {
 
       });
 
-      pin_.clickListener = gMaps_eventHandler.addListenerOnce(pin_.marker, 'click', generateReadOnlyInfoBox);
+      _pin.clickListener = g_mapEventHandler.addListenerOnce(_pin.marker, 'click', generateReadOnlyInfoBox);
 
-      if (infoForm_DescField.value) pin_.description = infoForm_DescField.value;
+      if (infoForm_DescField.value) _pin.description = infoForm_DescField.value;
 
 
-      primaryMap.push(pin_);
+      primaryMap.push(_pin);
 
       clearFilterPins();
 
-      renderHandler.rerenderMap();
+      renderHandler.rerenderMap(g_mapEmbed);
 
       callback();
 
@@ -425,14 +200,14 @@ function handleNewPinForm(newPinObject, callback) {
 
   });
 
-  gMaps_eventHandler.addDomListener(infoForm_CancelButton, 'click', function () {
+  g_mapEventHandler.addDomListener(infoForm_CancelButton, 'click', function () {
 
     hidePin(newPinObject);
     callback();
 
   });
 
-  gMaps_eventHandler.addListener(newPinObject.infoBox, 'closeclick', function () {
+  g_mapEventHandler.addListener(newPinObject.infoBox, 'closeclick', function () {
 
     hidePin(newPinObject);
     callback();
@@ -443,15 +218,15 @@ function handleNewPinForm(newPinObject, callback) {
 
 function handleReadOnlyInfoBox(pin) {
 
-  let infoBox = mapNode.querySelector(`.pin-infobox-readonly-container[data-latLng="${pin.latLng}"]`)
+  let infoBox = g_mapNode.querySelector(`.pin-infobox-readonly-container[data-latLng="${pin.latLng}"]`)
   let infoBox_ButtonContainer = infoBox.querySelector('.trash-button-container');
   let infoBox_TrashButton = infoBox_ButtonContainer.querySelector('button.trash-button');
 
-  gMaps_eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
+  g_mapEventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
 
     infoBox_ButtonContainer.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
 
-    gMaps_eventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
+    g_mapEventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
 
       let primaryMap = renderHandler.primaryMapList;
       let savedPlacesList = document.querySelector('.saved-places-list-element');
@@ -467,11 +242,11 @@ function handleReadOnlyInfoBox(pin) {
 
   });
 
-  gMaps_eventHandler.addListenerOnce(pin.infoBox, 'closeclick', function () {
+  g_mapEventHandler.addListenerOnce(pin.infoBox, 'closeclick', function () {
 
     pin.infoBox.close();
 
-    pin.clickListener = gMaps_eventHandler.addListenerOnce(pin.marker, 'click', generateReadOnlyInfoBox);
+    pin.clickListener = g_mapEventHandler.addListenerOnce(pin.marker, 'click', generateReadOnlyInfoBox);
 
   });
 
@@ -519,7 +294,7 @@ function handleSaveModalInputs(callback) {
 
 }
 
-function importMap(mapName) {
+function importMap(mapName, mapEmbed) {
 
   let mapURL = '/importMap/' + mapName;
 
@@ -558,7 +333,7 @@ function importMap(mapName) {
 
       });
 
-      let pin_ = new Pin({
+      let _pin = new Pin({
 
         marker: marker,
         name: entry.name,
@@ -566,13 +341,13 @@ function importMap(mapName) {
 
       });
 
-      if (entry.description) pin_.description = entry.description;
+      if (entry.description) _pin.description = entry.description;
 
-      importMap.push(pin_);
+      importMap.push(_pin);
 
     });
 
-    renderHandler.setNewPrimaryMap(importMap);
+    renderHandler.setNewPrimaryMap(importMap, mapEmbed);
 
   }).catch(function (err) {
 
@@ -592,10 +367,10 @@ function hidePin(pin) {
 
 }
 
-function showPin(pin) {
+function showPin(pin, mapEmbed) {
 
-  pin.marker.setMap(map);
+  pin.marker.setMap(mapEmbed);
 
-  pin.clickListener = gMaps_eventHandler.addListenerOnce(pin.marker, 'click', generateReadOnlyInfoBox);
+  pin.clickListener = g_mapEventHandler.addListenerOnce(pin.marker, 'click', generateReadOnlyInfoBox);
 
 }
