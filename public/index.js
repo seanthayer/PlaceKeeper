@@ -32,7 +32,7 @@ function createFilterPin(filter) {
 
     clearFilterPins();
 
-    renderHandler.rerenderMap(g_mapEmbed);
+    renderHandler.map.rerender(g_mapEmbed);
 
   }, { once: true });
 
@@ -45,7 +45,7 @@ function doFilterUpdate() {
   if (filter.text) {
 
     let filterMap = [];
-    let primaryMap = renderHandler.primaryMapList;
+    let primaryMap = renderHandler.map.primaryMapList;
     let savedPlacesList = document.querySelector('.saved-places-list-element');
 
     removeChildNodes(savedPlacesList);
@@ -58,7 +58,7 @@ function doFilterUpdate() {
 
     clearFilterPins();
 
-    renderHandler.renderComponents(filterMap, g_mapEmbed);
+    renderHandler.map.renderComponents(filterMap, g_mapEmbed);
 
     createFilterPin(filter);
 
@@ -94,7 +94,7 @@ function openImportModal() {
   importModal_xButton.addEventListener('click', importModal_closeFunc);
   importModal_closeButton.addEventListener('click', importModal_closeFunc);
 
-  renderHandler.renderImportModal(function () {
+  renderHandler.importModal.render(function () {
 
     importModal_directory.querySelectorAll('.map-directory-entry-container').forEach((entry) => {
 

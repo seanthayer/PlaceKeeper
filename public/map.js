@@ -90,7 +90,7 @@ function generateReadOnlyInfoBox(event) {
 
   let eventOriginPin;
 
-  renderHandler.currentRenderList.forEach((pin) => {
+  renderHandler.map.currentRenderList.forEach((pin) => {
 
     if (pin.latLng === event.latLng) {
 
@@ -134,7 +134,7 @@ function handleNewPinForm(newPinObject, callback) {
 
   g_mapEventHandler.addDomListener(infoForm_saveButton, 'click', function () {
 
-    let primaryMap = renderHandler.primaryMapList;
+    let primaryMap = renderHandler.map.primaryMapList;
 
     if (infoForm_nameField.value) {
 
@@ -157,7 +157,7 @@ function handleNewPinForm(newPinObject, callback) {
 
       clearFilterPins();
 
-      renderHandler.rerenderMap(g_mapEmbed);
+      renderHandler.map.rerender(g_mapEmbed);
 
       callback();
 
@@ -197,7 +197,7 @@ function handleReadOnlyInfoBox(pin) {
 
     g_mapEventHandler.addDomListenerOnce(infoBox_trashButton, 'click', function () {
 
-      let primaryMap = renderHandler.primaryMapList;
+      let primaryMap = renderHandler.map.primaryMapList;
       let savedPlacesList = document.querySelector('.saved-places-list-element');
       let listEntry = savedPlacesList.querySelector(`[data-latLng="${pin.latLng}"]`);
 
@@ -251,7 +251,7 @@ function handleSaveModalInputs(callback) {
 
     });
 
-    commsHandler.exportMap(fileName, pinData, callback);
+    commsHandler.put.exportMap(fileName, pinData, callback);
 
   } else {
 
@@ -314,7 +314,7 @@ function importMap(mapName, mapEmbed) {
 
     });
 
-    renderHandler.setNewPrimaryMap(importMap, mapEmbed);
+    renderHandler.map.setNewPrimaryMap(importMap, mapEmbed);
 
   }).catch(function (err) {
 

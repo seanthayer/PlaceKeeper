@@ -1,77 +1,85 @@
 var commsHandler = {
 
-  getMapsDirectory: function (callback) {
+  get: {
 
-    let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
+    mapsDirectory: function (callback) {
 
-    let requestGET = new Request('/getMapsDirectory', { method: 'GET', headers: requestHEADER });
+      let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
 
-    fetch(requestGET).then(function (res) {
+      let requestGET = new Request('/getMapsDirectory', { method: 'GET', headers: requestHEADER });
 
-      if (res.ok) {
+      fetch(requestGET).then(function (res) {
 
-        return res.json();
+        if (res.ok) {
 
-      } else {
+          return res.json();
 
-        console.error(`[ERROR] Data directory not found`);
+        } else {
 
-        throw res.status;
+          console.error(`[ERROR] Data directory not found`);
 
-      }
+          throw res.status;
 
-    }).then(function (data) {
+        }
 
-      for (let i = 0; i < data.length; i++) {
+      }).then(function (data) {
 
-        data[i] = data[i].split('.')[0];
+        for (let i = 0; i < data.length; i++) {
 
-      }
+          data[i] = data[i].split('.')[0];
 
-      callback(data);
+        }
 
-    }).catch(function (err) {
+        callback(data);
 
-      console.error('[ERROR] ' + err);
+      }).catch(function (err) {
 
-    });
+        console.error('[ERROR] ' + err);
 
-  },
-
-  exportMap: function (fileName, data, callback) {
-
-    let entryData = {
-
-      fileName: fileName,
-      data: data
+      });
 
     }
 
-    let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
+  },
 
-    let requestPOST = new Request('/exportFile', { method: 'POST', headers: requestHEADER, body: JSON.stringify(entryData) });
+  put: {
 
-    fetch(requestPOST).then(function (res) {
+    exportMap: function (fileName, data, callback) {
 
-      if (res.ok) {
+      let entryData = {
 
-        console.log('POST Successful');
-
-      } else {
-
-        console.warn('[WARN] ' + res.status);
-
-        alert('Error saving map data!');
+        fileName: fileName,
+        data: data
 
       }
 
-      callback();
+      let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
 
-    }).catch(function (err) {
+      let requestPOST = new Request('/exportFile', { method: 'POST', headers: requestHEADER, body: JSON.stringify(entryData) });
 
-      console.error('[ERROR] ' + err);
+      fetch(requestPOST).then(function (res) {
 
-    });
+        if (res.ok) {
+
+          console.log('POST Successful');
+
+        } else {
+
+          console.warn('[WARN] ' + res.status);
+
+          alert('Error saving map data!');
+
+        }
+
+        callback();
+
+      }).catch(function (err) {
+
+        console.error('[ERROR] ' + err);
+
+      });
+
+    }
 
   }
 
@@ -79,103 +87,107 @@ var commsHandler = {
 
 var renderHandler = {
 
-  currentRenderList: [],
+  map: {
 
-  primaryMapList: [],
+    currentRenderList: [],
 
-  setNewPrimaryMap: function (newMap, mapEmbed) {
+    primaryMapList: [],
 
-    this.primaryMapList.forEach((pin) => {
+    setNewPrimaryMap: function (newMap, mapEmbed) {
 
-      hidePin(pin);
+      this.primaryMapList.forEach((pin) => {
 
-    });
+        hidePin(pin);
 
-    this.currentRenderList = [];
-    this.renderComponents(newMap, mapEmbed);
-    this.primaryMapList = newMap;
+      });
 
-  },
+      this.currentRenderList = [];
+      this.renderComponents(newMap, mapEmbed);
+      this.primaryMapList = newMap;
 
-  rerenderMap: function (mapEmbed) {
+    },
 
-    this.renderComponents(this.primaryMapList, mapEmbed);
+    rerender: function (mapEmbed) {
 
-  },
+      this.renderComponents(this.primaryMapList, mapEmbed);
 
-  renderComponents: function (newRenderList, mapEmbed) {
+    },
 
-    // Begin map render
+    renderComponents: function (newRenderList, mapEmbed) {
 
-    let setIntersect = [];
+      // Begin map render
 
-    for (let i = 0; i < this.currentRenderList.length; i++) {
+      let setIntersect = [];
 
-      for (let  j = 0; j < newRenderList.length; j++) {
+      for (let i = 0; i < this.currentRenderList.length; i++) {
 
-        let currentPin_latLng = this.currentRenderList[i].latLng.toString();
-        let newPin_latLng = newRenderList[j].latLng.toString();
+        for (let  j = 0; j < newRenderList.length; j++) {
 
-        if (currentPin_latLng === newPin_latLng) {
+          let currentPin_latLng = this.currentRenderList[i].latLng.toString();
+          let newPin_latLng = newRenderList[j].latLng.toString();
 
-          setIntersect.push(currentPin_latLng);
+          if (currentPin_latLng === newPin_latLng) {
+
+            setIntersect.push(currentPin_latLng);
+
+          }
 
         }
 
       }
 
-    }
+      let renderSubDiff = this.currentRenderList.filter(pin => !setIntersect.includes(pin.latLng.toString()) );
+      let renderAddDiff = newRenderList.filter(pin => !setIntersect.includes(pin.latLng.toString()) );
 
-    let renderSubDiff = this.currentRenderList.filter(pin => !setIntersect.includes(pin.latLng.toString()) );
-    let renderAddDiff = newRenderList.filter(pin => !setIntersect.includes(pin.latLng.toString()) );
+      console.log('Intersect: ', setIntersect);
+      console.log('Sub diff: ', renderSubDiff);
+      console.log('Add diff: ', renderAddDiff);
 
-    console.log('Intersect: ', setIntersect);
-    console.log('Sub diff: ', renderSubDiff);
-    console.log('Add diff: ', renderAddDiff);
+      renderSubDiff.forEach((pin) => {
 
-    renderSubDiff.forEach((pin) => {
+        hidePin(pin);
 
-      hidePin(pin);
+      });
 
-    });
+      renderAddDiff.forEach((pin) => {
 
-    renderAddDiff.forEach((pin) => {
+        showPin(pin, mapEmbed);
 
-      showPin(pin, mapEmbed);
+      });
 
-    });
+      // End map render
 
-    // End map render
+      // Begin placesList render
 
-    // Begin placesList render
+      let savedPlacesList = document.querySelector('.saved-places-list-element');
 
-    let savedPlacesList = document.querySelector('.saved-places-list-element');
+      removeChildNodes(savedPlacesList);
 
-    removeChildNodes(savedPlacesList);
+      newRenderList.forEach((pin) => {
 
-    newRenderList.forEach((pin) => {
+        let context = {
 
-      let context = {
+          name: pin.name,
+          latLng: pin.latLng,
+          lat: pin.latLng.lat(),
+          lng: pin.latLng.lng()
 
-        name: pin.name,
-        latLng: pin.latLng,
-        lat: pin.latLng.lat(),
-        lng: pin.latLng.lng()
+        }
 
-      }
+        if (pin.description) context.description = pin.description;
 
-      if (pin.description) context.description = pin.description;
+        let savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
+        savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
 
-      let savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
-      savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
+        interfaceHandler.placesList.generateListeners(pin, mapEmbed);
 
-      interfaceHandler.placesList.generateListeners(pin, mapEmbed);
+      });
 
-    });
+      // End placesList render
 
-    // End placesList render
+      this.currentRenderList = newRenderList;
 
-    this.currentRenderList = newRenderList;
+    },
 
   },
 
@@ -217,25 +229,29 @@ var renderHandler = {
 
   },
 
-  renderImportModal: function (callback) {
+  importModal: {
 
-    let importModal = document.querySelector('.modal-container.import-modal');
-    let importModal_Directory = importModal.querySelector('.modal-directory-container');
+    render: function (callback) {
 
-    commsHandler.getMapsDirectory(function (data) {
+      let importModal = document.querySelector('.modal-container.import-modal');
+      let importModal_Directory = importModal.querySelector('.modal-directory-container');
 
-      data.forEach((item, i) => {
+      commsHandler.get.mapsDirectory(function (data) {
 
-        let uniqueID = item + '.' + i;
-        let directoryEntry = `<div class="map-directory-entry-container" data-id="${uniqueID}"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`;
+        data.forEach((item, i) => {
 
-        importModal_Directory.insertAdjacentHTML('beforeend', directoryEntry);
+          let uniqueID = item + '.' + i;
+          let directoryEntry = `<div class="map-directory-entry-container" data-id="${uniqueID}"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`;
+
+          importModal_Directory.insertAdjacentHTML('beforeend', directoryEntry);
+
+        });
+
+        callback();
 
       });
 
-      callback();
-
-    });
+    }
 
   }
 
@@ -264,7 +280,7 @@ var interfaceHandler = {
 
         trashButton.addEventListener('click', function () {
 
-          let primaryMap = renderHandler.primaryMapList;
+          let primaryMap = renderHandler.map.primaryMapList;
 
           hidePin(pin);
 
