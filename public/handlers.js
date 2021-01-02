@@ -36,6 +36,43 @@ var commsHandler = {
 
     });
 
+  },
+
+  exportMap: function (fileName, data, callback) {
+
+    let entryData = {
+
+      fileName: fileName,
+      data: data
+
+    }
+
+    let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
+
+    let requestPOST = new Request('/exportFile', { method: 'POST', headers: requestHEADER, body: JSON.stringify(entryData) });
+
+    fetch(requestPOST).then(function (res) {
+
+      if (res.ok) {
+
+        console.log('POST Successful');
+
+      } else {
+
+        console.warn('[WARN] ' + res.status);
+
+        alert('Error saving map data!');
+
+      }
+
+      callback();
+
+    }).catch(function (err) {
+
+      console.error('[ERROR] ' + err);
+
+    });
+
   }
 
 }
@@ -168,7 +205,7 @@ var renderHandler = {
 
   },
 
-  renderSaveModal: function () {
+  renderSaveModal: function (callback) {
 
     let saveModal = document.querySelector('.modal-container.save-modal')
     let saveModal_ModalTable = saveModal.querySelector('.modal-table');
@@ -198,11 +235,13 @@ var renderHandler = {
 
     });
 
+    callback();
+
   },
 
-  renderImportModal: function (callback) {
+  _saveModal_close: ,
 
-    // This function deals with 'commsHandler' and requires a callback to ensure data availability.
+  renderImportModal: function (callback) {
 
     let importModal = document.querySelector('.modal-container.import-modal');
     let importModal_Directory = importModal.querySelector('.modal-directory-container');

@@ -26,9 +26,9 @@ function createFilterPin(filter) {
   filterInfoBox.appendChild(filterPin);
 
 
-  let filterPin_XButton = filterPin.querySelector('.fas.fa-times-circle');
+  let filterPin_xButton = filterPin.querySelector('.fas.fa-times-circle');
 
-  filterPin_XButton.addEventListener('click', function () {
+  filterPin_xButton.addEventListener('click', function () {
 
     clearFilterPins();
 
@@ -71,32 +71,32 @@ function doFilterUpdate() {
 function openImportModal() {
 
   let importModal = document.querySelector('.modal-container.import-modal');
-  let importModal_BackDrop = document.querySelector('.modal-backdrop.import-modal');
-  let importModal_XButton = importModal.querySelector('.modal-x-button');
-  let importModal_CloseButton = importModal.querySelector('.modal-close-button');
-  let importModal_Directory = importModal.querySelector('.modal-directory-container');
+  let importModal_backdrop = document.querySelector('.modal-backdrop.import-modal');
+  let importModal_xButton = importModal.querySelector('.modal-x-button');
+  let importModal_closeButton = importModal.querySelector('.modal-close-button');
+  let importModal_directory = importModal.querySelector('.modal-directory-container');
 
-  let importModal_CloseFunc = function () {
+  let importModal_closeFunc = function () {
 
     importModal.classList.add('hidden');
-    importModal_BackDrop.classList.add('hidden');
+    importModal_backdrop.classList.add('hidden');
 
-    removeChildNodes(importModal_Directory);
+    removeChildNodes(importModal_directory);
 
-    importModal_XButton.removeEventListener('click', importModal_CloseFunc);
-    importModal_CloseButton.removeEventListener('click', importModal_CloseFunc);
+    importModal_xButton.removeEventListener('click', importModal_closeFunc);
+    importModal_closeButton.removeEventListener('click', importModal_closeFunc);
 
   }
 
   importModal.classList.remove('hidden');
-  importModal_BackDrop.classList.remove('hidden');
+  importModal_backdrop.classList.remove('hidden');
 
-  importModal_XButton.addEventListener('click', importModal_CloseFunc);
-  importModal_CloseButton.addEventListener('click', importModal_CloseFunc);
+  importModal_xButton.addEventListener('click', importModal_closeFunc);
+  importModal_closeButton.addEventListener('click', importModal_closeFunc);
 
   renderHandler.renderImportModal(function () {
 
-    importModal_Directory.querySelectorAll('.map-directory-entry-container').forEach((entry) => {
+    importModal_directory.querySelectorAll('.map-directory-entry-container').forEach((entry) => {
 
       entry.addEventListener('click', function () {
 
@@ -106,7 +106,7 @@ function openImportModal() {
 
         importMap(mapName, g_mapEmbed);
 
-        importModal_CloseFunc();
+        importModal_closeFunc();
 
       });
 
@@ -119,30 +119,30 @@ function openImportModal() {
 function openSaveModal() {
 
   let saveModal = document.querySelector('.modal-container.save-modal');
-  let saveModal_BackDrop = document.querySelector('.modal-backdrop.save-modal');
-  let saveModal_XButton = saveModal.querySelector('.modal-x-button');
-  let saveModal_CloseButton = saveModal.querySelector('.modal-close-button');
-  let saveModal_SaveButton = saveModal.querySelector('.modal-save-button');
-  let saveModal_SelectAllCheckbox = saveModal.querySelector('.modal-table-select-all');
-  let saveModal_Checkboxes;
+  let saveModal_backdrop = document.querySelector('.modal-backdrop.save-modal');
+  let saveModal_xButton = saveModal.querySelector('.modal-x-button');
+  let saveModal_closeButton = saveModal.querySelector('.modal-close-button');
+  let saveModal_saveButton = saveModal.querySelector('.modal-save-button');
+  let saveModal_selectAllCheckbox = saveModal.querySelector('.modal-table-select-all');
+  let saveModal_checkboxes;
 
-  let saveModal_CloseFunc = function () {
+  let saveModal_closeFunc = function () {
 
     // Hides modal, removes listeners, and resets inputs
 
     saveModal.classList.add('hidden');
-    saveModal_BackDrop.classList.add('hidden');
+    saveModal_backdrop.classList.add('hidden');
 
-    saveModal_XButton.removeEventListener('click', saveModal_CloseFunc);
-    saveModal_CloseButton.removeEventListener('click', saveModal_CloseFunc);
+    saveModal_xButton.removeEventListener('click', saveModal_closeFunc);
+    saveModal_closeButton.removeEventListener('click', saveModal_closeFunc);
 
-    saveModal_SaveButton.removeEventListener('click', saveModal_SaveButtonFunc);
+    saveModal_saveButton.removeEventListener('click', saveModal_saveButtonFunc);
 
-    saveModal_SelectAllCheckbox.removeEventListener('click', saveModal_SelectAllFunc);
+    saveModal_selectAllCheckbox.removeEventListener('click', saveModal_selectAllFunc);
 
-    saveModal_Checkboxes.forEach((checkbox) => {
+    saveModal_checkboxes.forEach((checkbox) => {
 
-      checkbox.removeEventListener('change', saveModal_CheckboxChangeListenerFunc);
+      checkbox.removeEventListener('change', saveModal_checkboxChangeListenerFunc);
 
     });
 
@@ -156,66 +156,66 @@ function openSaveModal() {
 
     });
 
-  } // End 'saveModal_CloseFunc'
+  } // End 'saveModal_closeFunc'
 
-  let saveModal_SaveButtonFunc = function () {
+  let saveModal_saveButtonFunc = function () {
 
     handleSaveModalInputs(function () {
 
-      saveModal_CloseFunc();
+      saveModal_closeFunc();
 
     });
 
-  } // End 'saveModal_SaveButtonFunc'
+  } // End 'saveModal_saveButtonFunc'
 
-  let saveModal_SelectAllFunc = function () {
+  let saveModal_selectAllFunc = function () {
 
-    // Adds a toggle functionality for 'saveModal_SelectAllCheckbox'
+    // Adds a toggle functionality for 'saveModal_selectAllCheckbox'
 
-    saveModal_Checkboxes.forEach((item) => {
+    saveModal_checkboxes.forEach((item) => {
 
-      item.checked = saveModal_SelectAllCheckbox.checked;
+      item.checked = saveModal_selectAllCheckbox.checked;
 
     });
 
-  } // End 'saveModal_SelectAllFunc'
+  } // End 'saveModal_selectAllFunc'
 
-  let saveModal_CheckboxChangeListenerFunc = function () {
+  let saveModal_checkboxChangeListenerFunc = function () {
 
     // Listens for a change on any table row checkbox, and flips the header pin if (all) || (not all) checkboxes are checked
 
-    let checkboxes_Total = saveModal_Checkboxes.length;
+    let checkboxes_Total = saveModal_checkboxes.length;
     let checkboxes_Checked = saveModal.querySelectorAll('.table-row-checkbox:checked').length;
 
     if (checkboxes_Total === checkboxes_Checked) {
 
-      saveModal_SelectAllCheckbox.checked = true;
+      saveModal_selectAllCheckbox.checked = true;
 
     } else {
 
-      saveModal_SelectAllCheckbox.checked = false;
+      saveModal_selectAllCheckbox.checked = false;
 
     }
 
-  } // End 'saveModal_CheckboxChangeListenerFunc'
+  } // End 'saveModal_checkboxChangeListenerFunc'
 
   renderHandler.renderSaveModal();
 
-  saveModal_Checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
+  saveModal_checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
 
   saveModal.classList.remove('hidden');
-  saveModal_BackDrop.classList.remove('hidden');
+  saveModal_backdrop.classList.remove('hidden');
 
-  saveModal_XButton.addEventListener('click', saveModal_CloseFunc);
-  saveModal_CloseButton.addEventListener('click', saveModal_CloseFunc);
+  saveModal_xButton.addEventListener('click', saveModal_closeFunc);
+  saveModal_closeButton.addEventListener('click', saveModal_closeFunc);
 
-  saveModal_SaveButton.addEventListener('click', saveModal_SaveButtonFunc);
+  saveModal_saveButton.addEventListener('click', saveModal_saveButtonFunc);
 
-  saveModal_SelectAllCheckbox.addEventListener('click', saveModal_SelectAllFunc);
+  saveModal_selectAllCheckbox.addEventListener('click', saveModal_selectAllFunc);
 
-  saveModal_Checkboxes.forEach((checkbox) => {
+  saveModal_checkboxes.forEach((checkbox) => {
 
-    checkbox.addEventListener('change', saveModal_CheckboxChangeListenerFunc);
+    checkbox.addEventListener('change', saveModal_checkboxChangeListenerFunc);
 
   });
 

@@ -15,7 +15,7 @@ function Pin(pin) {
 
 }
 
-// The API will callback 'initMap()' when finished loading
+// The API will callback 'initMap()' when finished loading. The global variables are also defined here.
 function initMap() {
 
   g_mapNode = document.querySelector('#map');
@@ -36,58 +36,27 @@ function initMap() {
 
 }
 
-function exportMap(fileName, data) {
-
-  let entryData = {
-
-    fileName: fileName,
-    data: data
-
-  }
-
-  let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
-
-  let requestPOST = new Request('/exportFile', { method: 'POST', headers: requestHEADER, body: JSON.stringify(entryData) });
-
-  fetch(requestPOST).then(function (res) {
-
-    if (res.ok) {
-
-      console.log('POST Successful');
-
-    } else {
-
-      console.warn('[WARN] ' + res.status);
-
-      alert('Error saving map data!');
-
-    }
-
-  });
-
-}
-
 function generateNewPinForm(event) {
 
   let clickEventLatLng = event.latLng;
 
-  let newPin_Marker = new google.maps.Marker({
+  let newPin_marker = new google.maps.Marker({
 
     position: clickEventLatLng,
     map: g_mapEmbed
 
   });
 
-  let newPin_InfoFormHTML = Handlebars.templates.pinInfoForm();
-  let newPin_InfoForm = generatePinInfoBox(clickEventLatLng, newPin_InfoFormHTML, g_mapEmbed);
+  let newPin_infoFormHTML = Handlebars.templates.pinInfoForm();
+  let newPin_infoForm = generatePinInfoBox(clickEventLatLng, newPin_infoFormHTML, g_mapEmbed);
 
   // Wait for the dynamically generated infobox to be loaded
-  g_mapEventHandler.addListenerOnce(newPin_InfoForm, 'domready', function () {
+  g_mapEventHandler.addListenerOnce(newPin_infoForm, 'domready', function () {
 
     let newPin = {
 
-      marker: newPin_Marker,
-      infoBox: newPin_InfoForm,
+      marker: newPin_marker,
+      infoBox: newPin_infoForm,
       latLng: clickEventLatLng
 
     };
@@ -158,30 +127,30 @@ function generateReadOnlyInfoBox(event) {
 function handleNewPinForm(newPinObject, callback) {
 
   let infoForm = g_mapNode.querySelector('.pin-infoform-container');
-  let infoForm_NameField = infoForm.querySelector('input.pin-infoform-name');
-  let infoForm_DescField = infoForm.querySelector('textarea.pin-infoform-description');
-  let infoForm_SaveButton = infoForm.querySelector('button[name="save"]');
-  let infoForm_CancelButton = infoForm.querySelector('button[name="cancel"]');
+  let infoForm_nameField = infoForm.querySelector('input.pin-infoform-name');
+  let infoForm_descField = infoForm.querySelector('textarea.pin-infoform-description');
+  let infoForm_saveButton = infoForm.querySelector('button[name="save"]');
+  let infoForm_cancelButton = infoForm.querySelector('button[name="cancel"]');
 
-  g_mapEventHandler.addDomListener(infoForm_SaveButton, 'click', function () {
+  g_mapEventHandler.addDomListener(infoForm_saveButton, 'click', function () {
 
     let primaryMap = renderHandler.primaryMapList;
 
-    if (infoForm_NameField.value) {
+    if (infoForm_nameField.value) {
 
       newPinObject.infoBox.close();
 
       let _pin = new Pin({
 
         marker: newPinObject.marker,
-        name: infoForm_NameField.value,
+        name: infoForm_nameField.value,
         latLng: newPinObject.latLng
 
       });
 
       _pin.clickListener = g_mapEventHandler.addListenerOnce(_pin.marker, 'click', generateReadOnlyInfoBox);
 
-      if (infoForm_DescField.value) _pin.description = infoForm_DescField.value;
+      if (infoForm_descField.value) _pin.description = infoForm_descField.value;
 
 
       primaryMap.push(_pin);
@@ -200,7 +169,7 @@ function handleNewPinForm(newPinObject, callback) {
 
   });
 
-  g_mapEventHandler.addDomListener(infoForm_CancelButton, 'click', function () {
+  g_mapEventHandler.addDomListener(infoForm_cancelButton, 'click', function () {
 
     hidePin(newPinObject);
     callback();
@@ -219,14 +188,14 @@ function handleNewPinForm(newPinObject, callback) {
 function handleReadOnlyInfoBox(pin) {
 
   let infoBox = g_mapNode.querySelector(`.pin-infobox-readonly-container[data-latLng="${pin.latLng}"]`)
-  let infoBox_ButtonContainer = infoBox.querySelector('.trash-button-container');
-  let infoBox_TrashButton = infoBox_ButtonContainer.querySelector('button.trash-button');
+  let infoBox_buttonContainer = infoBox.querySelector('.trash-button-container');
+  let infoBox_trashButton = infoBox_buttonContainer.querySelector('button.trash-button');
 
-  g_mapEventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
+  g_mapEventHandler.addDomListenerOnce(infoBox_trashButton, 'click', function () {
 
-    infoBox_ButtonContainer.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
+    infoBox_buttonContainer.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
 
-    g_mapEventHandler.addDomListenerOnce(infoBox_TrashButton, 'click', function () {
+    g_mapEventHandler.addDomListenerOnce(infoBox_trashButton, 'click', function () {
 
       let primaryMap = renderHandler.primaryMapList;
       let savedPlacesList = document.querySelector('.saved-places-list-element');
@@ -255,7 +224,7 @@ function handleReadOnlyInfoBox(pin) {
 function handleSaveModalInputs(callback) {
 
   let saveModal = document.querySelector('.modal-container.save-modal');
-  let saveModal_SelectedPins = saveModal.querySelectorAll('.table-row-checkbox:checked');
+  let saveModal_selectedPins = saveModal.querySelectorAll('.table-row-checkbox:checked');
   let fileName = saveModal.querySelector('.modal-input').value;
 
   if (fileName) {
@@ -264,7 +233,7 @@ function handleSaveModalInputs(callback) {
 
     let pinData = [];
 
-    saveModal_SelectedPins.forEach((pin) => {
+    saveModal_selectedPins.forEach((pin) => {
 
       let pinTableRow = pin.parentNode.parentNode;
 
@@ -282,9 +251,7 @@ function handleSaveModalInputs(callback) {
 
     });
 
-    exportMap(fileName, pinData);
-
-    callback();
+    commsHandler.exportMap(fileName, pinData, callback);
 
   } else {
 
