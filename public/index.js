@@ -94,20 +94,17 @@ function openImportModal() {
   importModal_XButton.addEventListener('click', importModal_CloseFunc);
   importModal_CloseButton.addEventListener('click', importModal_CloseFunc);
 
-  renderHandler.getMapsDirectory(function (data) {
+  renderHandler.renderImportModal(function () {
 
-    data.forEach((item, i) => {
+    importModal_Directory.querySelectorAll('.map-directory-entry-container').forEach((entry) => {
 
-      let uniqueID = item + i;
-      let directoryEntry = `<div class="map-directory-entry-container" id="${uniqueID}"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`;
+      entry.addEventListener('click', function () {
 
-      importModal_Directory.insertAdjacentHTML('beforeend', directoryEntry);
-
-      importModal_Directory.querySelector(`#${uniqueID}`).addEventListener('click', function () {
+        let mapName = entry.dataset.id.split('.')[0];
 
         clearFilterPins();
 
-        importMap(item);
+        importMap(mapName);
 
         importModal_CloseFunc();
 
@@ -217,8 +214,6 @@ function openSaveModal() {
   saveModal_SelectAllCheckbox.addEventListener('click', saveModal_SelectAllFunc);
 
   saveModal_Checkboxes.forEach((checkbox) => {
-
-    console.log('event listener');
 
     checkbox.addEventListener('change', saveModal_CheckboxChangeListenerFunc);
 

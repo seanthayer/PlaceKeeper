@@ -3,31 +3,7 @@ var mapNode = document.querySelector('#map');
 var mapClickListener;
 var eventHandler;
 
-var renderHandler = {
-
-  currentRenderList: [],
-
-  primaryMapList: [],
-
-  setNewPrimaryMap: function (newMap) {
-
-    this.primaryMapList.forEach((pin) => {
-
-      removeMarkerAndInfoBox(pin.marker, pin.infoBox);
-
-    });
-
-    this.currentRenderList = [];
-    this.renderComponents(newMap);
-    this.primaryMapList = newMap;
-
-  },
-
-  rerenderMap: function () {
-
-    this.renderComponents(this.primaryMapList);
-
-  },
+var commsHandler = {
 
   getMapsDirectory: function (callback) {
 
@@ -64,6 +40,34 @@ var renderHandler = {
       console.error('[ERROR] ' + err);
 
     });
+
+  }
+
+}
+
+var renderHandler = {
+
+  currentRenderList: [],
+
+  primaryMapList: [],
+
+  setNewPrimaryMap: function (newMap) {
+
+    this.primaryMapList.forEach((pin) => {
+
+      removeMarkerAndInfoBox(pin.marker, pin.infoBox);
+
+    });
+
+    this.currentRenderList = [];
+    this.renderComponents(newMap);
+    this.primaryMapList = newMap;
+
+  },
+
+  rerenderMap: function () {
+
+    this.renderComponents(this.primaryMapList);
 
   },
 
@@ -196,6 +200,30 @@ var renderHandler = {
 
       let pinsHTML = Handlebars.templates.pinTableRow(context);
       saveModal_ModalTable.insertAdjacentHTML('beforeend', pinsHTML);
+
+    });
+
+  },
+
+  renderImportModal: function (callback) {
+
+    // This function deals with 'commsHandler' and requires a callback to ensure data availability.
+
+    let importModal = document.querySelector('.modal-container.import-modal');
+    let importModal_Directory = importModal.querySelector('.modal-directory-container');
+
+    commsHandler.getMapsDirectory(function (data) {
+
+      data.forEach((item, i) => {
+
+        let uniqueID = item + '.' + i;
+        let directoryEntry = `<div class="map-directory-entry-container" data-id="${uniqueID}"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`;
+
+        importModal_Directory.insertAdjacentHTML('beforeend', directoryEntry);
+
+      });
+
+      callback();
 
     });
 
