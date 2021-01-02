@@ -130,31 +130,31 @@ function openSaveModal() {
 
     // Hides modal, removes listeners, and resets inputs
 
-    saveModal.classList.add('hidden');
-    saveModal_backdrop.classList.add('hidden');
+      saveModal.classList.add('hidden');
+      saveModal_backdrop.classList.add('hidden');
 
-    saveModal_xButton.removeEventListener('click', saveModal_closeFunc);
-    saveModal_closeButton.removeEventListener('click', saveModal_closeFunc);
+      saveModal_xButton.removeEventListener('click', saveModal_closeFunc);
+      saveModal_closeButton.removeEventListener('click', saveModal_closeFunc);
 
-    saveModal_saveButton.removeEventListener('click', saveModal_saveButtonFunc);
+      saveModal_saveButton.removeEventListener('click', saveModal_saveButtonFunc);
 
-    saveModal_selectAllCheckbox.removeEventListener('click', saveModal_selectAllFunc);
+      saveModal_selectAllCheckbox.removeEventListener('click', saveModal_selectAllFunc);
 
-    saveModal_checkboxes.forEach((checkbox) => {
+      saveModal_checkboxes.forEach((checkbox) => {
 
-      checkbox.removeEventListener('change', saveModal_checkboxChangeListenerFunc);
+        checkbox.removeEventListener('change', saveModal_checkboxChangeListenerFunc);
 
-    });
+      });
 
-    saveModal.querySelector('.modal-input').value = '';
+      saveModal.querySelector('.modal-input').value = '';
 
-    saveModal.querySelector('.modal-table-select-all').checked = false;
+      saveModal.querySelector('.modal-table-select-all').checked = false;
 
-    saveModal.querySelectorAll('.table-row-checkbox').forEach((item) => {
+      saveModal.querySelectorAll('.table-row-checkbox').forEach((item) => {
 
-      item.checked = false;
+        item.checked = false;
 
-    });
+      });
 
   } // End 'saveModal_closeFunc'
 
@@ -199,7 +199,7 @@ function openSaveModal() {
 
   } // End 'saveModal_checkboxChangeListenerFunc'
 
-  renderHandler.renderSaveModal();
+  renderHandler.saveModal.render();
 
   saveModal_checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
 

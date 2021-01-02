@@ -169,6 +169,85 @@ var renderHandler = {
       let savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
       savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
 
+      interfaceHandler.placesList.generateListeners(pin, mapEmbed);
+
+    });
+
+    // End placesList render
+
+    this.currentRenderList = newRenderList;
+
+  },
+
+  saveModal: {
+
+    render: function (callback) {
+
+      let saveModal = document.querySelector('.modal-container.save-modal')
+      let saveModal_ModalTable = saveModal.querySelector('.modal-table');
+      let saveModal_TableRows = saveModal_ModalTable.querySelectorAll('tr.modal-table-row');
+
+      saveModal_TableRows.forEach((node) => {
+
+        // TODO: What does this even select?
+        node.parentNode.remove();
+
+      });
+
+      this.primaryMapList.forEach((pin) => {
+
+        let context = {
+
+          name: pin.name,
+          lat: pin.latLng.lat(),
+          lng: pin.latLng.lng()
+
+        }
+
+        if (pin.description) context.description = pin.description;
+
+        let pinsHTML = Handlebars.templates.pinTableRow(context);
+        saveModal_ModalTable.insertAdjacentHTML('beforeend', pinsHTML);
+
+      });
+
+      callback();
+
+    }
+
+  },
+
+  renderImportModal: function (callback) {
+
+    let importModal = document.querySelector('.modal-container.import-modal');
+    let importModal_Directory = importModal.querySelector('.modal-directory-container');
+
+    commsHandler.getMapsDirectory(function (data) {
+
+      data.forEach((item, i) => {
+
+        let uniqueID = item + '.' + i;
+        let directoryEntry = `<div class="map-directory-entry-container" data-id="${uniqueID}"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`;
+
+        importModal_Directory.insertAdjacentHTML('beforeend', directoryEntry);
+
+      });
+
+      callback();
+
+    });
+
+  }
+
+}
+
+var interfaceHandler = {
+
+  placesList: {
+
+    generateListeners: function (pin, mapEmbed) {
+
+      let savedPlacesList = document.querySelector('.saved-places-list-element');
       let listEntry = savedPlacesList.querySelector(`[data-latLng="${pin.latLng}"]`);
       let latLngButton = listEntry.querySelector('button.saved-place-entry-latLng')
       let trashButton = listEntry.querySelector('button.trash-button');
@@ -197,69 +276,17 @@ var renderHandler = {
 
       }, { once: true });
 
-    });
-
-    // End placesList render
-
-    this.currentRenderList = newRenderList;
+    }
 
   },
 
-  renderSaveModal: function (callback) {
+  saveModal: {
 
-    let saveModal = document.querySelector('.modal-container.save-modal')
-    let saveModal_ModalTable = saveModal.querySelector('.modal-table');
-    let saveModal_TableRows = saveModal_ModalTable.querySelectorAll('tr.modal-table-row');
+    generateListeners: function () {
 
-    saveModal_TableRows.forEach((node) => {
 
-      // TODO: What does this even select?
-      node.parentNode.remove();
 
-    });
-
-    this.primaryMapList.forEach((pin) => {
-
-      let context = {
-
-        name: pin.name,
-        lat: pin.latLng.lat(),
-        lng: pin.latLng.lng()
-
-      }
-
-      if (pin.description) context.description = pin.description;
-
-      let pinsHTML = Handlebars.templates.pinTableRow(context);
-      saveModal_ModalTable.insertAdjacentHTML('beforeend', pinsHTML);
-
-    });
-
-    callback();
-
-  },
-
-  _saveModal_close: ,
-
-  renderImportModal: function (callback) {
-
-    let importModal = document.querySelector('.modal-container.import-modal');
-    let importModal_Directory = importModal.querySelector('.modal-directory-container');
-
-    commsHandler.getMapsDirectory(function (data) {
-
-      data.forEach((item, i) => {
-
-        let uniqueID = item + '.' + i;
-        let directoryEntry = `<div class="map-directory-entry-container" data-id="${uniqueID}"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`;
-
-        importModal_Directory.insertAdjacentHTML('beforeend', directoryEntry);
-
-      });
-
-      callback();
-
-    });
+    }
 
   }
 
