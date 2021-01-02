@@ -67,103 +67,103 @@ var renderHandler = {
 
   },
 
-  renderComponents: function (newRenderList, renderOptions = {mapEmbed: true, placesList: true}) {
+  renderComponents: function (newRenderList) {
 
-    if (renderOptions.mapEmbed || renderOptions.mapEmbed === undefined) {
+    // Begin map render
 
-      let setIntersect = [];
+    let setIntersect = [];
 
-      for (let i = 0; i < this.currentRenderList.length; i++) {
+    for (let i = 0; i < this.currentRenderList.length; i++) {
 
-        for (let  j = 0; j < newRenderList.length; j++) {
+      for (let  j = 0; j < newRenderList.length; j++) {
 
-          let currentPin_latLng = this.currentRenderList[i].latLng.toString();
-          let newPin_latLng = newRenderList[j].latLng.toString();
+        let currentPin_latLng = this.currentRenderList[i].latLng.toString();
+        let newPin_latLng = newRenderList[j].latLng.toString();
 
-          if (currentPin_latLng === newPin_latLng) {
+        if (currentPin_latLng === newPin_latLng) {
 
-            setIntersect.push(currentPin_latLng);
-
-          }
+          setIntersect.push(currentPin_latLng);
 
         }
 
       }
 
-      let renderSubDiff = this.currentRenderList.filter(pin => !setIntersect.includes(pin.latLng.toString()) );
-      let renderAddDiff = newRenderList.filter(pin => !setIntersect.includes(pin.latLng.toString()) );
-
-      console.log('Intersect: ', setIntersect);
-      console.log('Sub diff: ', renderSubDiff);
-      console.log('Add diff: ', renderAddDiff);
-
-      renderSubDiff.forEach((pin) => {
-
-        removeMarkerAndInfoBox(pin.marker, pin.infoBox);
-
-      });
-
-      renderAddDiff.forEach((pin) => {
-
-        pin.marker.setMap(map);
-
-      });
-
     }
 
-    if (renderOptions.placesList || renderOptions.placesList === undefined) {
+    let renderSubDiff = this.currentRenderList.filter(pin => !setIntersect.includes(pin.latLng.toString()) );
+    let renderAddDiff = newRenderList.filter(pin => !setIntersect.includes(pin.latLng.toString()) );
 
-      let savedPlacesList = document.querySelector('.saved-places-list-element');
+    console.log('Intersect: ', setIntersect);
+    console.log('Sub diff: ', renderSubDiff);
+    console.log('Add diff: ', renderAddDiff);
 
-      removeChildNodes(savedPlacesList);
+    renderSubDiff.forEach((pin) => {
 
-      newRenderList.forEach((pin) => {
+      removeMarkerAndInfoBox(pin.marker, pin.infoBox);
 
-        let context = {
+    });
 
-          name: pin.name,
-          latLng: pin.latLng,
-          lat: pin.latLng.lat(),
-          lng: pin.latLng.lng()
+    renderAddDiff.forEach((pin) => {
 
-        }
+      pin.marker.setMap(map);
 
-        if (pin.description) context.description = pin.description;
+    });
 
-        let savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
-        savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
+    // End map render
 
-        let listEntry = savedPlacesList.querySelector(`[data-latLng="${pin.latLng}"]`);
-        let latLngButton = listEntry.querySelector('button.saved-place-entry-latLng')
-        let trashButton = listEntry.querySelector('button.trash-button');
+    // Begin placesList render
 
-        eventHandler.addDomListener(latLngButton, 'click', function () {
+    let savedPlacesList = document.querySelector('.saved-places-list-element');
 
-          map.panTo(pin.latLng);
+    removeChildNodes(savedPlacesList);
 
-        });
+    newRenderList.forEach((pin) => {
+
+      let context = {
+
+        name: pin.name,
+        latLng: pin.latLng,
+        lat: pin.latLng.lat(),
+        lng: pin.latLng.lng()
+
+      }
+
+      if (pin.description) context.description = pin.description;
+
+      let savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
+      savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
+
+      let listEntry = savedPlacesList.querySelector(`[data-latLng="${pin.latLng}"]`);
+      let latLngButton = listEntry.querySelector('button.saved-place-entry-latLng')
+      let trashButton = listEntry.querySelector('button.trash-button');
+
+      eventHandler.addDomListener(latLngButton, 'click', function () {
+
+        map.panTo(pin.latLng);
+
+      });
+
+      eventHandler.addDomListenerOnce(trashButton, 'click', function () {
+
+        trashButton.parentNode.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
 
         eventHandler.addDomListenerOnce(trashButton, 'click', function () {
 
-          trashButton.parentNode.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
+          let primaryMap = renderHandler.primaryMapList;
 
-          eventHandler.addDomListenerOnce(trashButton, 'click', function () {
+          removeMarkerAndInfoBox(pin.marker, pin.infoBox);
 
-            let primaryMap = renderHandler.primaryMapList;
+          savedPlacesList.removeChild(listEntry);
 
-            removeMarkerAndInfoBox(pin.marker, pin.infoBox);
-
-            savedPlacesList.removeChild(listEntry);
-
-            primaryMap.splice(primaryMap.indexOf(pin), 1);
-
-          });
+          primaryMap.splice(primaryMap.indexOf(pin), 1);
 
         });
 
       });
 
-    }
+    });
+
+    // End placesList render
 
     this.currentRenderList = newRenderList;
 
