@@ -272,6 +272,90 @@ var renderHandler = {
 
   },
 
+  filter: {
+
+    applyFilter: function () {
+
+      let searchbar_input = interfaceHandler.filter.node_searchbar.querySelector('.search-bar-input');
+
+      let filter = { text: searchbar_input.value.trim() }
+
+      if (filter.text) {
+
+        let filterMap = [];
+        let primaryMap = renderHandler.map.primaryMapList;
+
+        primaryMap.forEach((pin) => {
+
+          if ( renderHandler.filter.pinPassesFilter(pin, filter) ) filterMap.push(pin);
+
+        });
+
+        renderHandler.filter.clearFilterPins();
+
+        renderHandler.map.renderComponents(filterMap, g_mapEmbed);
+
+        renderHandler.filter.createFilterPin(filter);
+
+        searchbar_input.value = '';
+
+      }
+
+    },
+
+    pinPassesFilter: function (pin, filter) {
+
+      if (filter.text) {
+
+        let pinName = pin.name.toLowerCase();
+        let filterText = filter.text.toLowerCase();
+
+        if (pinName.indexOf(filterText) === -1) {
+
+          return false;
+
+        }
+
+      }
+
+      return true;
+
+    },
+
+    clearFilterPins: function () {
+
+      let filterInfoBox = interfaceHandler.filter.node_filterInfo;
+
+      removeChildNodes(filterInfoBox);
+
+      if (!filterInfoBox.classList.contains('hidden')) {
+
+        filterInfoBox.classList.add('hidden');
+
+      }
+
+    },
+
+    createFilterPin: function (filter) {
+
+      let filterInfoBox = interfaceHandler.filter.node_filterInfo;
+      filterInfoBox.classList.remove('hidden');
+
+      let filterPin = document.createElement('div');
+      filterPin.classList.add('filter-pin-container');
+
+      filterPin.insertAdjacentHTML('afterbegin', `<span class="filter-pin">Filtering for: "${filter.text}</span>"`);
+      filterPin.insertAdjacentHTML('beforeend', `<i class="fas fa-times-circle"></i>`);
+
+      filterInfoBox.appendChild(filterPin);
+
+
+      interfaceHandler.filter.generateListener();
+
+    }
+
+  },
+
   saveModal: {
 
     render: function () {
@@ -417,6 +501,27 @@ var interfaceHandler = {
 
   },
 
+  filter: {
+
+    node_searchbar: document.querySelector('.search-bar-container'),
+    node_filterInfo: document.querySelector('.saved-places-filter-info'),
+
+    generateListener: function () {
+
+      let filterPin_xButton = this.node_filterInfo.querySelector('.fas.fa-times-circle');
+
+      filterPin_xButton.addEventListener('click', function () {
+
+        renderHandler.filter.clearFilterPins();
+
+        renderHandler.map.rerender(g_mapEmbed);
+
+      }, { once: true });
+
+    }
+
+  },
+
   saveModal: {
 
     node: document.querySelector('.modal-container.save-modal'),
@@ -478,7 +583,7 @@ var interfaceHandler = {
       let saveModal_selectedPins = saveModal.querySelectorAll('.table-row-checkbox:checked');
       let fileName = saveModal.querySelector('.modal-input').value;
 
-      if (fileName) {
+      if (fileName && saveModal_selectedPins.length) {
 
         fileName = fileName.trim().replace(/\s+/g, '-');
 
@@ -573,7 +678,7 @@ var interfaceHandler = {
 
           let mapName = entry.dataset.id.split('.')[0];
 
-          clearFilterPins();
+          renderHandler.filter.clearFilterPins();
 
           commsHandler.get.importMap(mapName, g_mapEmbed);
 
