@@ -38,6 +38,69 @@ var commsHandler = {
 
       });
 
+    },
+
+    importMap: function (mapName, mapEmbed) {
+
+      let mapURL = '/importMap/' + mapName;
+
+      let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
+
+      let requestGET = new Request(mapURL, { method: 'GET', headers: requestHEADER });
+
+      fetch(requestGET).then(function (res) {
+
+        if (res.ok) {
+
+          return res.json();
+
+        } else {
+
+          console.error(`[ERROR] Resource (${mapName}) not found`);
+
+          throw res.status;
+
+        }
+
+      }).then(function (importData) {
+
+        let importMap = [];
+
+        importData.forEach((entry) => {
+
+          let coords = { lat: parseFloat(entry.lat), lng: parseFloat(entry.lng) };
+
+          let newLatLng = new google.maps.LatLng(coords);
+
+          let marker = new google.maps.Marker({
+
+            position: newLatLng,
+            map: null
+
+          });
+
+          let _pin = new Pin({
+
+            marker: marker,
+            name: entry.name,
+            latLng: newLatLng
+
+          });
+
+          if (entry.description) _pin.description = entry.description;
+
+          importMap.push(_pin);
+
+        });
+
+        renderHandler.map.setNewPrimaryMap(importMap, mapEmbed);
+
+      }).catch(function (err) {
+
+        console.error('[ERROR] ' + err);
+
+      });
+
     }
 
   },
@@ -512,7 +575,7 @@ var interfaceHandler = {
 
           clearFilterPins();
 
-          importMap(mapName, g_mapEmbed);
+          commsHandler.get.importMap(mapName, g_mapEmbed);
 
           interfaceHandler.importModal._close();
 
