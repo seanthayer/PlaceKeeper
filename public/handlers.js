@@ -159,7 +159,7 @@ var renderHandler = {
 
       // Begin placesList render
 
-      let savedPlacesList = document.querySelector('.saved-places-list-element');
+      let savedPlacesList = interfaceHandler.placesList.node;
 
       removeChildNodes(savedPlacesList);
 
@@ -193,9 +193,10 @@ var renderHandler = {
 
   saveModal: {
 
-    render: function (callback) {
+    render: function () {
 
-      let saveModal = document.querySelector('.modal-container.save-modal')
+      let saveModal = interfaceHandler.saveModal.node;
+      let saveModal_backdrop = interfaceHandler.saveModal.node_backdrop;
       let saveModal_ModalTable = saveModal.querySelector('.modal-table');
       let saveModal_TableRows = saveModal_ModalTable.querySelectorAll('tr.modal-table-row');
 
@@ -206,7 +207,7 @@ var renderHandler = {
 
       });
 
-      this.primaryMapList.forEach((pin) => {
+      renderHandler.map.primaryMapList.forEach((pin) => {
 
         let context = {
 
@@ -223,7 +224,31 @@ var renderHandler = {
 
       });
 
-      callback();
+
+      saveModal.classList.remove('hidden');
+      saveModal_backdrop.classList.remove('hidden');
+
+      interfaceHandler.saveModal.generateListeners();
+
+    },
+
+    derender: function () {
+
+      let saveModal = interfaceHandler.saveModal.node;
+      let saveModal_backdrop = interfaceHandler.saveModal.node_backdrop;
+
+      saveModal.classList.add('hidden');
+      saveModal_backdrop.classList.add('hidden');
+
+      saveModal.querySelector('.modal-input').value = '';
+
+      saveModal.querySelector('.modal-table-select-all').checked = false;
+
+      saveModal.querySelectorAll('.table-row-checkbox').forEach((item) => {
+
+        item.checked = false;
+
+      });
 
     }
 
@@ -261,9 +286,11 @@ var interfaceHandler = {
 
   placesList: {
 
+    node: document.querySelector('.saved-places-list-element'),
+
     generateListeners: function (pin, mapEmbed) {
 
-      let savedPlacesList = document.querySelector('.saved-places-list-element');
+      let savedPlacesList = this.node;
       let listEntry = savedPlacesList.querySelector(`[data-latLng="${pin.latLng}"]`);
       let latLngButton = listEntry.querySelector('button.saved-place-entry-latLng')
       let trashButton = listEntry.querySelector('button.trash-button');
@@ -298,11 +325,136 @@ var interfaceHandler = {
 
   saveModal: {
 
+    node: document.querySelector('.modal-container.save-modal'),
+    node_backdrop: document.querySelector('.modal-backdrop.save-modal'),
+
     generateListeners: function () {
 
+      let saveModal = this.node;
+      let saveModal_xButton = saveModal.querySelector('.modal-x-button');
+      let saveModal_closeButton = saveModal.querySelector('.modal-close-button');
+      let saveModal_saveButton = saveModal.querySelector('.modal-save-button');
+      let saveModal_selectAllCheckbox = saveModal.querySelector('.modal-table-select-all');
+      let saveModal_checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
 
+      saveModal_xButton.addEventListener('click', this._close);
+      saveModal_closeButton.addEventListener('click', this._close);
 
-    }
+      saveModal_saveButton.addEventListener('click', this._save);
+
+      saveModal_selectAllCheckbox.addEventListener('click', this._selectAll);
+
+      saveModal_checkboxes.forEach((checkbox) => {
+
+        checkbox.addEventListener('change', this._checkboxChangeListener);
+
+      });
+
+    },
+
+    _close: function (event) {
+
+      let saveModal = interfaceHandler.saveModal.node;
+      let saveModal_xButton = saveModal.querySelector('.modal-x-button');
+      let saveModal_closeButton = saveModal.querySelector('.modal-close-button');
+      let saveModal_saveButton = saveModal.querySelector('.modal-save-button');
+      let saveModal_selectAllCheckbox = saveModal.querySelector('.modal-table-select-all');
+      let saveModal_checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
+
+      renderHandler.saveModal.derender();
+
+      saveModal_xButton.removeEventListener('click', interfaceHandler.saveModal._close);
+      saveModal_closeButton.removeEventListener('click', interfaceHandler.saveModal._close);
+
+      saveModal_saveButton.removeEventListener('click', interfaceHandler.saveModal._save);
+
+      saveModal_selectAllCheckbox.removeEventListener('click', interfaceHandler.saveModal._selectAll);
+
+      saveModal_checkboxes.forEach((checkbox) => {
+
+        checkbox.removeEventListener('change', interfaceHandler.saveModal._checkboxChangeListener);
+
+      });
+
+    },
+
+    _save: function (event) {
+
+      let saveModal = interfaceHandler.saveModal.node;
+      let saveModal_selectedPins = saveModal.querySelectorAll('.table-row-checkbox:checked');
+      let fileName = saveModal.querySelector('.modal-input').value;
+
+      if (fileName) {
+
+        fileName = fileName.trim().replace(/\s+/g, '-');
+
+        let pinData = [];
+
+        saveModal_selectedPins.forEach((pin) => {
+
+          let pinTableRow = pin.parentNode.parentNode;
+
+          let pinObj = {
+
+            name: pinTableRow.dataset.name,
+            lat: pinTableRow.dataset.lat,
+            lng: pinTableRow.dataset.lng
+
+          }
+
+          if (pinTableRow.dataset.description) pinObj.description = pinTableRow.dataset.description;
+
+          pinData.push(pinObj);
+
+        });
+
+        commsHandler.put.exportMap(fileName, pinData, function () {
+
+          interfaceHandler.saveModal._close();
+
+        });
+
+      } else {
+
+        alert('Please enter a file name!');
+
+      }
+
+    },
+
+    _selectAll: function (event) {
+
+      let saveModal_selectAllCheckbox = interfaceHandler.saveModal.node.querySelector('.modal-table-select-all');
+      let saveModal_checkboxes = interfaceHandler.saveModal.node.querySelectorAll('.table-row-checkbox');
+
+      saveModal_checkboxes.forEach((item) => {
+
+        item.checked = saveModal_selectAllCheckbox.checked;
+
+      });
+
+    },
+
+    _checkboxChangeListener: function (event) {
+
+      let saveModal = interfaceHandler.saveModal.node;
+      let saveModal_selectAllCheckbox = saveModal.querySelector('.modal-table-select-all');
+      let saveModal_checkboxes = saveModal.querySelectorAll('.table-row-checkbox');
+
+      let checkboxes_total = saveModal_checkboxes.length;
+      let checkboxes_checked = saveModal.querySelectorAll('.table-row-checkbox:checked').length;
+
+      if (checkboxes_total === checkboxes_checked) {
+
+        saveModal_selectAllCheckbox.checked = true;
+
+      } else {
+
+        saveModal_selectAllCheckbox.checked = false;
+
+      }
+
+    },
 
   }
 

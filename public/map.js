@@ -221,46 +221,6 @@ function handleReadOnlyInfoBox(pin) {
 
 }
 
-function handleSaveModalInputs(callback) {
-
-  let saveModal = document.querySelector('.modal-container.save-modal');
-  let saveModal_selectedPins = saveModal.querySelectorAll('.table-row-checkbox:checked');
-  let fileName = saveModal.querySelector('.modal-input').value;
-
-  if (fileName) {
-
-    fileName = fileName.trim().replace(/\s+/g, '-');
-
-    let pinData = [];
-
-    saveModal_selectedPins.forEach((pin) => {
-
-      let pinTableRow = pin.parentNode.parentNode;
-
-      let pinObj = {
-
-        name: pinTableRow.dataset.name,
-        lat: pinTableRow.dataset.lat,
-        lng: pinTableRow.dataset.lng
-
-      }
-
-      if (pinTableRow.dataset.description) pinObj.description = pinTableRow.dataset.description;
-
-      pinData.push(pinObj);
-
-    });
-
-    commsHandler.put.exportMap(fileName, pinData, callback);
-
-  } else {
-
-    alert('Please enter a file name!');
-
-  }
-
-}
-
 function importMap(mapName, mapEmbed) {
 
   let mapURL = '/importMap/' + mapName;
