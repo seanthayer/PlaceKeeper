@@ -93,11 +93,29 @@ var renderHandler = {
 
     primaryMapList: [],
 
+    hidePin: function (pin) {
+
+      pin.marker.setMap(null);
+
+      if (pin.clickListener) pin.clickListener.remove();
+
+      if (pin.infoBox) pin.infoBox.close();
+
+    },
+
+    showPin: function (pin, mapEmbed) {
+
+      pin.marker.setMap(mapEmbed);
+
+      pin.clickListener = g_mapEventHandler.addListenerOnce(pin.marker, 'click', generateReadOnlyInfoBox);
+
+    },
+
     setNewPrimaryMap: function (newMap, mapEmbed) {
 
       this.primaryMapList.forEach((pin) => {
 
-        hidePin(pin);
+        this.hidePin(pin);
 
       });
 
@@ -145,13 +163,13 @@ var renderHandler = {
 
       renderSubDiff.forEach((pin) => {
 
-        hidePin(pin);
+        this.hidePin(pin);
 
       });
 
       renderAddDiff.forEach((pin) => {
 
-        showPin(pin, mapEmbed);
+        this.showPin(pin, mapEmbed);
 
       });
 
@@ -309,7 +327,7 @@ var interfaceHandler = {
 
           let primaryMap = renderHandler.map.primaryMapList;
 
-          hidePin(pin);
+          renderHandler.map.hidePin(pin);
 
           savedPlacesList.removeChild(listEntry);
 

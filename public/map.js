@@ -171,14 +171,14 @@ function handleNewPinForm(newPinObject, callback) {
 
   g_mapEventHandler.addDomListener(infoForm_cancelButton, 'click', function () {
 
-    hidePin(newPinObject);
+    renderHandler.map.hidePin(newPinObject);
     callback();
 
   });
 
   g_mapEventHandler.addListener(newPinObject.infoBox, 'closeclick', function () {
 
-    hidePin(newPinObject);
+    renderHandler.map.hidePin(newPinObject);
     callback();
 
   });
@@ -201,7 +201,7 @@ function handleReadOnlyInfoBox(pin) {
       let savedPlacesList = document.querySelector('.saved-places-list-element');
       let listEntry = savedPlacesList.querySelector(`[data-latLng="${pin.latLng}"]`);
 
-      hidePin(pin);
+      renderHandler.map.hidePin(pin);
 
       savedPlacesList.removeChild(listEntry);
 
@@ -281,23 +281,5 @@ function importMap(mapName, mapEmbed) {
     console.error('[ERROR] ' + err);
 
   });
-
-}
-
-function hidePin(pin) {
-
-  pin.marker.setMap(null);
-
-  if (pin.clickListener) pin.clickListener.remove();
-
-  if (pin.infoBox) pin.infoBox.close();
-
-}
-
-function showPin(pin, mapEmbed) {
-
-  pin.marker.setMap(mapEmbed);
-
-  pin.clickListener = g_mapEventHandler.addListenerOnce(pin.marker, 'click', generateReadOnlyInfoBox);
 
 }
