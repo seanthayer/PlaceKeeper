@@ -242,11 +242,10 @@ var renderHandler = {
 
       });
 
+      interfaceHandler.saveModal.generateListeners();
 
       saveModal.classList.remove('hidden');
       saveModal_backdrop.classList.remove('hidden');
-
-      interfaceHandler.saveModal.generateListeners();
 
     },
 
@@ -274,10 +273,11 @@ var renderHandler = {
 
   importModal: {
 
-    render: function (callback) {
+    render: function () {
 
-      let importModal = document.querySelector('.modal-container.import-modal');
-      let importModal_Directory = importModal.querySelector('.modal-directory-container');
+      let importModal = interfaceHandler.importModal.node;
+      let importModal_backdrop = interfaceHandler.importModal.node_backdrop;
+      let importModal_directory = importModal.querySelector('.modal-directory-container');
 
       commsHandler.get.mapsDirectory(function (data) {
 
@@ -286,13 +286,26 @@ var renderHandler = {
           let uniqueID = item + '.' + i;
           let directoryEntry = `<div class="map-directory-entry-container" data-id="${uniqueID}"> <i class="fas fa-file"></i> <h4 class="file-title">${item}</h4> </div>`;
 
-          importModal_Directory.insertAdjacentHTML('beforeend', directoryEntry);
+          importModal_directory.insertAdjacentHTML('beforeend', directoryEntry);
 
         });
 
-        callback();
+        interfaceHandler.importModal.generateListeners();
+
+        importModal.classList.remove('hidden');
+        importModal_backdrop.classList.remove('hidden');
 
       });
+
+    },
+
+    derender: function () {
+
+      let importModal = interfaceHandler.importModal.node;
+      let importModal_backdrop = interfaceHandler.importModal.node_backdrop;
+
+      importModal.classList.add('hidden');
+      importModal_backdrop.classList.add('hidden');
 
     }
 
@@ -473,6 +486,57 @@ var interfaceHandler = {
       }
 
     },
+
+  },
+
+  importModal: {
+
+    node: document.querySelector('.modal-container.import-modal'),
+    node_backdrop: document.querySelector('.modal-backdrop.import-modal'),
+
+    generateListeners: function () {
+
+      let importModal = this.node;
+      let importModal_xButton = importModal.querySelector('.modal-x-button');
+      let importModal_closeButton = importModal.querySelector('.modal-close-button');
+      let importModal_directory = importModal.querySelector('.modal-directory-container');
+
+      importModal_xButton.addEventListener('click', this._close);
+      importModal_closeButton.addEventListener('click', this._close);
+
+      importModal_directory.querySelectorAll('.map-directory-entry-container').forEach((entry) => {
+
+        entry.addEventListener('click', function () {
+
+          let mapName = entry.dataset.id.split('.')[0];
+
+          clearFilterPins();
+
+          importMap(mapName, g_mapEmbed);
+
+          interfaceHandler.importModal._close();
+
+        });
+
+      });
+
+    },
+
+    _close: function (event) {
+
+      let importModal = interfaceHandler.importModal.node;
+      let importModal_directory = importModal.querySelector('.modal-directory-container');
+      let importModal_xButton = importModal.querySelector('.modal-x-button');
+      let importModal_closeButton = importModal.querySelector('.modal-close-button');
+
+      renderHandler.importModal.derender();
+
+      removeChildNodes(importModal_directory);
+
+      importModal_xButton.removeEventListener('click', interfaceHandler.importModal._close);
+      importModal_closeButton.removeEventListener('click', interfaceHandler.importModal._close);
+
+    }
 
   }
 

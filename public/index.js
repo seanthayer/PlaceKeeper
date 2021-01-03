@@ -68,54 +68,6 @@ function doFilterUpdate() {
 
 }
 
-function openImportModal() {
-
-  let importModal = document.querySelector('.modal-container.import-modal');
-  let importModal_backdrop = document.querySelector('.modal-backdrop.import-modal');
-  let importModal_xButton = importModal.querySelector('.modal-x-button');
-  let importModal_closeButton = importModal.querySelector('.modal-close-button');
-  let importModal_directory = importModal.querySelector('.modal-directory-container');
-
-  let importModal_closeFunc = function () {
-
-    importModal.classList.add('hidden');
-    importModal_backdrop.classList.add('hidden');
-
-    removeChildNodes(importModal_directory);
-
-    importModal_xButton.removeEventListener('click', importModal_closeFunc);
-    importModal_closeButton.removeEventListener('click', importModal_closeFunc);
-
-  }
-
-  importModal.classList.remove('hidden');
-  importModal_backdrop.classList.remove('hidden');
-
-  importModal_xButton.addEventListener('click', importModal_closeFunc);
-  importModal_closeButton.addEventListener('click', importModal_closeFunc);
-
-  renderHandler.importModal.render(function () {
-
-    importModal_directory.querySelectorAll('.map-directory-entry-container').forEach((entry) => {
-
-      entry.addEventListener('click', function () {
-
-        let mapName = entry.dataset.id.split('.')[0];
-
-        clearFilterPins();
-
-        importMap(mapName, g_mapEmbed);
-
-        importModal_closeFunc();
-
-      });
-
-    });
-
-  });
-
-}
-
 function pinPassesFilter(pin, filter) {
 
   if (filter.text) {
@@ -148,11 +100,11 @@ function removeChildNodes(node) {
 window.addEventListener('DOMContentLoaded', function () {
 
   let saveMapButton;
-  let searchBarButton;
   let importMapButton;
+  let searchBarButton;
 
   if (saveMapButton = document.querySelector('.save-map-button')) { saveMapButton.addEventListener('click', renderHandler.saveModal.render); }
+  if (importMapButton = document.querySelector('.import-map-button')) { importMapButton.addEventListener('click', renderHandler.importModal.render); }
   if (searchBarButton = document.querySelector('.search-bar-button')) { searchBarButton.addEventListener('click', doFilterUpdate); }
-  if (importMapButton = document.querySelector('.import-map-button')) { importMapButton.addEventListener('click', openImportModal); }
 
 });
