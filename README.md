@@ -1,5 +1,49 @@
 ## PlaceKeeper
 
+### Screenshots
+
+#### Site homepage
+<details><summary>[ Image ]</summary>
+   
+   ![Site homepage](/public/img/screenshots/screenshot_site-main.png)
+   
+</details>
+
+#### Creating a new pin
+<details><summary>[ Image ]</summary>
+   
+   ![Creating a new pin](/public/img/screenshots/screenshot_site-newpin.png)
+   
+</details>
+
+#### Import modal
+<details><summary>[ Image ]</summary>
+   
+   ![Import modal](/public/img/screenshots/screenshot_site-importmodal.png)
+   
+</details>
+
+#### A map with multiple pins
+<details><summary>[ Image ]</summary>
+   
+   ![A map with multiple pins](/public/img/screenshots/screenshot_site-multi-pins.png)
+   
+</details>
+
+#### An example of the search function
+<details><summary>[ Image ]</summary>
+   
+   ![An example of the search function](/public/img/screenshots/screenshot_site-filter.png)
+   
+</details>
+
+#### Save modal
+<details><summary>[ Image ]</summary>
+   
+   ![Save modal](/public/img/screenshots/screenshot_site-savemodal.png)
+   
+</details>
+
 ### Running the prototype locally
 
 1. Be sure to have Node.js installed (along with npm, of course)
