@@ -40,7 +40,7 @@ var commsHandler = {
 
     },
 
-    importMap: function (mapName, mapEmbed) {
+    importMap: function (mapName) {
 
       let mapURL = '/importMap/' + mapName;
 
@@ -93,7 +93,7 @@ var commsHandler = {
 
         });
 
-        renderHandler.map.setNewPrimaryMap(importMap, mapEmbed);
+        renderHandler.map.setNewPrimaryList(importMap);
 
       }).catch(function (err) {
 
@@ -152,60 +152,78 @@ var renderHandler = {
 
   map: {
 
+    mapTarget: null,
+
     currentRenderList: [],
 
-    primaryMapList: [],
+    primaryList: [],
 
-    hidePin: function (pin) {
+    getCurrentRender: function () {
 
-      pin.marker.setMap(null);
-
-      if (pin.clickListener) pin.clickListener.remove();
-
-      if (pin.infoBox) pin.infoBox.close();
+      return Array.from(this.currentRenderList);
 
     },
 
-    showPin: function (pin, mapEmbed) {
+    getPrimaryList: function () {
 
-      pin.marker.setMap(mapEmbed);
-
-      pin.clickListener = g_mapEventHandler.addListenerOnce(pin.marker, 'click', generateReadOnlyInfoBox);
+      return Array.from(this.primaryList);
 
     },
 
-    setNewPrimaryMap: function (newMap, mapEmbed) {
+    setNewMapTarget: function (mapEmbed) {
 
-      this.primaryMapList.forEach((pin) => {
+      this.mapTarget = mapEmbed;
+
+    },
+
+    setNewPrimaryList: function (newMap) {
+
+      this.derender();
+
+      this.renderComponents(newMap);
+      this.primaryList = newMap;
+
+    },
+
+    setNewRender: function (newRender) {
+
+      this.currentRenderList = newRender;
+
+    },
+
+    derender: function () {
+
+      console.log('Derendering');
+
+      this.primaryList.forEach((pin) => {
 
         this.hidePin(pin);
 
       });
 
       this.currentRenderList = [];
-      this.renderComponents(newMap, mapEmbed);
-      this.primaryMapList = newMap;
 
     },
 
-    rerender: function (mapEmbed) {
+    rerender: function () {
 
-      this.renderComponents(this.primaryMapList, mapEmbed);
+      this.renderComponents( this.getPrimaryList() );
 
     },
 
-    renderComponents: function (newRenderList, mapEmbed) {
+    renderComponents: function (newRender) {
 
       // Begin map render
 
+      let currentRender = this.getCurrentRender();
       let setIntersect = [];
 
-      for (let i = 0; i < this.currentRenderList.length; i++) {
+      for (let i = 0; i < currentRender.length; i++) {
 
-        for (let  j = 0; j < newRenderList.length; j++) {
+        for (let  j = 0; j < newRender.length; j++) {
 
-          let currentPin_latLng = this.currentRenderList[i].latLng.toString();
-          let newPin_latLng = newRenderList[j].latLng.toString();
+          let currentPin_latLng = currentRender[i].latLng.toString();
+          let newPin_latLng = newRender[j].latLng.toString();
 
           if (currentPin_latLng === newPin_latLng) {
 
@@ -217,8 +235,8 @@ var renderHandler = {
 
       }
 
-      let renderSubDiff = this.currentRenderList.filter(pin => !setIntersect.includes(pin.latLng.toString()) );
-      let renderAddDiff = newRenderList.filter(pin => !setIntersect.includes(pin.latLng.toString()) );
+      let renderSubDiff = currentRender.filter(pin => !setIntersect.includes(pin.latLng.toString()) );
+      let renderAddDiff = newRender.filter(pin => !setIntersect.includes(pin.latLng.toString()) );
 
       console.log('Intersect: ', setIntersect);
       console.log('Sub diff: ', renderSubDiff);
@@ -232,7 +250,7 @@ var renderHandler = {
 
       renderAddDiff.forEach((pin) => {
 
-        this.showPin(pin, mapEmbed);
+        this.showPin(pin);
 
       });
 
@@ -244,7 +262,7 @@ var renderHandler = {
 
       removeChildNodes(savedPlacesList);
 
-      newRenderList.forEach((pin) => {
+      newRender.forEach((pin) => {
 
         let context = {
 
@@ -260,15 +278,141 @@ var renderHandler = {
         let savedPlacesEntryHTML = Handlebars.templates.savedPlaceEntry(context);
         savedPlacesList.insertAdjacentHTML('beforeend', savedPlacesEntryHTML);
 
-        interfaceHandler.placesList.generateListeners(pin, mapEmbed);
+        interfaceHandler.placesList.generateListeners(pin, this.mapTarget);
 
       });
 
       // End placesList render
 
-      this.currentRenderList = newRenderList;
+      this.setNewRender(newRender);
 
     },
+
+    pushPin: function (pin) {
+
+      this.primaryList.push(pin);
+
+    },
+
+    hidePin: function (pin) {
+
+      pin.marker.setMap(null);
+
+      if (pin.clickListener) pin.clickListener.remove();
+
+      if (pin.infoBox) pin.infoBox.close();
+
+    },
+
+    showPin: function (pin) {
+
+      pin.marker.setMap(this.mapTarget);
+
+      pin.clickListener = g_mapEventHandler.addListenerOnce(pin.marker, 'click', renderHandler.pin.renderPinInfo);
+
+    },
+
+    splicePin: function (pin) {
+
+      this.primaryList.splice(this.primaryList.indexOf(pin), 1);
+
+    },
+
+  },
+
+  pin: {
+
+    renderNewPinForm: function (event) {
+
+      let mapEmbed = renderHandler.map.mapTarget;
+
+      let clickEventLatLng = event.latLng;
+
+      let newPin_marker = new google.maps.Marker({
+
+        position: clickEventLatLng,
+        map: mapEmbed
+
+      });
+
+      let newPin_infoFormHTML = Handlebars.templates.pinInfoForm();
+      let newPin_infoForm = renderHandler.pin._generatePinInfoBox(clickEventLatLng, newPin_infoFormHTML);
+
+      // Wait for the dynamically generated infobox to be loaded
+      g_mapEventHandler.addListenerOnce(newPin_infoForm, 'domready', function () {
+
+        let newPin = {
+
+          marker: newPin_marker,
+          infoBox: newPin_infoForm,
+          latLng: clickEventLatLng
+
+        };
+
+        interfaceHandler.pin.handleNewPinForm(newPin, function () {
+
+          g_mapEventHandler.addListenerOnce(mapEmbed, 'click', renderHandler.pin.renderNewPinForm);
+
+        });
+
+      });
+
+    },
+
+    renderPinInfo: function (event) {
+
+      let currentRender = renderHandler.map.getCurrentRender();
+      let mapEmbed = renderHandler.map.mapTarget;
+      let eventOriginPin;
+
+      currentRender.forEach((pin) => {
+
+        if (pin.latLng === event.latLng) {
+
+          eventOriginPin = pin;
+
+        }
+
+      });
+
+      mapEmbed.panTo(eventOriginPin.latLng);
+
+      let context = {
+
+        name: eventOriginPin.name,
+        latLng: eventOriginPin.latLng
+
+      }
+
+      if (eventOriginPin.description) context.description = eventOriginPin.description;
+
+      let infoBoxHTML = Handlebars.templates.pinInfoBox(context);
+      let infoBox = renderHandler.pin._generatePinInfoBox(eventOriginPin.latLng, infoBoxHTML);
+
+      eventOriginPin.infoBox = infoBox;
+
+      g_mapEventHandler.addListenerOnce(infoBox, 'domready', function () {
+
+        interfaceHandler.pin.handleInfoBox(eventOriginPin);
+
+      });
+
+    },
+
+    _generatePinInfoBox: function (latLng, html) {
+
+      // 'offset' is used for the 'pixelOffset' option and must be defined by a 'Size' object
+      let offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
+      let infoBox = new google.maps.InfoWindow();
+
+      infoBox.setPosition(latLng);
+      infoBox.setContent(html);
+      infoBox.setOptions({ pixelOffset: offset });
+      infoBox.open(renderHandler.map.mapTarget);
+
+      return infoBox;
+
+    }
 
   },
 
@@ -283,9 +427,9 @@ var renderHandler = {
       if (filter.text) {
 
         let filterMap = [];
-        let primaryMap = renderHandler.map.primaryMapList;
+        let primaryList = renderHandler.map.getPrimaryList();
 
-        primaryMap.forEach((pin) => {
+        primaryList.forEach((pin) => {
 
           if ( renderHandler.filter.pinPassesFilter(pin, filter) ) filterMap.push(pin);
 
@@ -293,7 +437,7 @@ var renderHandler = {
 
         renderHandler.filter.clearFilterPins();
 
-        renderHandler.map.renderComponents(filterMap, g_mapEmbed);
+        renderHandler.map.renderComponents(filterMap);
 
         renderHandler.filter.createFilterPin(filter);
 
@@ -350,7 +494,7 @@ var renderHandler = {
       filterInfoBox.appendChild(filterPin);
 
 
-      interfaceHandler.filter.generateListener();
+      interfaceHandler.filter.generateListener(renderHandler.map.mapTarget);
 
     }
 
@@ -372,7 +516,7 @@ var renderHandler = {
 
       });
 
-      renderHandler.map.primaryMapList.forEach((pin) => {
+      renderHandler.map.getPrimaryList().forEach((pin) => {
 
         let context = {
 
@@ -437,7 +581,7 @@ var renderHandler = {
 
         });
 
-        interfaceHandler.importModal.generateListeners();
+        interfaceHandler.importModal.generateListeners(renderHandler.map.mapTarget);
 
         importModal.classList.remove('hidden');
         importModal_backdrop.classList.remove('hidden');
@@ -462,6 +606,100 @@ var renderHandler = {
 
 var interfaceHandler = {
 
+  pin: {
+
+    handleNewPinForm: function (newPin, callback) {
+
+      let infoForm = g_mapNode.querySelector('.pin-infoform-container');
+      let infoForm_nameField = infoForm.querySelector('input.pin-infoform-name');
+      let infoForm_descField = infoForm.querySelector('textarea.pin-infoform-description');
+      let infoForm_saveButton = infoForm.querySelector('button[name="save"]');
+      let infoForm_cancelButton = infoForm.querySelector('button[name="cancel"]');
+
+      g_mapEventHandler.addDomListenerOnce(infoForm_saveButton, 'click', function () {
+
+        if (infoForm_nameField.value) {
+
+          let _pin = new Pin({
+
+            marker: newPin.marker,
+            name: infoForm_nameField.value,
+            latLng: newPin.latLng
+
+          });
+
+          if (infoForm_descField.value) _pin.description = infoForm_descField.value;
+
+          newPin.infoBox.close();
+
+          renderHandler.map.pushPin(_pin);
+
+          renderHandler.filter.clearFilterPins();
+
+          renderHandler.map.rerender();
+
+          callback();
+
+        } else {
+
+          alert('You must enter a name for a new pin!');
+
+        }
+
+      });
+
+      g_mapEventHandler.addDomListener(infoForm_cancelButton, 'click', function () {
+
+        renderHandler.map.hidePin(newPin);
+        callback();
+
+      });
+
+      g_mapEventHandler.addListener(newPin.infoBox, 'closeclick', function () {
+
+        renderHandler.map.hidePin(newPin);
+        callback();
+
+      });
+
+    },
+
+    handleInfoBox: function (pin) {
+
+      let infoBox = g_mapNode.querySelector(`.pin-infobox-container[data-latLng="${pin.latLng}"]`)
+      let infoBox_buttonContainer = infoBox.querySelector('.trash-button-container');
+      let infoBox_trashButton = infoBox_buttonContainer.querySelector('button.trash-button');
+
+      g_mapEventHandler.addDomListenerOnce(infoBox_trashButton, 'click', function () {
+
+        infoBox_buttonContainer.insertAdjacentHTML('afterbegin', '<em>Press again to confirm</em><strong>:</strong>');
+
+        g_mapEventHandler.addDomListenerOnce(infoBox_trashButton, 'click', function () {
+
+          let savedPlacesList = interfaceHandler.placesList.node;
+          let listEntry = savedPlacesList.querySelector(`[data-latLng="${pin.latLng}"]`);
+
+          renderHandler.map.hidePin(pin);
+          renderHandler.map.splicePin(pin);
+
+          savedPlacesList.removeChild(listEntry);
+
+        });
+
+      });
+
+      g_mapEventHandler.addListenerOnce(pin.infoBox, 'closeclick', function () {
+
+        pin.infoBox.close();
+
+        pin.clickListener = g_mapEventHandler.addListenerOnce(pin.marker, 'click', renderHandler.pin.renderPinInfo);
+
+      });
+
+    }
+
+  },
+
   placesList: {
 
     node: document.querySelector('.saved-places-list-element'),
@@ -477,7 +715,7 @@ var interfaceHandler = {
 
         mapEmbed.panTo(pin.latLng);
 
-      }, { once: true });
+      });
 
       trashButton.addEventListener('click', function () {
 
@@ -485,13 +723,10 @@ var interfaceHandler = {
 
         trashButton.addEventListener('click', function () {
 
-          let primaryMap = renderHandler.map.primaryMapList;
-
           renderHandler.map.hidePin(pin);
+          renderHandler.map.splicePin(pin);
 
           savedPlacesList.removeChild(listEntry);
-
-          primaryMap.splice(primaryMap.indexOf(pin), 1);
 
         }, { once: true });
 
@@ -506,7 +741,7 @@ var interfaceHandler = {
     node_searchbar: document.querySelector('.search-bar-container'),
     node_filterInfo: document.querySelector('.saved-places-filter-info'),
 
-    generateListener: function () {
+    generateListener: function (mapEmbed) {
 
       let filterPin_xButton = this.node_filterInfo.querySelector('.fas.fa-times-circle');
 
@@ -514,7 +749,7 @@ var interfaceHandler = {
 
         renderHandler.filter.clearFilterPins();
 
-        renderHandler.map.rerender(g_mapEmbed);
+        renderHandler.map.rerender();
 
       }, { once: true });
 
@@ -662,7 +897,7 @@ var interfaceHandler = {
     node: document.querySelector('.modal-container.import-modal'),
     node_backdrop: document.querySelector('.modal-backdrop.import-modal'),
 
-    generateListeners: function () {
+    generateListeners: function (mapEmbed) {
 
       let importModal = this.node;
       let importModal_xButton = importModal.querySelector('.modal-x-button');
@@ -680,7 +915,7 @@ var interfaceHandler = {
 
           renderHandler.filter.clearFilterPins();
 
-          commsHandler.get.importMap(mapName, g_mapEmbed);
+          commsHandler.get.importMap(mapName);
 
           interfaceHandler.importModal._close();
 
