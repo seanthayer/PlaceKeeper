@@ -85,12 +85,12 @@ main {
   margin: 8px 12px 4px 12px;
 }
 
-.pin-infobox-readonly-title {
+.pin-infobox-title {
   text-align: center;
   margin: 5px 0px 5px 0px;
 }
 
-.pin-infobox-readonly-description {
+.pin-infobox-description {
   border: 1px solid black;
   padding: 10px;
   text-align: center;

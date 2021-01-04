@@ -12,6 +12,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js" charset="utf-8" defer></script>
     <script src="/handlebarsPartials.js" charset="utf-8" defer></script>
+    <script src="/handlers.js" charset="utf-8" defer></script>
     <script src="/index.js" charset="utf-8" defer></script>
 
     {{#if homePage}}
@@ -21,11 +22,11 @@
       <!-- API key is redacted in public releases -->
       {{#if API_KEY}}
 
-        <script src="https://maps.googleapis.com/maps/api/js?key={{ API_KEY }}&callback=initMap&v=3.42.9" charset="utf-8" defer></script>
+        <script src="https://maps.googleapis.com/maps/api/js?v=weekly&key={{ API_KEY }}&callback=initMap" charset="utf-8" defer></script>
 
       {{else}}
 
-        <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" charset="utf-8" defer></script>
+        <script src="https://maps.googleapis.com/maps/api/js?v=weekly&callback=initMap" charset="utf-8" defer></script>
 
       {{/if}}
 
