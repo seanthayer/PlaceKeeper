@@ -1,8 +1,33 @@
+/*  Handlers:
+ *    commsHandler{}
+ *    renderHandler{}
+ *    interfaceHandler{}
+ */
+
 var commsHandler = {
+
+  /*  Description:
+   *    Handles communications between the client and server.
+   *
+   *  Structure:
+   *
+   *  - get{
+   *      mapsDirectory(callback)
+   *      importMap(mapName)
+   *    }
+   *
+   *  - put{
+   *     exportMap(fileName, data, callback)
+   *    }
+   */
 
   get: {
 
     mapsDirectory: function (callback) {
+
+      /*	Description:
+       *		Requests the file names of the saved maps from the server.
+       */
 
       let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
 
@@ -42,6 +67,10 @@ var commsHandler = {
 
     importMap: function (mapName) {
 
+      /*	Description:
+       *		Requests the pin data in JSON format for the specified map, parses it into the Pin() structure, and passes it off to renderHandler{}
+       */
+
       let mapURL = '/importMap/' + mapName;
 
       let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
@@ -67,6 +96,8 @@ var commsHandler = {
         let importMap = [];
 
         importData.forEach((entry) => {
+
+          // Parsing 'importData' into the Pin() structure.
 
           let coords = { lat: parseFloat(entry.lat), lng: parseFloat(entry.lng) };
 
@@ -109,6 +140,10 @@ var commsHandler = {
 
     exportMap: function (fileName, data, callback) {
 
+      /*	Description:
+       *		Requests the server to save the provided pin data.
+       */
+
       let entryData = {
 
         fileName: fileName,
@@ -149,6 +184,53 @@ var commsHandler = {
 }
 
 var renderHandler = {
+
+  /*  Description:
+   *    Handles the rendering of all dynamic components.
+   *
+   *  Structure:
+   *
+   *  - map{
+   *      mapTarget: null
+   *      currentRenderList: []
+   *      primaryList: []
+   *      getCurrentRender()
+   *      getPrimaryList()
+   *      setNewMapTarget(mapEmbed)
+   *      setNewPrimaryList(newMap)
+   *      setNewRender(newRender)
+   *      derender()
+   *      rerender()
+   *      renderComponents(newRender)
+   *      pushPin(pin)
+   *      hidePin(pin)
+   *      showPin(pin)
+   *      splicePin(pin)
+   *    }
+   *
+   *  - pin{
+   *      renderNewPinForm(event)
+   *      renderPinInfo(event)
+   *      _generatePinInfoBox(latLng, html)
+   *    }
+   *
+   *  - filter{
+   *      applyFilter()
+   *      _pinPassesFilter(pin, filter)
+   *      clearFilterPins()
+   *      createFilterPin(filter)
+   *    }
+   *
+   *  - saveModal{
+   *     render()
+   *     derender()
+   *    }
+   *
+   *  - importModal{
+   *      render()
+   *      derender()
+   *    }
+   */
 
   map: {
 
@@ -212,6 +294,10 @@ var renderHandler = {
     },
 
     renderComponents: function (newRender) {
+
+      /*	Description:
+       *		Renders the dynamic components directly related to map functionality. Currently the map pins and places list.
+       */
 
       // Begin map render
 
@@ -324,6 +410,10 @@ var renderHandler = {
 
     renderNewPinForm: function (event) {
 
+      /*	Description:
+       *		Renders the pin form used for creating a new pin.
+       */
+
       let mapEmbed = renderHandler.map.mapTarget;
 
       let clickEventLatLng = event.latLng;
@@ -338,7 +428,7 @@ var renderHandler = {
       let newPin_infoFormHTML = Handlebars.templates.pinInfoForm();
       let newPin_infoForm = renderHandler.pin._generatePinInfoBox(clickEventLatLng, newPin_infoFormHTML);
 
-      // Wait for the dynamically generated infobox to be loaded
+      // Wait for the dynamically generated infobox to be loaded.
       g_mapEventHandler.addListenerOnce(newPin_infoForm, 'domready', function () {
 
         let newPin = {
@@ -349,6 +439,7 @@ var renderHandler = {
 
         };
 
+        // interfaceHandler{} will handle the inputs, and callback when the form closes.
         interfaceHandler.pin.handleNewPinForm(newPin, function () {
 
           g_mapEventHandler.addListenerOnce(mapEmbed, 'click', renderHandler.pin.renderNewPinForm);
@@ -361,12 +452,17 @@ var renderHandler = {
 
     renderPinInfo: function (event) {
 
+      /*	Description:
+       *		Renders the info box associated with an already created pin. Displays name, description, and a delete button.
+       */
+
       let currentRender = renderHandler.map.getCurrentRender();
       let mapEmbed = renderHandler.map.mapTarget;
       let eventOriginPin;
 
       currentRender.forEach((pin) => {
 
+        // A way to access the click event's origin pin from the 'event' parameter itself was not found, so comparing 'latLng' is used instead.
         if (pin.latLng === event.latLng) {
 
           eventOriginPin = pin;
@@ -401,6 +497,10 @@ var renderHandler = {
 
     _generatePinInfoBox: function (latLng, html) {
 
+      /*	Description:
+       *		Uses the Maps API to generate an info window.
+       */
+
       // 'offset' is used for the 'pixelOffset' option and must be defined by a 'Size' object
       let offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
       let infoBox = new google.maps.InfoWindow();
@@ -420,6 +520,10 @@ var renderHandler = {
 
     applyFilter: function () {
 
+      /*	Description:
+       *		Renders the map's dynamic components from a filtered map list.
+       */
+
       let searchbar_input = interfaceHandler.filter.node_searchbar.querySelector('.search-bar-input');
 
       let filter = { text: searchbar_input.value.trim() }
@@ -431,7 +535,7 @@ var renderHandler = {
 
         primaryList.forEach((pin) => {
 
-          if ( renderHandler.filter.pinPassesFilter(pin, filter) ) filterMap.push(pin);
+          if ( renderHandler.filter._pinPassesFilter(pin, filter) ) filterMap.push(pin);
 
         });
 
@@ -447,7 +551,7 @@ var renderHandler = {
 
     },
 
-    pinPassesFilter: function (pin, filter) {
+    _pinPassesFilter: function (pin, filter) {
 
       if (filter.text) {
 
@@ -504,6 +608,10 @@ var renderHandler = {
 
     render: function () {
 
+      /*	Description:
+       *		Renders the save modal using the renderHandler{} primary list.
+       */
+
       let saveModal = interfaceHandler.saveModal.node;
       let saveModal_backdrop = interfaceHandler.saveModal.node_backdrop;
       let saveModal_ModalTable = saveModal.querySelector('.modal-table');
@@ -511,7 +619,7 @@ var renderHandler = {
 
       saveModal_TableRows.forEach((node) => {
 
-        // TODO: What does this even select?
+        // Removes the table row's parent node 'tbody'
         node.parentNode.remove();
 
       });
@@ -542,6 +650,10 @@ var renderHandler = {
 
     derender: function () {
 
+      /*	Description:
+       *		Hides modal and resets values.
+       */
+
       let saveModal = interfaceHandler.saveModal.node;
       let saveModal_backdrop = interfaceHandler.saveModal.node_backdrop;
 
@@ -565,6 +677,10 @@ var renderHandler = {
   importModal: {
 
     render: function () {
+
+      /*	Description:
+       *		Renders the import modal using the file names requested from the server.
+       */
 
       let importModal = interfaceHandler.importModal.node;
       let importModal_backdrop = interfaceHandler.importModal.node_backdrop;
@@ -594,9 +710,12 @@ var renderHandler = {
 
       let importModal = interfaceHandler.importModal.node;
       let importModal_backdrop = interfaceHandler.importModal.node_backdrop;
+      let importModal_directory = importModal.querySelector('.modal-directory-container');
 
       importModal.classList.add('hidden');
       importModal_backdrop.classList.add('hidden');
+
+      removeChildNodes(importModal_directory);
 
     }
 
@@ -606,9 +725,52 @@ var renderHandler = {
 
 var interfaceHandler = {
 
+  /*  Description:
+   *    Handles the logical interactions for all interface components.
+   *
+   *  Structure:
+   *
+   *  - pin{
+   *      handleNewPinForm(newPin, callback)
+   *      handleInfoBox(pin)
+   *    }
+   *
+   *  - placesList{
+   *      node: '.saved-places-list-element'
+   *      generateListeners(pin, mapEmbed)
+   *    }
+   *
+   *  - filter{
+   *      node_searchbar: '.search-bar-container'
+   *      node_filterInfo: '.saved-places-filter-info'
+   *      generateListener(mapEmbed)
+   *    }
+   *
+   *  - saveModal{
+   *      node: '.modal-container.save-modal'
+   *      node_backdrop: '.modal-backdrop.save-modal'
+   *      generateListeners()
+   *      _close(event)
+   *      _save(event)
+   *      _selectAll(event)
+   *      _checkboxChangeListener(event)
+   *    }
+   *
+   *  - importModal{
+   *      node: '.modal-container.import-modal'
+   *      node_backdrop: '.modal-backdrop.import-modal'
+   *      generateListeners(mapEmbed)
+   *      _close(event)
+   *    }
+   */
+
   pin: {
 
     handleNewPinForm: function (newPin, callback) {
+
+      /*	Description:
+       *		Handles logical and listener interactions for the new pin form.
+       */
 
       let infoForm = g_mapNode.querySelector('.pin-infoform-container');
       let infoForm_nameField = infoForm.querySelector('input.pin-infoform-name');
@@ -666,6 +828,10 @@ var interfaceHandler = {
 
     handleInfoBox: function (pin) {
 
+      /*	Description:
+       *		Handles logical and listener interactions for the existing pin info box.
+       */
+
       let infoBox = g_mapNode.querySelector(`.pin-infobox-container[data-latLng="${pin.latLng}"]`)
       let infoBox_buttonContainer = infoBox.querySelector('.trash-button-container');
       let infoBox_trashButton = infoBox_buttonContainer.querySelector('button.trash-button');
@@ -705,6 +871,10 @@ var interfaceHandler = {
     node: document.querySelector('.saved-places-list-element'),
 
     generateListeners: function (pin, mapEmbed) {
+
+      /*	Description:
+       *		Handles logical and listener interactions for the places list.
+       */
 
       let savedPlacesList = this.node;
       let listEntry = savedPlacesList.querySelector(`[data-latLng="${pin.latLng}"]`);
@@ -764,6 +934,10 @@ var interfaceHandler = {
 
     generateListeners: function () {
 
+      /*	Description:
+       *		Handles logical and listener interactions for the save modal.
+       */
+
       let saveModal = this.node;
       let saveModal_xButton = saveModal.querySelector('.modal-x-button');
       let saveModal_closeButton = saveModal.querySelector('.modal-close-button');
@@ -787,6 +961,10 @@ var interfaceHandler = {
     },
 
     _close: function (event) {
+
+      /*	Description:
+       *		Handles closing tasks for the save modal.
+       */
 
       let saveModal = interfaceHandler.saveModal.node;
       let saveModal_xButton = saveModal.querySelector('.modal-x-button');
@@ -814,6 +992,10 @@ var interfaceHandler = {
 
     _save: function (event) {
 
+      /*	Description:
+       *		Requests the server to save the selected pins as JSON, under a given file name.
+       */
+
       let saveModal = interfaceHandler.saveModal.node;
       let saveModal_selectedPins = saveModal.querySelectorAll('.table-row-checkbox:checked');
       let fileName = saveModal.querySelector('.modal-input').value;
@@ -826,6 +1008,7 @@ var interfaceHandler = {
 
         saveModal_selectedPins.forEach((pin) => {
 
+          // Table rows contain datasets for each entry, allowing ease of access.
           let pinTableRow = pin.parentNode.parentNode;
 
           let pinObj = {
@@ -899,6 +1082,10 @@ var interfaceHandler = {
 
     generateListeners: function (mapEmbed) {
 
+      /*	Description:
+       *		Handles logical and listener interactions for the import modal.
+       */
+
       let importModal = this.node;
       let importModal_xButton = importModal.querySelector('.modal-x-button');
       let importModal_closeButton = importModal.querySelector('.modal-close-button');
@@ -927,14 +1114,15 @@ var interfaceHandler = {
 
     _close: function (event) {
 
+      /*	Description:
+       *		Handles closing tasks for the import modal.
+       */
+
       let importModal = interfaceHandler.importModal.node;
-      let importModal_directory = importModal.querySelector('.modal-directory-container');
       let importModal_xButton = importModal.querySelector('.modal-x-button');
       let importModal_closeButton = importModal.querySelector('.modal-close-button');
 
       renderHandler.importModal.derender();
-
-      removeChildNodes(importModal_directory);
 
       importModal_xButton.removeEventListener('click', interfaceHandler.importModal._close);
       importModal_closeButton.removeEventListener('click', interfaceHandler.importModal._close);

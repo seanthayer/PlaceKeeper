@@ -25,11 +25,19 @@ app.all('*', function (req, res, next) {
 
 app.get('/', function (req, res) {
 
+	/*	Description:
+	 *		Renders homepage.handlebars with an API_KEY (if present).
+	 */
+
   res.status(200).render('homepage', { homePage: true, API_KEY: API_KEY });
 
 });
 
 app.post('/exportFile', function (req, res) {
+
+	/*	Description:
+	 *		Writes a '.json' file containing the request's pin data to the server's 'data/' directory.
+	 */
 
 	let entryData = {
 
@@ -44,13 +52,13 @@ app.post('/exportFile', function (req, res) {
 
 		if (err) {
 
-			res.status(500).send('POST ERROR');
+			res.sendStatus(500);
 
 			throw err;
 
 		} else {
 
-			res.status(200).send();
+			res.sendStatus(200);
 
 		}
 
@@ -59,6 +67,10 @@ app.post('/exportFile', function (req, res) {
 });
 
 app.get('/getMapsDirectory', function (req, res, next) {
+
+	/*	Description:
+	 *		Sends a response containing a list of the current file names in text format.
+	 */
 
 	if (req.header('Referer')) {
 
@@ -83,6 +95,10 @@ app.get('/getMapsDirectory', function (req, res, next) {
 });
 
 app.get('/importMap/:map_name', function (req, res, next) {
+
+	/*	Description:
+	 *		Sends a response containing the pin data for the selected file in JSON format.
+	 */
 
 	if (req.header('Referer')) {
 
