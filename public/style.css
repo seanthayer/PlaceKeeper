@@ -91,6 +91,7 @@ main {
 }
 
 .pin-infobox-description {
+  max-width: 208px;
   border: 1px solid black;
   padding: 10px;
   text-align: center;
