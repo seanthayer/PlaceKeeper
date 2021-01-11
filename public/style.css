@@ -42,6 +42,11 @@ main {
   background: white;
 }
 
+.header-image {
+  height: 160px;
+  width: 180px;
+}
+
 .content-container {
   display: flex;
   justify-content: space-between;
@@ -104,9 +109,9 @@ main {
   text-align: right;
 }
 
-.trash-button {
+/* .trash-button {
   padding: 0;
-}
+} */
 
 .far.fa-trash-alt {
   margin: -5px;
@@ -204,7 +209,7 @@ div.saved-place-entry {
   padding: 0;
   background: none;
   color: cornflowerblue;
-  font-size: 10px;
+  font-size: 9px;
 }
 
 .saved-place-entry-latLng:hover {
