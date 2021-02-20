@@ -8,17 +8,19 @@ Working with the generous guidance of Professor Rob Hess.
 (The description and objectives listed reflect a best case of the project's completion. The end result will vary, depending on the challenges faced.)
 
 ### Project Description
-PlaceKeeper will be a web application that interfaces with the Google Maps JavaScript API, allowing a user to store points of interest on a personal user profile. The application will be served from a Node.js based back-end, and the data will be handled using a MySQL database or MongoDB. The user interface will be completely overhauled to utilize the React.js framework, and the page will be stylized using Bootstrap or Material UI. The application will be capable of managing multiple profiles with authentication, and the application’s map embed will feature expanded functionality and more complex API interactions.
+PlaceKeeper will be a web application that interfaces with the Google Maps JavaScript API, allowing a user to store points of interest on a personal user profile. The application will be served from a Node.js based back-end, and the data will be handled using a MySQL database or MongoDB. The user interface will be completely overhauled to utilize the React library, and the page will be stylized using Bootstrap or Material UI. The application will be capable of managing multiple profiles with authentication, and the application’s map embed will feature expanded functionality and more complex API interactions.
 
 Finally, the application will be presented with a responsive and intuitive user experience, tying together a fully realized version of PlaceKeeper and exhibiting a full-stack implementation.
 
 ### Project Objectives
-* The application’s UI is interactive and fully featured using the React.js framework.
+* The application’s UI is interactive and fully featured using the React library.
 * The application’s front-end is stylized using Bootstrap or Material UI.
 * The application’s back-end handles relevant data using a MySQL database or MongoDB.
 * The application’s back-end authenticates the user and can handle multiple user accounts.
 * The application’s front-end map embed has expanded functionality.
 * The application’s front-end is presented with a responsive UI and an intuitive UX.
+
+---
 
 ### Screenshots
 
@@ -26,44 +28,44 @@ Finally, the application will be presented with a responsive and intuitive user 
 
 #### Site homepage
 <details><summary>[Image]</summary>
-   
+
    ![Site homepage](/public/img/screenshots/screenshot_site-main.png)
-   
+
 </details>
 
 #### Creating a new pin
 <details><summary>[Image]</summary>
-   
+
    ![Creating a new pin](/public/img/screenshots/screenshot_site-newpin.png)
-   
+
 </details>
 
 #### Import modal
 <details><summary>[Image]</summary>
-   
+
    ![Import modal](/public/img/screenshots/screenshot_site-importmodal.png)
-   
+
 </details>
 
 #### A map with multiple pins
 <details><summary>[Image]</summary>
-   
+
    ![A map with multiple pins](/public/img/screenshots/screenshot_site-multi-pins.png)
-   
+
 </details>
 
 #### An example of the search function
 <details><summary>[Image]</summary>
-   
+
    ![An example of the search function](/public/img/screenshots/screenshot_site-filter.png)
-   
+
 </details>
 
 #### Save modal
 <details><summary>[Image]</summary>
-   
+
    ![Save modal](/public/img/screenshots/screenshot_site-savemodal.png)
-   
+
 </details>
 
 </details>
