@@ -1,6 +1,6 @@
 // 'g_' prefix denotes a global variable.
-var g_mapNode;
-var g_mapEventHandler;
+window.g_mapNode;
+window.g_mapEventHandler;
 
 function Pin(pin) {
 
