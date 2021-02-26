@@ -326,7 +326,7 @@ var renderHandler = {
       
       /*  Description:
        *    Function renders the dynamic components directly related to map functionality.
-       *    In O(n^2) complexity, the function calculates the intersection 'A ∩ B', where 'A' is the map's current render and 'B' is the new render.
+       *    In O(n²) complexity, the function calculates the intersection 'A ∩ B', where 'A' is the map's current render and 'B' is the new render.
        *    This intersection represents pins that do not need to be removed or added during the render.
        *    So, let 'C' be this intersection: the function calculates 'A - C' and 'B - C' to find relative set complements of 'A \ B' and 'B \ A'.
        *    These set complements, 'D' and 'E', then represent the pins to be removed and the pins to be added, respectively.
