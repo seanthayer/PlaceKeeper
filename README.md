@@ -1,70 +1,114 @@
-# Getting Started with Create React App
+# PlaceKeeper
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Spring 2021 - CS 406
+A continuation of PlaceKeeper.
 
-## Available Scripts
+Working with the generous guidance of Professor Rob Hess.
 
-In the project directory, you can run:
+(The description and objectives listed reflect a best case of the project's completion. The end result will vary, depending on the challenges faced.)
 
-### `npm start`
+### Project Goal
+PlaceKeeper's primary goal is to serve as a hands-on learning opportunity. By the logical end of the project, the aim is to have a deeper understanding of:
+* Working with external APIs
+* Working with PHP, XML, and JavaScript
+* Working with Node.js, React, and Material UI
+* Designing and implementing MySQL databases
+* Designing and implementing user interfaces
+* Managing multiple user accounts and authentication
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+As a secondary outcome, PlaceKeeper will exhibit a full stack implementation and act as a reference point for future projects.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Project Description
+PlaceKeeper will be a web application that interfaces with the Google Maps JavaScript API. It will give a user the ability to store and interact with location data through various methods. These methods will interact directly with the Maps API in the following ways:
+* All location data will be managed using [MySQL and PHP](https://developers.google.com/maps/documentation/javascript/mysql-to-maps).
+* A map can optionally be used to visualize a dataset. Through an imported `.csv` or `.json` file, a user can import large quantities of data gathered from a seperate application or source. (Security risks will be accounted for when importing user data.) Then, through the Maps API [Visualization Library](https://developers.google.com/maps/documentation/javascript/visualization), a user can present their data through an adjustable heatmap.  
+* A user will be able to manually create a location by placing a new pin or dragging an existing pin. A user will also be able to create a new location through the Maps API [Geocoding Service](https://developers.google.com/maps/documentation/javascript/geocoding). Using this service will convert a valid street address into a corresponding latitude & longitude pair on the map.
+* Through the Maps API [Distance Matrix Service](https://developers.google.com/maps/documentation/javascript/distancematrix), a user will be able to calculate the distance of a path between an origin pin and a destination pin, if such a path exists.
+* Each location infobox will have a button that simply brings a user into the [Street View](https://developers.google.com/maps/documentation/javascript/streetview) of that given location.
+* The [Custom Markers](https://developers.google.com/maps/documentation/javascript/custom-markers) API may be implemented just for the fun of it. :-)
+* The Maps API has a nice [Drawing Library](https://developers.google.com/maps/documentation/javascript/drawinglayer) which allows a user to draw directly on the map embed. This will make it so a more broad "location area" can be defined through the use of [Shapes](https://developers.google.com/maps/documentation/javascript/shapes).
+* The map embed will be correctly [Localized](https://developers.google.com/maps/documentation/javascript/localization) for a user's region.
 
-### `npm test`
+PlaceKeeper's server will be built using [Node.js](https://nodejs.org/) with [Express](https://www.npmjs.com/package/express) serving. As mentioned previously, the relevant data will be handled using MySQL and PHP. The user interface will be implemented using the React library, and more specifically, using [Create React App](https://create-react-app.dev/) as a framework.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Now, if React is a fine wine, then [Material UI](https://material-ui.com/) is the artisan cheese it pairs with, and PlaceKeeper will be the vineyard that a user has the pleasure of relaxing in. Or, in so many words, Material UI will be added alongside React to handle styling.
 
-### `npm run build`
+Finally, basic user profiles will be implemented, allowing the storage of user-specific maps on the server.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Project Objectives
+* The application’s front-end is implemented using Create React App.
+* The application’s front-end is stylized using Material UI.
+* The application’s front-end map embed has expanded functionality.
+* The application’s front-end is presented with a responsive UI and an intuitive UX.
+* The application's back-end features a robust Node.js server that utilizes Express.
+* The application’s back-end handles relevant data using a MySQL database.
+* The application's back-end uses PHP to handle queried data.
+* The application’s back-end authenticates a user and can handle multiple user accounts.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Screenshots
 
-### `npm run eject`
+<details><summary>[Jan. 2021]</summary>
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+#### Site homepage
+<details><summary>[Image]</summary>
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   ![Site homepage](/public/img/screenshots/screenshot_site-main.png)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+</details>
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+#### Creating a new pin
+<details><summary>[Image]</summary>
 
-## Learn More
+   ![Creating a new pin](/public/img/screenshots/screenshot_site-newpin.png)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+</details>
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#### Import modal
+<details><summary>[Image]</summary>
 
-### Code Splitting
+   ![Import modal](/public/img/screenshots/screenshot_site-importmodal.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+</details>
 
-### Analyzing the Bundle Size
+#### A map with multiple pins
+<details><summary>[Image]</summary>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+   ![A map with multiple pins](/public/img/screenshots/screenshot_site-multi-pins.png)
 
-### Making a Progressive Web App
+</details>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+#### An example of the search function
+<details><summary>[Image]</summary>
 
-### Advanced Configuration
+   ![An example of the search function](/public/img/screenshots/screenshot_site-filter.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+</details>
 
-### Deployment
+#### Save modal
+<details><summary>[Image]</summary>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+   ![Save modal](/public/img/screenshots/screenshot_site-savemodal.png)
 
-### `npm run build` fails to minify
+</details>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+</details>
+
+### Running the application locally
+
+1. Be sure to have Node.js installed.
+
+2. Clone the repository to your local machine.
+
+3. Within the repo's directory, run `npm install --production` from GitBash or the Linux terminal.
+
+    * If you have a GoogleMaps API Key, then create a `ENV_VARS.env` file in the repo's root dir, and within that file create a var `G_MAPS_API_KEY` set equal to your API Key. It will be automatically embedded when the server boots. (Note that this is not secure for public facing applications.)
+
+    * If you do not have a GoogleMaps API Key, then the map embed will simply be started in development mode when the server boots.
+
+4. After the dependencies are installed, run `npm start`.
+
+5. The server will begin listening on env var 'PORT' if specified, or 3000 if not.
+
+6. Access the specified port in a web browser: `localhost:{PORT}`.
