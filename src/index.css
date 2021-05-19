@@ -52,9 +52,151 @@ code {
   width: 180px;
 }
 
+.content-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.map-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1;
+  min-width: 484px;
+  margin-right: 10px;
+}
+
 #map {
   width: 100%;
   height: 720px;
   border: 1px solid black;
   border-radius: 5px;
+}
+
+.import-and-save-buttons-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 35px;
+}
+
+.import-map-button {
+  padding: 15px;
+}
+
+.save-map-button {
+  padding: 15px;
+}
+
+.trash-button-container {
+  margin-top: 10px;
+  color: crimson;
+  font-size: 12px;
+  text-align: right;
+}
+
+.far.fa-trash-alt {
+  margin: -5px;
+  color: crimson;
+}
+
+.search-bar-container {
+  display: flex;
+  padding: 5px 3px 5px 3px;
+  border: 1px solid black;
+  border-radius: 5px;
+  background: dimgrey;
+}
+
+.search-bar-element {
+  margin: 2px;
+}
+
+.search-bar-button {
+  margin: 2px;
+}
+
+.saved-places-container {
+  flex: 0 0;
+  margin-left: 10px;
+}
+
+.saved-places-list-title {
+  margin: 0;
+  margin-top: 5px;
+  padding: 5px 5px 0px 5px;
+  border: 1px solid black;
+  border-radius: 5px 5px 0 0;
+  background: white;
+}
+
+.saved-places-filter-info {
+  display: inline-block;
+  position: absolute;
+  margin: 0;
+  border: 1px solid black;
+  border-top: 0;
+  background: crimson;
+  font-family: 'Roboto';
+  font-size: 12px;
+  font-weight: lighter;
+}
+
+.filter-pin {
+  display: inline-block;
+  padding: 5px 0px 0px 5px;
+}
+
+.fas.fa-times-circle {
+  vertical-align: top;
+  margin: 6px 5px 4px 2px;
+}
+
+.fas.fa-times-circle:hover {
+  cursor: pointer;
+  color: floralwhite;
+}
+
+.saved-places-list-container {
+  max-height: 652px;
+  height: 652px;
+  border: 1px solid black;
+  border-top: 0;
+  border-radius: 0 0 5px 5px;
+  background: dimgrey;
+  overflow: auto;
+}
+
+ul.saved-places-list-element {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+div.saved-place-entry {
+  margin: 10px 15px 10px 15px;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+  background: white;
+}
+
+.saved-place-entry-title {
+  margin: 0;
+  font-size: 14px;
+}
+
+.saved-place-entry-latLng {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: cornflowerblue;
+  font-size: 8px;
+}
+
+.saved-place-entry-latLng:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.saved-place-entry-latLng:active {
+  color: aqua;
 }
