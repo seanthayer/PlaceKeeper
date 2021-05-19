@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { Loader } from '@googlemaps/js-api-loader';
 
 const loader = new Loader({
-  apiKey: '',
+  apiKey: `${process.env.REACT_APP_GMAPS_APIKEY}`,
   version: 'weekly',
   clickableIcons: false
 });
