@@ -8,6 +8,7 @@ class App extends React.Component {
     super(props);
     this.state = { modal: false, modalContents: null };
     this.showSaveModal = this.showSaveModal.bind(this);
+    this.showImportModal = this.showImportModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
   }
 
@@ -29,7 +30,7 @@ class App extends React.Component {
   
         <main>
           <div className="content-container">
-            <Map showSaveModal={this.showSaveModal}/>
+            <Map showSaveModal={this.showSaveModal} showImportModal={this.showImportModal}/>
             <PlacesList />
           </div>
         </main>
@@ -49,6 +50,13 @@ class App extends React.Component {
     });
   }
 
+  showImportModal() {
+    this.setState({
+      modal: true,
+      modalContents: <ImportModal closeModal={this.closeModal}/>
+    });
+  }
+
   closeModal() {
     this.setState({
       modal: false,
@@ -65,7 +73,7 @@ class Map extends React.Component {
 
         <div className="import-and-save-buttons-container">
 
-        <ImportButton />
+        <ImportButton showImportModal={this.props.showImportModal}/>
         <SaveButton showSaveModal={this.props.showSaveModal}/>
 
         </div>
@@ -94,12 +102,21 @@ class SaveButton extends React.Component {
 }
 
 class ImportButton extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
+  }
+
   render() {
     return (
       <div className="import-map-element">
-        <button type="button" className="import-map-button">Import Map</button>
+        <button type="button" className="import-map-button" onClick={this.handleClick}>Import Map</button>
       </div>
     );
+  }
+
+  handleClick() {
+    this.props.showImportModal();
   }
 }
 
@@ -173,6 +190,37 @@ class SaveModal extends React.Component {
 
         <div className="modal-footer">
           <button type="button" className="modal-save-button action-button">Save</button>
+          <button type="button" className="modal-close-button action-button" onClick={this.props.closeModal}>Close</button>
+        </div>
+
+        </div>
+      </div>
+    );
+  }
+}
+
+class ImportModal extends React.Component {
+  render() {
+    return (
+      <div className="modal-backdrop import-modal">
+        <div className="modal-container import-modal">
+
+        <div className="modal-header">
+          <h2 className="modal-title">Import Map</h2>
+          <button type="button" className="modal-x-button" onClick={this.props.closeModal}>&times;</button>
+        </div>
+
+        <div className="modal-description">
+          <p>Available Maps:</p>
+        </div>
+
+        <div className="modal-body import-modal">
+          <div className="modal-directory-container">
+
+          </div>
+        </div>
+
+        <div className="modal-footer">
           <button type="button" className="modal-close-button action-button" onClick={this.props.closeModal}>Close</button>
         </div>
 
