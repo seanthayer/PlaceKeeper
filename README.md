@@ -1,6 +1,20 @@
 # PlaceKeeper
 
-### Spring 2021 - CS 406
+### Front end
+<ins>Completed</ins>↴
+* [x] Convert homepage to React
+* [x] Rendering of import & save modals
+
+### Back end
+<ins>Completed</ins>↴
+
+### Gmaps
+<ins>Completed</ins>↴
+* [x] Linked API within React
+
+## Project Metadata
+<details><summary>[Expand]</summary>
+<br>
 A continuation of PlaceKeeper.
 
 Working with the generous guidance of Professor Rob Hess.
@@ -45,11 +59,13 @@ Finally, basic user profiles will be implemented, allowing the storage of user-s
 * The application's back-end uses PHP to handle queried data.
 * The application’s back-end authenticates a user and can handle multiple user accounts.
 
----
+</details>
+
+## Misc.
 
 ### Screenshots
 
-<details><summary>[Jan. 2021]</summary>
+<details><summary>[V1 - Jan. 2021]</summary>
 
 #### Site homepage
 <details><summary>[Image]</summary>
@@ -97,18 +113,4 @@ Finally, basic user profiles will be implemented, allowing the storage of user-s
 
 ### Running the application locally
 
-1. Be sure to have Node.js installed.
-
-2. Clone the repository to your local machine.
-
-3. Within the repo's directory, run `npm install --production` from GitBash or the Linux terminal.
-
-    * If you have a GoogleMaps API Key, then create a `ENV_VARS.env` file in the repo's root dir, and within that file create a var `G_MAPS_API_KEY` set equal to your API Key. It will be automatically embedded when the server boots. (Note that this is not secure for public facing applications.)
-
-    * If you do not have a GoogleMaps API Key, then the map embed will simply be started in development mode when the server boots.
-
-4. After the dependencies are installed, run `npm start`.
-
-5. The server will begin listening on env var 'PORT' if specified, or 3000 if not.
-
-6. Access the specified port in a web browser: `localhost:{PORT}`.
+To be updated.
