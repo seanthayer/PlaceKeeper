@@ -200,3 +200,172 @@ div.saved-place-entry {
 .saved-place-entry-latLng:active {
   color: aqua;
 }
+
+.modal-backdrop {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: fixed;
+  z-index: 1;
+  background-color: rgba(0,0,0,0.85);
+}
+
+.modal-container {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: auto;
+  max-width: 700px;
+  min-width: 400px;
+  min-height: 300px;
+  margin: 40px auto;
+  background-color: #fff;
+  border-radius: 15px;
+  position: fixed;
+  z-index: 2;
+}
+
+.modal-header {
+  border-bottom: 1px solid rgb(208, 208, 208);
+}
+
+.modal-title {
+  margin-left: 20px;
+  margin-top: 10px;
+  font-size: 22px;
+}
+
+.modal-body {
+  margin-left: 40px;
+  margin-bottom: 10px;
+  max-height: 400px;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+
+.modal-body.import-modal {
+  overflow: auto;
+  overflow-x: auto;
+  margin: 0px 20px 16px 20px;
+}
+
+.modal-description {
+  margin-left: 20px;
+}
+
+.modal-footer {
+  border-top: 1px solid rgb(208, 208, 208);
+  padding-top: 20px;
+}
+
+.modal-x-button {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  font-size: 25px;
+  border: none;
+  background: none;
+  padding: 0;
+  color: rgb(125, 125, 125);
+}
+
+.modal-save-button {
+  width: 150px;
+  border: 0px;
+  color: white;
+  background-color: rgb(0,135,189);
+}
+
+.modal-close-button {
+  width: 80px;
+  border: 2px solid rgb(208, 208, 208);
+  background-color: #fff;
+}
+
+.action-button {
+  height: 50px;
+  float: right;
+  margin-right: 20px;
+  border-radius: 5px;
+}
+
+.modal-directory-container {
+  height: 300px;
+  border: 1px solid black;
+}
+
+.modal-input-container {
+  display: flex;
+}
+
+.modal-input {
+  margin-top: 18px;
+  margin-left: 5px;
+}
+
+.modal-input-text {
+  margin-left: 40px;
+  font-size: 22px;
+}
+
+.map-directory-entry-container {
+  display: inline-block;
+  cursor: pointer;
+  margin: 8px;
+  border: 1px solid black;
+  padding: 10px;
+}
+
+.fas.fa-file {
+  color: green;
+}
+
+.map-directory-entry-container:hover .fas.fa-file {
+  color: lightgreen;
+}
+
+.file-title {
+  display: inline;
+  margin: 2px;
+}
+
+.modal-table table, th, td {
+  text-align: center;
+  border: 2px solid black;
+  padding: 10px;
+}
+
+.modal-table-header {
+  background-color: gray;
+  color: white;
+  font-weight: 100;
+  font-size: 14px;
+}
+
+.modal-table-row {
+  background-color: rgb(208, 208, 208);
+  color: black;
+}
+
+.modal-table-checkboxes {
+  width: 60px;
+}
+
+.modal-table-select-all {
+  background-color: gray;
+  border: 1px solid white;
+}
+
+.table-header-name {
+  width: 120px
+}
+
+.table-header-latitude {
+  width: 180px;
+}
+
+.table-header-longitude {
+  width: 180px;
+}
