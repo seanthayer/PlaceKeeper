@@ -8,18 +8,12 @@ header {
   justify-content: space-between;
   min-width: 881px;
   border-bottom: 2px solid black;
-  background-image: url('/img/background_header-bg.png');
   background-color: white;
 }
 
 main {
   margin: 25px;
 }
-
-/* .gm-style .gm-style-iw {
-  font-weight: revert;
-  font-size: revert;
-} */
 
 .site-title {
   display: inline-block;
@@ -67,39 +61,18 @@ main {
   border-radius: 5px;
 }
 
-.pin-infoform-title {
-  text-align: center;
-  margin: 5px;
-}
-
-.pin-infoform-name {
-  font-family: 'Roboto';
-}
-
-.pin-infoform-description {
-  font-family: 'Roboto';
-  min-width: 210px;
-  min-height: 60px;
-  max-width: 210px;
-  max-height: 60px;
-}
-
-.pin-infoform-buttons-container {
+.import-and-save-buttons-container {
   display: flex;
   justify-content: space-between;
-  margin: 8px 12px 4px 12px;
+  margin: 35px;
 }
 
-.pin-infobox-title {
-  text-align: center;
-  margin: 5px 0px 5px 0px;
+.import-map-button {
+  padding: 15px;
 }
 
-.pin-infobox-description {
-  max-width: 208px;
-  border: 1px solid black;
-  padding: 10px;
-  text-align: center;
+.save-map-button {
+  padding: 15px;
 }
 
 .trash-button-container {
@@ -108,10 +81,6 @@ main {
   font-size: 12px;
   text-align: right;
 }
-
-/* .trash-button {
-  padding: 0;
-} */
 
 .far.fa-trash-alt {
   margin: -5px;
@@ -146,6 +115,8 @@ main {
   border: 1px solid black;
   border-radius: 5px 5px 0 0;
   background: white;
+  font-family: 'Roboto';
+  font-weight: 500;
 }
 
 .saved-places-filter-info {
@@ -171,13 +142,12 @@ main {
 }
 
 .fas.fa-times-circle:hover {
-  cursor: pointer;
   color: floralwhite;
 }
 
 .saved-places-list-container {
-  max-height: 642px;
-  height: 642px;
+  max-height: 652px;
+  height: 652px;
   border: 1px solid black;
   border-top: 0;
   border-radius: 0 0 5px 5px;
@@ -213,26 +183,11 @@ div.saved-place-entry {
 }
 
 .saved-place-entry-latLng:hover {
-  cursor: pointer;
   text-decoration: underline;
 }
 
 .saved-place-entry-latLng:active {
   color: aqua;
-}
-
-.import-and-save-buttons-container {
-  display: flex;
-  justify-content: space-between;
-  margin: 35px;
-}
-
-.import-map-button {
-  padding: 15px;
-}
-
-.save-map-button {
-  padding: 15px;
 }
 
 .modal-backdrop {
@@ -241,7 +196,7 @@ div.saved-place-entry {
   left: 0;
   right: 0;
   position: fixed;
-  z-index: 1000;
+  z-index: 1;
   background-color: rgba(0,0,0,0.85);
 }
 
@@ -258,7 +213,7 @@ div.saved-place-entry {
   background-color: #fff;
   border-radius: 15px;
   position: fixed;
-  z-index: 1010;
+  z-index: 2;
 }
 
 .modal-header {
@@ -302,7 +257,6 @@ div.saved-place-entry {
   border: none;
   background: none;
   padding: 0;
-  cursor: pointer;
   color: rgb(125, 125, 125);
 }
 
@@ -347,7 +301,6 @@ div.saved-place-entry {
 
 .map-directory-entry-container {
   display: inline-block;
-  cursor: pointer;
   margin: 8px;
   border: 1px solid black;
   padding: 10px;
@@ -403,8 +356,4 @@ div.saved-place-entry {
 
 .table-header-longitude {
   width: 180px;
-}
-
-.hidden {
-  display: none;
 }

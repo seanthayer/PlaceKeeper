@@ -1,34 +1,39 @@
 {
-  "name": "PlaceKeeper",
-  "version": "1.0.0",
-  "description": "PlaceKeeper is an application which utilizes the Google Maps JavaScript API to allow the user to store points of interest.",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prestart": "npm run build",
-    "start": "node server.js",
-    "predev": "npm run build",
-    "dev": "nodemon server.js",
-    "build": "handlebars ./views/partials/savedPlaceEntry.handlebars ./views/partials/pinInfoForm.handlebars ./views/partials/pinInfoBox.handlebars ./views/partials/pinTableRow.handlebars -f ./public/handlebarsPartials.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/seanthayer/PlaceKeeper.git"
-  },
-  "author": "Sean Thayer",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/seanthayer/PlaceKeeper/issues"
-  },
-  "homepage": "https://github.com/seanthayer/PlaceKeeper#readme",
+  "name": "placekeeper",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
-    "body-parser": "^1.19.0",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "express-handlebars": "^5.2.0",
-    "handlebars": "^4.7.7"
+    "@googlemaps/js-api-loader": "^1.11.4",
+    "@testing-library/jest-dom": "^5.12.0",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3",
+    "web-vitals": "^1.1.2"
   },
-  "devDependencies": {
-    "nodemon": "^2.0.6"
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
