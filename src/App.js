@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
-import background from './img/background_header-bg.png';          // Sloppy,
-import header from './img/thumbnail_placekeeper-header-icon.png'; // Find a better way.
+import background from './img/background_header-bg.png';
+import header from './img/thumbnail_placekeeper-header-icon.png';
 
 class App extends React.Component {
   constructor(props) {
@@ -229,43 +229,5 @@ class ImportModal extends React.Component {
     );
   }
 }
-
-// EXAMPLE CODE, disregard
-/*
-class Clock extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {date: new Date()};
-  }
-  
-  render() {
-    return (
-      <div>
-        <h1>A Simple Clock</h1>
-        <h2>
-          It is {this.state.date.toLocaleTimeString()}
-        </h2>
-      </div>
-    );
-  }
-  
-  tick() {
-    this.setState({
-      date: new Date()
-    });
-  }
-  
-  componentDidMount() {
-    this.timerID = setInterval(
-      () => this.tick(),
-      1000
-    );
-  }
-  
-  componentWillUnmount() {
-    clearInterval(this.timerID);
-  }
-}
-*/
 
 export default App;
