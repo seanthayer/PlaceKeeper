@@ -1,6 +1,6 @@
 import React from 'react';
 import MapInterface from './MapInterface';
-import HTMLGen from './HTMLFunctions';
+import HTMLGen from './HTMLGen';
 import { loader } from './index';
 import background from './img/background_header-bg.png';
 import header from './img/thumbnail_placekeeper-header-icon.png';
@@ -31,7 +31,10 @@ class App extends React.Component {
   
         <main>
           <div className="content-container">
-            <Map showSaveModal={this.showSaveModal} showImportModal={this.showImportModal}/>
+            <Map
+              showSaveModal={this.showSaveModal}
+              showImportModal={this.showImportModal}
+            />
             <PlacesList />
           </div>
         </main>
@@ -67,20 +70,9 @@ class Map extends React.Component {
   /*  Global vars generated and assigned here:
    *    - window.google
    *    - window.mapEvent
-   *    - window.mapEmbed
    *    - window.mapInterface
    *    - window.HTMLGen
    */
-  constructor(props) {
-    super(props);
-
-    this.generateNewPin = this.generateNewPin.bind(this);
-    this.generateInfoBox = this.generateInfoBox.bind(this);
-
-    window.mapInterface = new MapInterface();
-    window.HTMLGen = new HTMLGen();
-  }
-
   render() {
     return (
       <section className="map-container">
@@ -101,6 +93,7 @@ class Map extends React.Component {
     loader.load().then(() => {
       const google = window.google;
       const mapEvent = google.maps.event;
+      const mapDOMNode = document.querySelector('#map');
     
       const mapEmbed = new google.maps.Map(document.querySelector('#map'), {
     
@@ -110,52 +103,15 @@ class Map extends React.Component {
     
       });
 
-      window.mapEvent = mapEvent;
-      window.mapEmbed = mapEmbed;
+      const mapInterface  = new MapInterface(mapEmbed, mapDOMNode);
 
-      mapEvent.addListenerOnce(mapEmbed, 'click', this.generateNewPin);
+      window.mapEvent     = mapEvent;
+      window.mapInterface = mapInterface;
+      window.HTMLGen      = new HTMLGen();
+
+      mapEvent.addListenerOnce(mapEmbed, 'click', mapInterface.generateNewPin);
     });
     // End
-  }
-
-  generateNewPin(event) {
-    const google = window.google;
-    const mapEvent = google.maps.event;
-    const mapEmbed = window.mapEmbed;
-    const mapInterface = window.mapInterface;
-    const HTMLGen = window.HTMLGen;
-
-    let newInfoForm = this.generateInfoBox(event.latLng, HTMLGen.NewPinForm());
-
-    let newMarker = new google.maps.Marker({
-
-      position: event.latLng,
-      map: mapEmbed
-
-    });
-
-    mapEvent.addListenerOnce(newInfoForm, 'domready', () => {
-
-      console.log('ready');
-      mapInterface.handleNewPinForm(null);
-
-    });
-
-  }
-
-  generateInfoBox(latLng, html) {
-    const google = window.google;
-    const mapEmbed = window.mapEmbed;
-
-    let offset = new google.maps.Size(0, -35, 'pixel', 'pixel');
-    let infoBox = new google.maps.InfoWindow();
-
-    infoBox.setPosition(latLng);
-    infoBox.setContent(html);
-    infoBox.setOptions({ pixelOffset: offset });
-    infoBox.open(mapEmbed);
-
-    return infoBox;
   }
 }
 
