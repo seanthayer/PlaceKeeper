@@ -60,17 +60,25 @@ class MapInterface {
     let infoForm_cancelButton = infoForm.querySelector('button[name="cancel"]');
 
 
-    mapEvent.addDomListener(infoForm_cancelButton, 'click', function () {
+    mapEvent.addDomListener(infoForm_cancelButton, 'click', () => {
 
-      console.log('test cancel');
-
-    });
-
-    mapEvent.addListener(newPin.infoBox, 'closeclick', function () {
-
-      console.log('test x');
+      this._hidePin(newPin);
+      mapEvent.addListenerOnce(this.mapEmbed, 'click', this.generateNewPin);
 
     });
+
+    mapEvent.addListener(newPin.infoBox, 'closeclick', () => {
+
+      this._hidePin(newPin);
+      mapEvent.addListenerOnce(this.mapEmbed, 'click', this.generateNewPin);
+
+    });
+  }
+
+  _hidePin(pin) {
+    pin.marker.setMap(null);
+
+    if (pin.infoBox) pin.infoBox.close();
   }
 }
 
