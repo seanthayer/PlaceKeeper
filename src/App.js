@@ -1,22 +1,21 @@
 import React from 'react';
-import './App.css';
+import { loader } from './index';
 import background from './img/background_header-bg.png';
 import header from './img/thumbnail_placekeeper-header-icon.png';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { modal: false, modalContents: null };
+
+    this.state = { modal: null };
+
     this.showSaveModal = this.showSaveModal.bind(this);
     this.showImportModal = this.showImportModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
   }
 
   render() {
-    let modal;
-    if (this.state.modal) {
-      modal = this.state.modalContents;
-    }
+    let modal = this.state.modal;
 
     return (
       <div className="PlaceKeeper">
@@ -45,27 +44,45 @@ class App extends React.Component {
 
   showSaveModal() {
     this.setState({
-      modal: true,
-      modalContents: <SaveModal closeModal={this.closeModal}/>
+      modal: <SaveModal closeModal={this.closeModal}/>
     });
   }
 
   showImportModal() {
     this.setState({
-      modal: true,
-      modalContents: <ImportModal closeModal={this.closeModal}/>
+      modal: <ImportModal closeModal={this.closeModal}/>
     });
   }
 
   closeModal() {
     this.setState({
-      modal: false,
-      modalContents: null
+      modal: null
     });
   }
 }
 
 class Map extends React.Component {
+  constructor(props) {
+    super(props);
+
+    // Initiate API connection, then render map.
+    loader.load().then(() => {
+      const google = window.google;
+      let mapEmbed;
+    
+      // eslint-disable-next-line
+      mapEmbed = new google.maps.Map(document.querySelector('#map'), {
+    
+        center: { lat: 43.815136416911436, lng: -120.6398112171833 },
+        zoom: 5,
+        clickableIcons: false
+    
+      });
+    });
+    // End
+
+  }
+
   render() {
     return (
       <section className="map-container">
@@ -73,8 +90,8 @@ class Map extends React.Component {
 
         <div className="import-and-save-buttons-container">
 
-        <ImportButton showImportModal={this.props.showImportModal}/>
-        <SaveButton showSaveModal={this.props.showSaveModal}/>
+          <ImportButton showImportModal={this.props.showImportModal}/>
+          <SaveButton showSaveModal={this.props.showSaveModal}/>
 
         </div>
       </section>
