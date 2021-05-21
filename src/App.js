@@ -62,25 +62,14 @@ class App extends React.Component {
 }
 
 class Map extends React.Component {
+  /*  Global vars generated and assigned here:
+   *    - window.google
+   *    - window.mapEvent
+   *    - window.mapEmbed
+   */
   constructor(props) {
     super(props);
-
-    // Initiate API connection, then render map.
-    loader.load().then(() => {
-      const google = window.google;
-      let mapEmbed;
-    
-      // eslint-disable-next-line
-      mapEmbed = new google.maps.Map(document.querySelector('#map'), {
-    
-        center: { lat: 43.815136416911436, lng: -120.6398112171833 },
-        zoom: 5,
-        clickableIcons: false
-    
-      });
-    });
-    // End
-
+    this.generateNewPin = this.generateNewPin.bind(this);
   }
 
   render() {
@@ -96,6 +85,41 @@ class Map extends React.Component {
         </div>
       </section>
     );
+  }
+
+  componentDidMount() {
+    // Initiate API connection, render map, and assign global vars.
+    loader.load().then(() => {
+      const google = window.google;
+      const mapEvent = google.maps.event;
+    
+      const mapEmbed = new google.maps.Map(document.querySelector('#map'), {
+    
+        center: { lat: 43.815136416911436, lng: -120.6398112171833 },
+        zoom: 5,
+        clickableIcons: false
+    
+      });
+
+      window.mapEvent = mapEvent;
+      window.mapEmbed = mapEmbed;
+
+      mapEvent.addListener(mapEmbed, 'click', this.generateNewPin);
+    });
+    // End
+  }
+
+  generateNewPin(event) {
+    const google = window.google;
+    const mapEmbed = window.mapEmbed;
+
+    let newMarker = new google.maps.Marker({
+
+      position: event.latLng,
+      map: mapEmbed
+
+    });
+
   }
 }
 
