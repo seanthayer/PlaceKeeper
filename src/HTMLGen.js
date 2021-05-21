@@ -1,21 +1,26 @@
+import ReactDOMServer from 'react-dom/server';
+
+// ReactDOMServer has a convenient function "renderToString()" which allows a component to be composed
+// using a given data set, and returned as an HTML string. Similar to Handlebars.
+
 class HTMLGen {
   NewPinForm() {
-    return(`
-      <div class="pin-infoform-container">
+    return ReactDOMServer.renderToString(
+      <div className="pin-infoform-container">
   
-        <h2 class="pin-infoform-title">Create New Pin</h2>
+        <h2 className="pin-infoform-title">Create New Pin</h2>
   
-        <fieldset class="pin-infoform-fieldset">
+        <fieldset className="pin-infoform-fieldset">
   
           <legend>Pin Details</legend>
   
-          <label for="pin-infoform-name">Name:</label>
-          <input type="text" class="pin-infoform-name" name="name" maxlength="30" placeholder="Max 30 characters" /><br/><br/>
+          <label htmlFor="pin-infoform-name">Name:</label>
+          <input type="text" className="pin-infoform-name" name="name" maxLength="30" placeholder="Max 30 characters" /><br/><br/>
   
-          <label for="pin-infoform-description">Description</label><br/>
-          <textarea class="pin-infoform-description" name="description" rows="4" cols="28" maxlength="200" placeholder="Max 200 characters"></textarea><br/>
+          <label htmlFor="pin-infoform-description">Description</label><br/>
+          <textarea className="pin-infoform-description" name="description" rows="4" cols="28" maxLength="200" placeholder="Max 200 characters"></textarea><br/>
   
-          <div class="pin-infoform-buttons-container">
+          <div className="pin-infoform-buttons-container">
             <button type="button" name="cancel">Cancel</button>
             <button type="button" name="save">Save</button>
           </div>
@@ -23,7 +28,30 @@ class HTMLGen {
         </fieldset>
   
       </div>
-    `);
+    );
+  }
+
+  PinInfo(context) {
+    let latLng = context.latLng;
+    let name = context.name;
+    let description = null;
+    
+    if (context.description) 
+      description = <div className="pin-infobox-description"><p>{context.description}</p></div>;
+
+    return ReactDOMServer.renderToString(
+      <div className="pin-infobox-container" data-latlng={latLng}>
+
+        <h2 className="pin-infobox-title">{name}</h2>
+
+        {description}
+
+        <div className="trash-button-container">
+          <button type="button" name="trash-button" className="trash-button"><i className="far fa-trash-alt"></i></button>
+        </div>
+
+      </div>
+    );
   }
 }
 
