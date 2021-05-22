@@ -1,22 +1,23 @@
 import React from 'react';
-import './App.css';
+import MapInterface from './MapInterface';
+import HTMLGen from './HTMLGen';
+import { loader } from './index';
 import background from './img/background_header-bg.png';
 import header from './img/thumbnail_placekeeper-header-icon.png';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { modal: false, modalContents: null };
+
+    this.state = { modal: null };
+
     this.showSaveModal = this.showSaveModal.bind(this);
     this.showImportModal = this.showImportModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
   }
 
   render() {
-    let modal;
-    if (this.state.modal) {
-      modal = this.state.modalContents;
-    }
+    let modal = this.state.modal;
 
     return (
       <div className="PlaceKeeper">
@@ -30,7 +31,10 @@ class App extends React.Component {
   
         <main>
           <div className="content-container">
-            <Map showSaveModal={this.showSaveModal} showImportModal={this.showImportModal}/>
+            <Map
+              showSaveModal={this.showSaveModal}
+              showImportModal={this.showImportModal}
+            />
             <PlacesList />
           </div>
         </main>
@@ -45,27 +49,30 @@ class App extends React.Component {
 
   showSaveModal() {
     this.setState({
-      modal: true,
-      modalContents: <SaveModal closeModal={this.closeModal}/>
+      modal: <SaveModal closeModal={this.closeModal}/>
     });
   }
 
   showImportModal() {
     this.setState({
-      modal: true,
-      modalContents: <ImportModal closeModal={this.closeModal}/>
+      modal: <ImportModal closeModal={this.closeModal}/>
     });
   }
 
   closeModal() {
     this.setState({
-      modal: false,
-      modalContents: null
+      modal: null
     });
   }
 }
 
 class Map extends React.Component {
+  /*  Global vars generated and assigned here:
+   *    - window.google
+   *    - window.mapEvent
+   *    - window.mapInterface
+   *    - window.HTMLGen
+   */
   render() {
     return (
       <section className="map-container">
@@ -73,12 +80,38 @@ class Map extends React.Component {
 
         <div className="import-and-save-buttons-container">
 
-        <ImportButton showImportModal={this.props.showImportModal}/>
-        <SaveButton showSaveModal={this.props.showSaveModal}/>
+          <ImportButton showImportModal={this.props.showImportModal}/>
+          <SaveButton showSaveModal={this.props.showSaveModal}/>
 
         </div>
       </section>
     );
+  }
+
+  componentDidMount() {
+    // Initiate API connection, render map, and assign global vars.
+    loader.load().then(() => {
+      const google = window.google;
+      const mapEvent = google.maps.event;
+      const mapDOMNode = document.querySelector('#map');
+    
+      const mapEmbed = new google.maps.Map(document.querySelector('#map'), {
+    
+        center: { lat: 43.815136416911436, lng: -120.6398112171833 },
+        zoom: 5,
+        clickableIcons: false
+    
+      });
+
+      const mapInterface  = new MapInterface(mapEmbed, mapDOMNode);
+
+      window.mapEvent     = mapEvent;
+      window.mapInterface = mapInterface;
+      window.HTMLGen      = new HTMLGen();
+
+      mapEvent.addListenerOnce(mapEmbed, 'click', mapInterface.generateNewPin);
+    });
+    // End
   }
 }
 

@@ -75,6 +75,45 @@ main {
   padding: 15px;
 }
 
+.pin-infoform-title {
+  text-align: center;
+  margin: 5px;
+}
+
+.pin-infoform-name {
+  font-family: 'Roboto';
+}
+
+.pin-infoform-description {
+  font-family: 'Roboto';
+  min-width: 210px;
+  min-height: 60px;
+  max-width: 210px;
+  max-height: 60px;
+}
+
+.pin-infoform-buttons-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 12px 4px 12px;
+}
+
+.pin-infobox-title {
+  text-align: center;
+  margin: 5px 0px 5px 0px;
+}
+
+.pin-infobox-description {
+  max-width: 208px;
+  border: 1px solid black;
+  padding: 10px;
+  text-align: center;
+}
+
+.trash-button {
+  padding: 0;
+}
+
 .trash-button-container {
   margin-top: 10px;
   color: crimson;
@@ -83,7 +122,7 @@ main {
 }
 
 .far.fa-trash-alt {
-  margin: -5px;
+  margin: 0;
   color: crimson;
 }
 
@@ -136,13 +175,21 @@ main {
   padding: 5px 0px 0px 5px;
 }
 
+.fas.fa-check-circle {
+  margin-left: 5px;
+  color: green;
+}
+
+.fas.fa-check-circle:hover {
+  color: lightgreen;
+}
+
 .fas.fa-times-circle {
-  vertical-align: top;
-  margin: 6px 5px 4px 2px;
+  margin-left: 5px;
 }
 
 .fas.fa-times-circle:hover {
-  color: floralwhite;
+  color: salmon;
 }
 
 .saved-places-list-container {
