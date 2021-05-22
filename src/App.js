@@ -154,6 +154,14 @@ class ImportButton extends React.Component {
 }
 
 class PlacesList extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { places: [] };
+
+    this.addPlace = this.addPlace.bind(this);
+  }
+
   render() {
     return (
       <aside className="saved-places-container">
@@ -176,12 +184,56 @@ class PlacesList extends React.Component {
           <div className="saved-places-list-container">
             <ul className="saved-places-list-element">
 
+              {this.state.places.map(place => 
+                <SavedPlace 
+                  name={place.name}
+                  description={place.description}
+                  latLng={place.latLng}
+                  lat={place.lat}
+                  lng={place.lng}
+                />
+              )}
+
             </ul>
           </div>
 
         </div>
 
       </aside>
+    );
+  }
+
+  addPlace() {
+    console.log('place');
+  }
+}
+
+class SavedPlace extends React.Component {
+  /*  Expects props:
+   *    - name
+   *    - description (optional)
+   *    - latLng
+   *    - lat
+   *    - lng
+   */
+
+  render() {
+    let description = null;
+    
+    if (this.props.description)
+      description = this.props.description;
+
+    return(
+      <div class="saved-place-entry" name={this.props.name} data-description={description} data-latlng={this.props.latLng}>
+
+        <h5 class="saved-place-entry-title">{this.props.name}</h5>
+        <button type="button" name="saved-place-entry-latLng" class="saved-place-entry-latLng">({this.props.lat}, {this.props.lng})</button>
+    
+        <div class="trash-button-container">
+          <button type="button" name="trash-button" class="trash-button"><i class="far fa-trash-alt"></i></button>
+        </div>
+  
+      </div>
     );
   }
 }
