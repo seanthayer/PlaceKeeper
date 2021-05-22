@@ -5,11 +5,29 @@ import { loader } from './index';
 import background from './img/background_header-bg.png';
 import header from './img/thumbnail_placekeeper-header-icon.png';
 
+const staticPlaces =
+[
+  {
+    name: 'test1',
+    description: 'testdesc1',
+    latLng: (123, 456),
+    lat: 123,
+    lng: 456
+  },
+  {
+    name: 'test2',
+    description: 'testdesc2',
+    latLng: (234, 567),
+    lat: 234,
+    lng: 567
+  }
+]
+
 class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { modal: null };
+    this.state = { modal: null, places: staticPlaces };
 
     this.showSaveModal = this.showSaveModal.bind(this);
     this.showImportModal = this.showImportModal.bind(this);
@@ -35,7 +53,7 @@ class App extends React.Component {
               showSaveModal={this.showSaveModal}
               showImportModal={this.showImportModal}
             />
-            <PlacesList />
+            <PlacesList places={this.state.places}/>
           </div>
         </main>
 
@@ -154,14 +172,6 @@ class ImportButton extends React.Component {
 }
 
 class PlacesList extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = { places: [] };
-
-    this.addPlace = this.addPlace.bind(this);
-  }
-
   render() {
     return (
       <aside className="saved-places-container">
@@ -184,8 +194,9 @@ class PlacesList extends React.Component {
           <div className="saved-places-list-container">
             <ul className="saved-places-list-element">
 
-              {this.state.places.map(place => 
-                <SavedPlace 
+              {this.props.places.map(place => 
+                <SavedPlace
+                  key={place.latLng}
                   name={place.name}
                   description={place.description}
                   latLng={place.latLng}
@@ -201,10 +212,6 @@ class PlacesList extends React.Component {
 
       </aside>
     );
-  }
-
-  addPlace() {
-    console.log('place');
   }
 }
 
@@ -224,16 +231,18 @@ class SavedPlace extends React.Component {
       description = this.props.description;
 
     return(
-      <div class="saved-place-entry" name={this.props.name} data-description={description} data-latlng={this.props.latLng}>
+      <li key={this.props.latLng}>
+        <div className="saved-place-entry" name={this.props.name} data-description={description} data-latlng={this.props.latLng}>
 
-        <h5 class="saved-place-entry-title">{this.props.name}</h5>
-        <button type="button" name="saved-place-entry-latLng" class="saved-place-entry-latLng">({this.props.lat}, {this.props.lng})</button>
-    
-        <div class="trash-button-container">
-          <button type="button" name="trash-button" class="trash-button"><i class="far fa-trash-alt"></i></button>
+        <h5 className="saved-place-entry-title">{this.props.name}</h5>
+        <button type="button" name="saved-place-entry-latLng" className="saved-place-entry-latLng">({this.props.lat}, {this.props.lng})</button>
+
+        <div className="trash-button-container">
+          <button type="button" name="trash-button" className="trash-button"><i className="far fa-trash-alt"></i></button>
         </div>
-  
-      </div>
+
+        </div>
+      </li>
     );
   }
 }
