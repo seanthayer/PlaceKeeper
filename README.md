@@ -10,6 +10,8 @@
 
 ### Gmaps
 <ins>Completed</ins>↴
+* [x] Rendering of pin infoboxes
+* [x] Creation and deletion of map pins
 * [x] Linked API within React
 
 ## Project Metadata
