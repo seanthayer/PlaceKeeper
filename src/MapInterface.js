@@ -239,6 +239,7 @@ class MapInterface {
   addPin(pin) {
 
     this.pinList.push(pin);
+    this.updatePlaces(this.pinList);
 
   }
 
@@ -246,16 +247,13 @@ class MapInterface {
 
     pin.hide();
     this.pinList.splice(this.pinList.indexOf(pin), 1);
+    this.updatePlaces(this.pinList);
 
   }
 
   bindFunction(func) {
 
-    console.log(func);
-
-    this.boundFunc = func;
-
-    this.boundFunc();
+    this.updatePlaces = func;
 
   }
 }
