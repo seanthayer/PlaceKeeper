@@ -29,6 +29,8 @@ class App extends React.Component {
 
     this.state = { modal: null, places: staticPlaces };
 
+    this.exposedFunction = this.exposedFunction.bind(this);
+
     this.showSaveModal = this.showSaveModal.bind(this);
     this.showImportModal = this.showImportModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
@@ -50,6 +52,7 @@ class App extends React.Component {
         <main>
           <div className="content-container">
             <Map
+              exposedFunction={this.exposedFunction}
               showSaveModal={this.showSaveModal}
               showImportModal={this.showImportModal}
             />
@@ -63,6 +66,12 @@ class App extends React.Component {
   
       </div>
     );
+  }
+
+  exposedFunction() {
+    console.log(this);
+
+    this.setState({ modal: <SaveModal closeModal={this.closeModal}/>});
   }
 
   showSaveModal() {
@@ -127,6 +136,7 @@ class Map extends React.Component {
       window.mapInterface = mapInterface;
       window.HTMLGen      = new HTMLGen();
 
+      mapInterface.bindFunction(this.props.exposedFunction);
       mapEvent.addListenerOnce(mapEmbed, 'click', mapInterface.generateNewPin);
     });
     // End
