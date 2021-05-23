@@ -4,15 +4,16 @@
 <ins>Completed</ins>↴
 * [x] Convert homepage to React
 * [x] Rendering of import & save modals
+* [x] PlacesList complete rendering
 
 ### Back end
 <ins>Completed</ins>↴
 
 ### Gmaps
 <ins>Completed</ins>↴
-* [x] Rendering of pin infoboxes
-* [x] Creation and deletion of map pins
 * [x] Linked API within React
+* [x] Creation and deletion of map pins
+* [x] Rendering of pin infoboxes
 
 ## Project Metadata
 <details><summary>[Expand]</summary>
