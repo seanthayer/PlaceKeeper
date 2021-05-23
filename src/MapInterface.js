@@ -127,6 +127,8 @@ class MapInterface {
     this.generateInfoBox = this.generateInfoBox.bind(this);
     this.addPin = this.addPin.bind(this);
     this.removePin = this.removePin.bind(this);
+
+    this.bindFunction = this.bindFunction.bind(this);
   }
 
   generateNewPin(event) {
@@ -237,6 +239,7 @@ class MapInterface {
   addPin(pin) {
 
     this.pinList.push(pin);
+    this.updatePlaces(this.pinList);
 
   }
 
@@ -244,6 +247,13 @@ class MapInterface {
 
     pin.hide();
     this.pinList.splice(this.pinList.indexOf(pin), 1);
+    this.updatePlaces(this.pinList);
+
+  }
+
+  bindFunction(func) {
+
+    this.updatePlaces = func;
 
   }
 }
