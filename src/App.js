@@ -5,6 +5,7 @@ import { loader } from './index';
 import background from './img/background_header-bg.png';
 import header from './img/thumbnail_placekeeper-header-icon.png';
 
+/*
 const staticPlaces =
 [
   {
@@ -22,12 +23,13 @@ const staticPlaces =
     lng: 567
   }
 ]
+*/
 
 class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { modal: null, places: staticPlaces };
+    this.state = { modal: null, places: [] };
 
     this.updatePlaces = this.updatePlaces.bind(this);
     this.showSaveModal = this.showSaveModal.bind(this);
@@ -55,7 +57,10 @@ class App extends React.Component {
               showSaveModal={this.showSaveModal}
               showImportModal={this.showImportModal}
             />
-            <PlacesList places={this.state.places}/>
+            <PlacesList 
+              places={this.state.places}
+              updatePlaces={this.updatePlaces}
+            />
           </div>
         </main>
 
@@ -68,11 +73,9 @@ class App extends React.Component {
   }
 
   updatePlaces(newPlaces) {
-
     this.setState({
       places: newPlaces
     });
-
   }
 
   showSaveModal() {
@@ -183,6 +186,11 @@ class ImportButton extends React.Component {
 }
 
 class PlacesList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.removePlace = this.removePlace.bind(this);
+  }
+
   render() {
     return (
       <aside className="saved-places-container">
@@ -211,8 +219,7 @@ class PlacesList extends React.Component {
                   name={place.name}
                   description={place.description}
                   latLng={place.latLng}
-                  lat={place.lat}
-                  lng={place.lng}
+                  removePlace={this.removePlace}
                 />
               )}
 
@@ -224,6 +231,19 @@ class PlacesList extends React.Component {
       </aside>
     );
   }
+
+  removePlace(placeLatLng) {
+    const mapInterface = window.mapInterface;
+
+    let pList = Array.from(this.props.places);
+    let pListLatLngs = pList.map(place => place.latLng);
+    let i = pListLatLngs.indexOf(placeLatLng);
+
+    let pin = pList[i];
+
+    mapInterface.removePin(pin);
+
+  }
 }
 
 class SavedPlace extends React.Component {
@@ -231,9 +251,18 @@ class SavedPlace extends React.Component {
    *    - name
    *    - description (optional)
    *    - latLng
-   *    - lat
-   *    - lng
    */
+  constructor(props) {
+    super(props);
+
+    this.state = { contents: null };
+
+    this.handleTrash = this.handleTrash.bind(this);
+    this.confirmTrash = this.confirmTrash.bind(this);
+    this.resetTrash = this.resetTrash.bind(this);
+
+    this.state.contents = <TrashButton handleTrash={this.handleTrash}/>
+  }
 
   render() {
     let description = null;
@@ -246,14 +275,48 @@ class SavedPlace extends React.Component {
         <div className="saved-place-entry" name={this.props.name} data-description={description} data-latlng={this.props.latLng}>
 
         <h5 className="saved-place-entry-title">{this.props.name}</h5>
-        <button type="button" name="saved-place-entry-latLng" className="saved-place-entry-latLng">({this.props.lat}, {this.props.lng})</button>
+        <button type="button" name="saved-place-entry-latLng" className="saved-place-entry-latLng">({this.props.latLng.lat()}, {this.props.latLng.lng()})</button>
 
         <div className="trash-button-container">
-          <button type="button" name="trash-button" className="trash-button"><i className="far fa-trash-alt"></i></button>
+          
+          {this.state.contents}
+
         </div>
 
         </div>
       </li>
+    );
+  }
+  
+  handleTrash() {
+    this.setState({
+      contents: <ConfirmText confirmTrash={this.confirmTrash} resetTrash={this.resetTrash}/>
+    });
+  }
+
+  confirmTrash() {
+    this.props.removePlace(this.props.latLng);
+  }
+
+  resetTrash() {
+    this.setState({
+      contents: <TrashButton handleTrash={this.handleTrash}/>
+    });
+  }
+}
+
+class TrashButton extends React.Component {
+  render() {
+    return (
+      <button onClick={this.props.handleTrash} type="button" name="trash-button" className="trash-button"><i className="far fa-trash-alt"></i></button>
+    );
+  }
+}
+
+class ConfirmText extends React.Component {
+  render() {
+    return (
+      <div className="are-you-sure">Are you sure?<i onClick={this.props.confirmTrash} className="fas fa-check-circle"></i><i onClick={this.props.resetTrash} className="fas fa-times-circle"></i></div>
     );
   }
 }
