@@ -257,6 +257,7 @@ class SavedPlace extends React.Component {
 
     this.state = { contents: null };
 
+    this.panTo = this.panTo.bind(this);
     this.handleTrash = this.handleTrash.bind(this);
     this.confirmTrash = this.confirmTrash.bind(this);
     this.resetTrash = this.resetTrash.bind(this);
@@ -275,7 +276,7 @@ class SavedPlace extends React.Component {
         <div className="saved-place-entry" name={this.props.name} data-description={description} data-latlng={this.props.latLng}>
 
         <h5 className="saved-place-entry-title">{this.props.name}</h5>
-        <button type="button" name="saved-place-entry-latLng" className="saved-place-entry-latLng">({this.props.latLng.lat()}, {this.props.latLng.lng()})</button>
+        <button onClick={this.panTo} type="button" name="saved-place-entry-latLng" className="saved-place-entry-latLng">({this.props.latLng.lat()}, {this.props.latLng.lng()})</button>
 
         <div className="trash-button-container">
           
@@ -286,6 +287,11 @@ class SavedPlace extends React.Component {
         </div>
       </li>
     );
+  }
+
+  panTo() {
+    const mapInterface = window.mapInterface;
+    mapInterface.mapEmbed.panTo(this.props.latLng);
   }
   
   handleTrash() {
