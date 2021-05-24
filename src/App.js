@@ -36,6 +36,7 @@ class App extends React.Component {
   
         <main>
           <div className="content-container">
+
             <section className="map-and-buttons-container">
               <Map
                 updatePlaces={this.updatePlaces}
@@ -47,10 +48,14 @@ class App extends React.Component {
               />
             </section>
 
-            <PlacesList 
-              places={this.state.places}
-              updatePlaces={this.updatePlaces}
-            />
+            <section className="saved-places-container">
+              <PlacesSearch />
+              <PlacesList 
+                places={this.state.places}
+                updatePlaces={this.updatePlaces}
+              />
+            </section>
+
           </div>
         </main>
 
@@ -212,38 +217,27 @@ class PlacesList extends React.Component {
 
   render() {
     return (
-      <section className="saved-places-container">
+      <div className="saved-places-list-parent">
 
-        <div className="search-bar-container">
-          <div className="search-bar-element">
-            <input type="text" name="filter-text" className="search-bar-input" />
-          </div>
-          <button className="search-bar-button">Search</button>
+        <h5 className="saved-places-list-title">Saved Places</h5>
+
+        <div className="saved-places-list-container">
+          <ul className="saved-places-list-element">
+
+            {this.props.places.map(place => 
+              <SavedPlace
+                key={place.latLng}
+                name={place.name}
+                description={place.description}
+                latLng={place.latLng}
+                removePlace={this.removePlace}
+              />
+            )}
+
+          </ul>
         </div>
 
-        <div className="saved-places-list-parent">
-
-          <h5 className="saved-places-list-title">Saved Places</h5>
-
-          <div className="saved-places-list-container">
-            <ul className="saved-places-list-element">
-
-              {this.props.places.map(place => 
-                <SavedPlace
-                  key={place.latLng}
-                  name={place.name}
-                  description={place.description}
-                  latLng={place.latLng}
-                  removePlace={this.removePlace}
-                />
-              )}
-
-            </ul>
-          </div>
-
-        </div>
-
-      </section>
+      </div>
     );
   }
 
@@ -258,6 +252,19 @@ class PlacesList extends React.Component {
 
     mapInterface.removePin(pin);
 
+  }
+}
+
+class PlacesSearch extends React.Component {
+  render() {
+    return (
+      <div className="search-bar-container">
+        <div className="search-bar-element">
+          <input type="text" name="filter-text" className="search-bar-input" />
+        </div>
+        <button className="search-bar-button">Search</button>
+      </div>
+    );
   }
 }
 

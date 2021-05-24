@@ -274,6 +274,7 @@ div.saved-place-entry {
 
 .modal-body.save-modal {
   display: flex;
+  overflow: auto;
   justify-content: center;
   margin-bottom: 10px;
   max-height: 400px;
@@ -363,6 +364,7 @@ div.saved-place-entry {
   display: inline;
   margin-left: 8px;
   cursor: default;
+  user-select: none;
 }
 
 .modal-table {
