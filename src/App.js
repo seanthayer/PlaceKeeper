@@ -5,6 +5,8 @@ import { loader } from './index';
 import background from './img/background_header-bg.png';
 import header from './img/thumbnail_placekeeper-header-icon.png';
 
+import staticMaps from './tests/staticMaps';
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -13,6 +15,7 @@ class App extends React.Component {
 
     this.updatePlaces = this.updatePlaces.bind(this);
     this.POSTPlaces = this.POSTPlaces.bind(this);
+    this.GETMaps = this.GETMaps.bind(this);
     this.showSaveModal = this.showSaveModal.bind(this);
     this.showImportModal = this.showImportModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
@@ -69,6 +72,11 @@ class App extends React.Component {
     console.log('post');
   }
 
+  GETMaps() {
+    console.log('get');
+    return staticMaps;
+  }
+
   showSaveModal(givenState) {
     this.setState({
       modal:
@@ -81,10 +89,12 @@ class App extends React.Component {
   }
 
   showImportModal(givenState) {
+    let maps = this.GETMaps();
+
     this.setState({
       modal:
-        <ImportModal 
-          places={givenState} 
+        <ImportModal
+          maps={maps}
           closeModal={this.closeModal}
         />
     });
@@ -144,7 +154,6 @@ class ModalButtons extends React.Component {
       <div className="import-and-save-buttons-container">
 
         <ImportButton
-          places={this.props.places}
           showImportModal={this.props.showImportModal}
         />
         <SaveButton
@@ -420,6 +429,14 @@ class ImportModal extends React.Component {
         <div className="modal-body import-modal">
           <div className="modal-directory-container">
 
+          {this.props.maps.map(map => 
+            <ImportEntry
+              key={map.hash}
+              hash={map.hash}
+              title={map.title}
+            />
+          )}
+
           </div>
         </div>
 
@@ -428,6 +445,16 @@ class ImportModal extends React.Component {
         </div>
 
         </div>
+      </div>
+    );
+  }
+}
+
+class ImportEntry extends React.Component {
+  render() {
+    return (
+      <div className="map-directory-entry-container" data-id={this.props.hash}>
+        <i className="fas fa-file"></i><h4 className="file-title">{this.props.title}</h4> 
       </div>
     );
   }
