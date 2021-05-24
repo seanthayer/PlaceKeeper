@@ -12,6 +12,7 @@ class App extends React.Component {
     this.state = { modal: null, places: [] };
 
     this.updatePlaces = this.updatePlaces.bind(this);
+    this.POSTPlaces = this.POSTPlaces.bind(this);
     this.showSaveModal = this.showSaveModal.bind(this);
     this.showImportModal = this.showImportModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
@@ -64,11 +65,16 @@ class App extends React.Component {
     });
   }
 
+  POSTPlaces(places) {
+    console.log('post');
+  }
+
   showSaveModal(givenState) {
     this.setState({
       modal:
         <SaveModal 
-          places={givenState} 
+          places={givenState}
+          POSTPlaces={this.POSTPlaces}
           closeModal={this.closeModal}
         />
     });
@@ -160,7 +166,7 @@ class SaveButton extends React.Component {
   render() {
     return (
       <div className="save-map-element">
-        <button type="button" className="save-map-button" onClick={this.handleClick}>Save Map</button>
+        <button onClick={this.handleClick} type="button" className="save-map-button">Save Map</button>
       </div>
     );
   }
@@ -179,7 +185,7 @@ class ImportButton extends React.Component {
   render() {
     return (
       <div className="import-map-element">
-        <button type="button" className="import-map-button" onClick={this.handleClick}>Import Map</button>
+        <button onClick={this.handleClick} type="button" className="import-map-button">Import Map</button>
       </div>
     );
   }
@@ -335,7 +341,7 @@ class SaveModal extends React.Component {
 
         <div className="modal-header">
           <h2 className="modal-title">Saving Map</h2>
-          <button type="button" className="modal-x-button" onClick={this.props.closeModal}>&times;</button>
+          <button onClick={this.props.closeModal} type="button" className="modal-x-button">&times;</button>
         </div>
 
         <div className="modal-input-container">
@@ -372,8 +378,8 @@ class SaveModal extends React.Component {
         </div>
 
         <div className="modal-footer">
-          <button type="button" className="modal-save-button action-button">Save</button>
-          <button type="button" className="modal-close-button action-button" onClick={this.props.closeModal}>Close</button>
+          <button onClick={this.props.POSTPlaces} type="button" className="modal-save-button action-button">Save</button>
+          <button onClick={this.props.closeModal} type="button" className="modal-close-button action-button">Close</button>
         </div>
 
         </div>
@@ -404,7 +410,7 @@ class ImportModal extends React.Component {
 
         <div className="modal-header">
           <h2 className="modal-title">Import Map</h2>
-          <button type="button" className="modal-x-button" onClick={this.props.closeModal}>&times;</button>
+          <button onClick={this.props.closeModal} type="button" className="modal-x-button">&times;</button>
         </div>
 
         <div className="modal-description">
@@ -418,7 +424,7 @@ class ImportModal extends React.Component {
         </div>
 
         <div className="modal-footer">
-          <button type="button" className="modal-close-button action-button" onClick={this.props.closeModal}>Close</button>
+          <button onClick={this.props.closeModal} type="button" className="modal-close-button action-button">Close</button>
         </div>
 
         </div>
