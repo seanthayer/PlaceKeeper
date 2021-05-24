@@ -14,8 +14,9 @@ class App extends React.Component {
     this.state = { modal: null, places: [] };
 
     this.updatePlaces = this.updatePlaces.bind(this);
-    this.POSTPlaces = this.POSTPlaces.bind(this);
+    this.POSTMap = this.POSTMap.bind(this);
     this.GETMaps = this.GETMaps.bind(this);
+    this.GETMap = this.GETMap.bind(this);
     this.showSaveModal = this.showSaveModal.bind(this);
     this.showImportModal = this.showImportModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
@@ -73,7 +74,7 @@ class App extends React.Component {
     });
   }
 
-  POSTPlaces(places) {
+  POSTMap(places) {
     console.log('post');
   }
 
@@ -82,12 +83,22 @@ class App extends React.Component {
     return staticMaps;
   }
 
+  GETMap(hash) {
+    console.log('get => hash: ', hash);
+
+    let hashMap = staticMaps.map(map => map.hash);
+    let i = hashMap.indexOf(hash);
+
+    this.closeModal();
+    console.log(staticMaps[i].pins);
+  }
+
   showSaveModal(givenState) {
     this.setState({
       modal:
         <SaveModal 
           places={givenState}
-          POSTPlaces={this.POSTPlaces}
+          POSTMap={this.POSTMap}
           closeModal={this.closeModal}
         />
     });
@@ -100,6 +111,7 @@ class App extends React.Component {
       modal:
         <ImportModal
           maps={maps}
+          GETMap={this.GETMap}
           closeModal={this.closeModal}
         />
     });
@@ -394,7 +406,7 @@ class SaveModal extends React.Component {
         </div>
 
         <div className="modal-footer">
-          <button onClick={this.props.POSTPlaces} type="button" className="modal-save-button action-button">Save</button>
+          <button onClick={this.props.POSTMap} type="button" className="modal-save-button action-button">Save</button>
           <button onClick={this.props.closeModal} type="button" className="modal-close-button action-button">Close</button>
         </div>
 
@@ -441,6 +453,7 @@ class ImportModal extends React.Component {
               key={map.hash}
               hash={map.hash}
               title={map.title}
+              GETMap={this.props.GETMap}
             />
           )}
 
@@ -458,12 +471,23 @@ class ImportModal extends React.Component {
 }
 
 class ImportEntry extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
+  }
+
   render() {
     return (
-      <div className="map-directory-entry-container" data-id={this.props.hash}>
+      <div onClick={this.handleClick} className="map-directory-entry-container" data-id={this.props.hash}>
         <i className="fas fa-file"></i><h4 className="file-title">{this.props.title}</h4> 
       </div>
     );
+  }
+
+  handleClick() {
+
+    this.props.GETMap(this.props.hash);
+
   }
 }
 
