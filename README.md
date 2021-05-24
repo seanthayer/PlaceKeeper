@@ -5,6 +5,7 @@
 * [x] Convert homepage to React
 * [x] Rendering of import & save modals
 * [x] PlacesList complete rendering
+* [x] Import & Save modal rendering and functionality
 
 ### Back end
 <ins>Completed</ins>↴
