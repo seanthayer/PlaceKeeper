@@ -46,7 +46,7 @@ main {
   justify-content: space-between;
 }
 
-.map-container {
+.map-and-buttons-container {
   display: flex;
   flex-direction: column;
   flex: 1 1;
@@ -252,10 +252,9 @@ div.saved-place-entry {
   bottom: 0;
   left: 0;
   right: 0;
-  width: auto;
-  max-width: 700px;
-  min-width: 400px;
-  min-height: 300px;
+  width: 700px;
+  min-width: 700px;
+  min-height: 675px;
   margin: 40px auto;
   background-color: #fff;
   border-radius: 15px;
@@ -273,12 +272,11 @@ div.saved-place-entry {
   font-size: 22px;
 }
 
-.modal-body {
-  margin-left: 40px;
+.modal-body.save-modal {
+  display: flex;
+  justify-content: center;
   margin-bottom: 10px;
   max-height: 400px;
-  overflow: scroll;
-  overflow-x: hidden;
 }
 
 .modal-body.import-modal {
@@ -366,6 +364,10 @@ div.saved-place-entry {
   margin: 2px;
 }
 
+.modal-table {
+  flex: none;
+}
+
 .modal-table table, th, td {
   text-align: center;
   border: 2px solid black;
@@ -384,23 +386,14 @@ div.saved-place-entry {
   color: black;
 }
 
-.modal-table-checkboxes {
-  width: 60px;
-}
-
-.modal-table-select-all {
-  background-color: gray;
-  border: 1px solid white;
-}
-
 .table-header-name {
-  width: 120px
+  width: 186px;
 }
 
 .table-header-latitude {
-  width: 180px;
+  width: 186px;
 }
 
 .table-header-longitude {
-  width: 180px;
+  width: 186px;
 }

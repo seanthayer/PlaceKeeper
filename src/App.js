@@ -5,26 +5,6 @@ import { loader } from './index';
 import background from './img/background_header-bg.png';
 import header from './img/thumbnail_placekeeper-header-icon.png';
 
-/*
-const staticPlaces =
-[
-  {
-    name: 'test1',
-    description: 'testdesc1',
-    latLng: (123, 456),
-    lat: 123,
-    lng: 456
-  },
-  {
-    name: 'test2',
-    description: 'testdesc2',
-    latLng: (234, 567),
-    lat: 234,
-    lng: 567
-  }
-]
-*/
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -52,11 +32,17 @@ class App extends React.Component {
   
         <main>
           <div className="content-container">
-            <Map
-              updatePlaces={this.updatePlaces}
-              showSaveModal={this.showSaveModal}
-              showImportModal={this.showImportModal}
-            />
+            <section className="map-and-buttons-container">
+              <Map
+                updatePlaces={this.updatePlaces}
+              />
+              <ModalButtons
+                places={this.state.places}
+                showImportModal={this.showImportModal}
+                showSaveModal={this.showSaveModal}
+              />
+            </section>
+
             <PlacesList 
               places={this.state.places}
               updatePlaces={this.updatePlaces}
@@ -78,15 +64,23 @@ class App extends React.Component {
     });
   }
 
-  showSaveModal() {
+  showSaveModal(givenState) {
     this.setState({
-      modal: <SaveModal closeModal={this.closeModal}/>
+      modal:
+        <SaveModal 
+          places={givenState} 
+          closeModal={this.closeModal}
+        />
     });
   }
 
-  showImportModal() {
+  showImportModal(givenState) {
     this.setState({
-      modal: <ImportModal closeModal={this.closeModal}/>
+      modal:
+        <ImportModal 
+          places={givenState} 
+          closeModal={this.closeModal}
+        />
     });
   }
 
@@ -106,16 +100,7 @@ class Map extends React.Component {
    */
   render() {
     return (
-      <section className="map-container">
-        <div id="map"></div>
-
-        <div className="import-and-save-buttons-container">
-
-          <ImportButton showImportModal={this.props.showImportModal}/>
-          <SaveButton showSaveModal={this.props.showSaveModal}/>
-
-        </div>
-      </section>
+      <div id="map"></div>
     );
   }
 
@@ -147,6 +132,25 @@ class Map extends React.Component {
   }
 }
 
+class ModalButtons extends React.Component {
+  render() {
+    return (
+      <div className="import-and-save-buttons-container">
+
+        <ImportButton
+          places={this.props.places}
+          showImportModal={this.props.showImportModal}
+        />
+        <SaveButton
+          places={this.props.places}
+          showSaveModal={this.props.showSaveModal}
+        />
+
+      </div>
+    );
+  }
+}
+
 class SaveButton extends React.Component {
   constructor(props) {
     super(props);
@@ -162,7 +166,7 @@ class SaveButton extends React.Component {
   }
 
   handleClick() {
-    this.props.showSaveModal();
+    this.props.showSaveModal(this.props.places);
   }
 }
 
@@ -181,7 +185,7 @@ class ImportButton extends React.Component {
   }
 
   handleClick() {
-    this.props.showImportModal();
+    this.props.showImportModal(this.props.places);
   }
 }
 
@@ -193,7 +197,7 @@ class PlacesList extends React.Component {
 
   render() {
     return (
-      <aside className="saved-places-container">
+      <section className="saved-places-container">
 
         <div className="search-bar-container">
           <div className="search-bar-element">
@@ -205,10 +209,6 @@ class PlacesList extends React.Component {
         <div className="saved-places-list-parent">
 
           <h5 className="saved-places-list-title">Saved Places</h5>
-
-          <div className="saved-places-filter-info hidden">
-
-          </div>
 
           <div className="saved-places-list-container">
             <ul className="saved-places-list-element">
@@ -228,7 +228,7 @@ class PlacesList extends React.Component {
 
         </div>
 
-      </aside>
+      </section>
     );
   }
 
@@ -272,7 +272,7 @@ class SavedPlace extends React.Component {
       description = this.props.description;
 
     return(
-      <li key={this.props.latLng}>
+      <li>
         <div className="saved-place-entry" name={this.props.name} data-description={description} data-latlng={this.props.latLng}>
 
         <h5 className="saved-place-entry-title">{this.props.name}</h5>
@@ -349,15 +349,24 @@ class SaveModal extends React.Component {
           <p>You're about to save the following locations:</p>
         </div>
 
-        <div className="modal-body">
+        <div className="modal-body save-modal">
           <table className="modal-table">
             <tbody>
               <tr className="modal-table-header">
-                <th className="modal-table-checkboxes"><input type="checkbox" className="modal-table-select-all" /></th>
                 <th className="table-header-name">Pin Name</th>
                 <th className="table-header-latitude">Latitude</th>
                 <th className="table-header-longitude">Longitude</th>
               </tr>
+
+              {this.props.places.map(place => 
+                <TableRow
+                  key={place.latLng}
+                  name={place.name}
+                  description={place.description}
+                  latLng={place.latLng}
+                />
+              )}
+
             </tbody>
           </table>
         </div>
@@ -369,6 +378,20 @@ class SaveModal extends React.Component {
 
         </div>
       </div>
+    );
+  }
+}
+
+class TableRow extends React.Component {
+  render () {
+    return (
+      <tr className="modal-table-row" data-name={this.props.name} data-description={this.props.description} data-latlng={this.props.latLng}>
+
+        <td className="table-row-name">{this.props.name}</td>
+        <td className="table-row-latitude">{this.props.latLng.lat()}</td>
+        <td className="table-row-longitude">{this.props.latLng.lng()}</td>
+
+      </tr>
     );
   }
 }
