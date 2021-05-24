@@ -74,16 +74,44 @@ class App extends React.Component {
     });
   }
 
-  POSTMap(places) {
+  POSTMap(title, places) {
+    // MOCK
+
     console.log('post');
+
+    let map = { title: title, hash: null, pins: [] };
+
+    places.forEach((pin, i) => {
+
+      map.pins[i] = { name: pin.name, lat: pin.latLng.lat(), lng: pin.latLng.lng() }
+      if (pin.description)  map.pins[i].description = pin.description;
+
+    });
+
+    this.closeModal();
+    console.log(map);
   }
 
   GETMaps() {
+    // MOCK
+
     console.log('get');
-    return staticMaps;
+
+    let maps = [];
+    
+    staticMaps.forEach((map, i) => {
+
+      let titleHash = { title: map.title, hash: map.hash };
+      maps[i] = titleHash;
+
+    });
+
+    return maps;
   }
 
   GETMap(hash) {
+    // MOCK
+
     console.log('get => hash: ', hash);
 
     let hashMap = staticMaps.map(map => map.hash);
@@ -104,7 +132,7 @@ class App extends React.Component {
     });
   }
 
-  showImportModal(givenState) {
+  showImportModal() {
     let maps = this.GETMaps();
 
     this.setState({
@@ -263,7 +291,6 @@ class PlacesList extends React.Component {
     let pin = pList[i];
 
     mapInterface.removePin(pin);
-
   }
 }
 
@@ -362,6 +389,15 @@ class ConfirmText extends React.Component {
 }
 
 class SaveModal extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { mapName: null };
+
+    this.handleInput = this.handleInput.bind(this);
+    this.handleSave = this.handleSave.bind(this);
+  }
+
   render() {
     return (
       <div className="modal-backdrop save-modal">
@@ -375,7 +411,7 @@ class SaveModal extends React.Component {
         <div className="modal-input-container">
           <h1 className="modal-input-text">Map Name:</h1>
           <div className="modal-input-element">
-            <input type="text" className="modal-input" />
+            <input onChange={this.handleInput} type="text" className="modal-input" />
           </div>
         </div>
 
@@ -406,13 +442,40 @@ class SaveModal extends React.Component {
         </div>
 
         <div className="modal-footer">
-          <button onClick={this.props.POSTMap} type="button" className="modal-save-button action-button">Save</button>
+          <button onClick={this.handleSave} type="button" className="modal-save-button action-button">Save</button>
           <button onClick={this.props.closeModal} type="button" className="modal-close-button action-button">Close</button>
         </div>
 
         </div>
       </div>
     );
+  }
+
+  handleInput(event) {
+    this.setState({
+      mapName: event.target.value
+    });
+  }
+
+  handleSave() {
+
+    if (this.props.places.length) {
+
+      if (this.state.mapName) {
+
+        this.props.POSTMap(this.state.mapName, this.props.places);
+  
+      } else {
+  
+        alert('You must enter a name for a new map.');
+  
+      }
+
+    } else {
+
+      alert('You cannot save an empty map.');
+
+    }
   }
 }
 
