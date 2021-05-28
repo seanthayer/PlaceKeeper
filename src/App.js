@@ -53,7 +53,6 @@ class App extends React.Component {
               <PlacesSearch />
               <PlacesList 
                 places={this.state.places}
-                updatePlaces={this.updatePlaces}
               />
             </section>
 
