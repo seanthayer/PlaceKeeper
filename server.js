@@ -54,6 +54,28 @@ app.get('/API/getMaps', async (req, res) => {
 
 });
 
+app.get('/API/getMap/:title', async (req, res) => {
+
+  let title = req.params.title;
+
+  let results = await queryMapPins(title).catch((err) => { 
+
+    return err;
+
+  });
+
+  if (!results.error) {
+
+    res.status(200).send(results);
+
+  } else {
+
+    res.sendStatus(500);
+
+  }
+
+});
+
 app.get('/*', (req, res) => {
   
   res.status(200).sendFile(path.join(__dirname, 'build', 'index.html'));
@@ -83,7 +105,7 @@ function queryMapTitles() {
 
   return new Promise((resolve, reject) => {
 
-    pool.query('SELECT * FROM PLACEKEEPER_MAPS', function(err, results) {
+    pool.query('SELECT Title FROM PLACEKEEPER_MAPS', function(err, results) {
 
       if (err) {
     
@@ -91,6 +113,31 @@ function queryMapTitles() {
 
           error: err
 
+        });
+    
+      } else {
+
+        resolve(results);
+    
+      }
+    
+    });
+
+  });
+
+}
+
+function queryMapPins(title) {
+
+  return new Promise((resolve, reject) => {
+
+    pool.query('SELECT Name, Description, Lat, Lng FROM PINS WHERE Map = ?', [title],
+    function(err, results) {
+
+      if (err) {
+    
+        reject({
+          error: err
         });
     
       } else {

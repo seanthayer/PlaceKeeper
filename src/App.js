@@ -12,6 +12,7 @@ class App extends React.Component {
     this.state = { modal: null, places: [] };
 
     this.updatePlaces = this.updatePlaces.bind(this);
+    this.importMap = this.importMap.bind(this);
     this.POSTMap = this.POSTMap.bind(this);
     this.GETMaps = this.GETMaps.bind(this);
     this.GETMap = this.GETMap.bind(this);
@@ -71,6 +72,23 @@ class App extends React.Component {
     });
   }
 
+  async importMap(title) {
+    const mapInterface = window.mapInterface;
+
+    let mapPins = await this.GETMap(title).catch((err) => {
+
+      console.error('[ERROR] ' + err);
+      return [];
+
+    });
+
+    mapInterface.clearMap();
+    mapInterface.loadMap(mapPins);
+
+    this.closeModal();
+
+  }
+
   POSTMap(title, places) {
     // MOCK
 
@@ -128,16 +146,43 @@ class App extends React.Component {
 
   }
 
-  GETMap(hash) {
-    // MOCK
+  GETMap(title) {
+    
+    let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
+    let requestGET = new Request('/API/getMap/' + title, { method: 'GET', headers: requestHEADER });
 
-    // console.log('get => hash: ', hash);
+    return new Promise((resolve, reject) => {
 
-    // let hashMap = staticMaps.map(map => map.hash);
-    // let i = hashMap.indexOf(hash);
+      fetch(requestGET).then((res) => {
 
-    // this.closeModal();
-    // console.log(staticMaps[i].pins);
+        if (res.ok) {
+  
+          return res.json();
+  
+        } else {
+  
+          throw res.status;
+  
+        }
+  
+      }).then((mapPins) => {
+
+        resolve(mapPins);
+
+      }).catch((err) => {
+  
+        console.error('[ERROR] ' + err);
+
+        reject({
+
+          error: err
+
+        });
+  
+      });
+
+    });
+
   }
 
   async showImportModal() {
@@ -145,14 +190,14 @@ class App extends React.Component {
     let maps = await this.GETMaps().catch((err) => { 
 
       return [];
-  
+
     });
 
     this.setState({
       modal:
         <ImportModal
           maps={maps}
-          GETMap={this.GETMap}
+          importMap={this.importMap}
           closeModal={this.closeModal}
         />
     });
@@ -540,7 +585,7 @@ class ImportModal extends React.Component {
             <ImportEntry
               key={map.Title}
               title={map.Title}
-              GETMap={this.props.GETMap}
+              importMap={this.props.importMap}
             />
           )}
 
@@ -573,7 +618,7 @@ class ImportEntry extends React.Component {
 
   handleClick() {
 
-    this.props.GETMap(this.props.title);
+    this.props.importMap(this.props.title);
 
   }
 }

@@ -125,6 +125,7 @@ class MapInterface {
 
     this.generateNewPin = this.generateNewPin.bind(this);
     this.generateInfoBox = this.generateInfoBox.bind(this);
+    this.clearMap = this.clearMap.bind(this);
     this.addPin = this.addPin.bind(this);
     this.removePin = this.removePin.bind(this);
 
@@ -234,6 +235,57 @@ class MapInterface {
 
     });
     // -
+  }
+
+  clearMap() {
+
+    this.pinList.forEach((pin) => {
+
+      pin.hide();
+
+    });
+
+    this.pinList = [];
+    this.updatePlaces(this.pinList);
+
+  }
+
+  loadMap(newPins) {
+    const google = window.google;
+
+    newPins.forEach((newPin) => {
+
+      let coords = { lat: parseFloat(newPin.Lat), lng: parseFloat(newPin.Lng) };
+
+      let newLatLng = new google.maps.LatLng(coords);
+
+      let marker = new google.maps.Marker({
+
+        position: newLatLng,
+        map: this.mapEmbed
+
+      });
+
+      let pin = new Pin({
+
+        map:    this.mapEmbed,
+        mapDOM: this.mapDOMNode,
+        marker: marker,
+        name:   newPin.Name,
+        latLng: newLatLng
+
+      });
+
+      if (newPin.Description) pin.description = newPin.Description;
+
+      pin.generateListener();
+
+      this.pinList.push(pin);
+
+    });
+
+    this.updatePlaces(this.pinList);
+
   }
 
   addPin(pin) {
