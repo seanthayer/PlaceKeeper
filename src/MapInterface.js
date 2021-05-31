@@ -126,6 +126,7 @@ class MapInterface {
     this.generateNewPin = this.generateNewPin.bind(this);
     this.generateInfoBox = this.generateInfoBox.bind(this);
     this.clearMap = this.clearMap.bind(this);
+    this.loadMap = this.loadMap.bind(this);
     this.addPin = this.addPin.bind(this);
     this.removePin = this.removePin.bind(this);
 
@@ -255,7 +256,7 @@ class MapInterface {
 
     newPins.forEach((newPin) => {
 
-      let coords = { lat: parseFloat(newPin.Lat), lng: parseFloat(newPin.Lng) };
+      let coords = { lat: parseFloat(newPin.lat), lng: parseFloat(newPin.lng) };
 
       let newLatLng = new google.maps.LatLng(coords);
 
@@ -271,12 +272,12 @@ class MapInterface {
         map:    this.mapEmbed,
         mapDOM: this.mapDOMNode,
         marker: marker,
-        name:   newPin.Name,
+        name:   newPin.name,
         latLng: newLatLng
 
       });
 
-      if (newPin.Description) pin.description = newPin.Description;
+      if (newPin.description) pin.description = newPin.description;
 
       pin.generateListener();
 

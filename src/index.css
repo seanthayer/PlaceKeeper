@@ -115,6 +115,7 @@ main {
 }
 
 .trash-button-container {
+  height: 19px;
   margin-top: 10px;
   color: crimson;
   font-size: 12px;

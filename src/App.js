@@ -86,7 +86,6 @@ class App extends React.Component {
     mapInterface.loadMap(mapPins);
 
     this.closeModal();
-
   }
 
   POSTMap(title, places) {
@@ -583,8 +582,8 @@ class ImportModal extends React.Component {
 
           {this.props.maps.map(map => 
             <ImportEntry
-              key={map.Title}
-              title={map.Title}
+              key={map.title}
+              title={map.title}
               importMap={this.props.importMap}
             />
           )}

@@ -105,7 +105,7 @@ function queryMapTitles() {
 
   return new Promise((resolve, reject) => {
 
-    pool.query('SELECT Title FROM PLACEKEEPER_MAPS', function(err, results) {
+    pool.query('SELECT title FROM MAPS', function(err, results) {
 
       if (err) {
     
@@ -131,7 +131,7 @@ function queryMapPins(title) {
 
   return new Promise((resolve, reject) => {
 
-    pool.query('SELECT Name, Description, Lat, Lng FROM PINS WHERE Map = ?', [title],
+    pool.query('SELECT name, description, lat, lng FROM PINS WHERE Map = ?', [title],
     function(err, results) {
 
       if (err) {
