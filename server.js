@@ -8,6 +8,16 @@ const maxMySQLConnections = 10;
 
 const port = process.env.PORT || 3000;
 
+const pinSchema = {
+
+  map: 'string',
+  name: 'string',
+  description: 'string',
+  lat: 'number',
+  lng: 'number'
+
+};
+
 var pool = mysql.createPool({
 
   connectionLimit: maxMySQLConnections,
@@ -24,6 +34,7 @@ var pool = mysql.createPool({
  *      Middleware functions
  */
 
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'build')));
 
 app.all('*', (req, res, next) => {
@@ -76,6 +87,38 @@ app.get('/API/getMap/:title', async (req, res) => {
 
 });
 
+app.post('/API/postMap', async (req, res) => {
+
+  let validData = true;
+  let pinValues;
+  let results;
+
+  for (let i = 0; i < req.body.pins.length; i++) {
+    const pin = req.body.pins[i];
+
+    if (!validateSchema(pin, pinSchema)) {
+
+      validData = false;
+      break;
+
+    }
+
+  }
+
+  if (req.body.title && validData) {
+
+    pinValues = req.body.pins.map((e) => { return Object.values(e) })
+
+    console.log(pinValues);
+
+  } else {
+
+    res.sendStatus(400);
+
+  }
+
+});
+
 app.get('/*', (req, res) => {
   
   res.status(200).sendFile(path.join(__dirname, 'build', 'index.html'));
@@ -105,7 +148,8 @@ function queryMapTitles() {
 
   return new Promise((resolve, reject) => {
 
-    pool.query('SELECT title FROM MAPS', function(err, results) {
+    pool.query('SELECT title FROM MAPS',
+    function(err, results) {
 
       if (err) {
     
@@ -137,7 +181,9 @@ function queryMapPins(title) {
       if (err) {
     
         reject({
+
           error: err
+          
         });
     
       } else {
@@ -149,6 +195,38 @@ function queryMapPins(title) {
     });
 
   });
+
+}
+
+function validateSchema(input, schema) {
+
+  let inputKeys = Object.keys(input);
+  let schemaKeys = Object.keys(schema);
+
+  let inputTypes = Object.values(input).map((e) => { return (e != null ? typeof(e) : null); });
+  let schemaTypes = Object.values(schema);
+
+  let validSchema = true;
+
+  for (let i = 0; i < inputKeys.length; i++) {
+
+    const inputKey = inputKeys[i];
+    const schemaKey = schemaKeys[i];
+
+    const inputType = inputTypes[i];
+    const schemaType = (inputType != null ? schemaTypes[i] : null);
+
+    if ((inputKey != schemaKey) ||
+        (inputType != schemaType)) {
+
+      validSchema = false;
+      break;
+
+    }
+    
+  }
+
+  return validSchema;
 
 }
 

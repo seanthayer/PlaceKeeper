@@ -13,6 +13,7 @@ class App extends React.Component {
 
     this.updatePlaces = this.updatePlaces.bind(this);
     this.importMap = this.importMap.bind(this);
+    this.saveMap = this.saveMap.bind(this);
     this.POSTMap = this.POSTMap.bind(this);
     this.GETMaps = this.GETMaps.bind(this);
     this.GETMap = this.GETMap.bind(this);
@@ -77,33 +78,82 @@ class App extends React.Component {
 
     let mapPins = await this.GETMap(title).catch((err) => {
 
-      console.error('[ERROR] ' + err);
-      return [];
+      alert('Error getting map data.');
+      return err;
 
     });
 
-    mapInterface.clearMap();
-    mapInterface.loadMap(mapPins);
+    if (!mapPins.error) {
 
-    this.closeModal();
+      mapInterface.clearMap();
+      mapInterface.loadMap(mapPins);
+  
+      this.closeModal();
+
+    }
+
   }
 
-  POSTMap(title, places) {
-    // MOCK
+  async saveMap(title, places) {
 
-    console.log('post');
+    let map = { title: title, pins: [] };
+    let results;
 
-    let map = { title: title, hash: null, pins: [] };
+    places.forEach((place, i) => {
 
-    places.forEach((pin, i) => {
-
-      map.pins[i] = { name: pin.name, lat: pin.latLng.lat(), lng: pin.latLng.lng() }
-      if (pin.description)  map.pins[i].description = pin.description;
+      map.pins[i] = { map: title, name: place.name, description: null, lat: place.latLng.lat(), lng: place.latLng.lng() };
+      if (place.description) map.pins[i].description = place.description;
 
     });
 
-    this.closeModal();
-    console.log(map);
+    results = await this.POSTMap(map).catch((err) => {
+
+      alert('Error saving map data.');
+      return err;
+
+    });
+
+    if (!results.error) {
+
+      this.closeModal();
+
+    }
+
+  }
+
+  POSTMap(map) {
+
+    let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
+    let requestPOST = new Request('/API/postMap', { method: 'POST', headers: requestHEADER, body: JSON.stringify(map) });
+
+    return new Promise((resolve, reject) => {
+
+      fetch(requestPOST).then((res) => {
+
+        if (res.ok) {
+
+          resolve(true);
+
+        } else {
+
+          throw res.status;
+
+        }
+
+      }).catch((err) => {
+
+        console.error('[ERROR] ' + err);
+
+        reject({
+
+          error: err
+
+        });
+
+      });
+
+    });
+
   }
 
   GETMaps() {
@@ -208,7 +258,7 @@ class App extends React.Component {
       modal:
         <SaveModal 
           places={givenState}
-          POSTMap={this.POSTMap}
+          saveMap={this.saveMap}
           closeModal={this.closeModal}
         />
     });
@@ -532,7 +582,7 @@ class SaveModal extends React.Component {
 
       if (this.state.mapName) {
 
-        this.props.POSTMap(this.state.mapName, this.props.places);
+        this.props.saveMap(this.state.mapName, this.props.places);
   
       } else {
   
