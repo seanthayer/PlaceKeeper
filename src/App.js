@@ -79,11 +79,11 @@ class App extends React.Component {
     let mapPins = await this.GETMap(title).catch((err) => {
 
       alert('Error getting map data.');
-      return err;
+      return null;
 
     });
 
-    if (!mapPins.error) {
+    if (mapPins) {
 
       mapInterface.clearMap();
       mapInterface.loadMap(mapPins);
@@ -109,11 +109,11 @@ class App extends React.Component {
     results = await this.POSTMap(map).catch((err) => {
 
       alert('Error saving map data.');
-      return err;
+      return null;
 
     });
 
-    if (!results.error) {
+    if (results) {
 
       this.closeModal();
 

@@ -53,13 +53,15 @@ app.get('/API/getMaps', async (req, res) => {
 
   });
 
-  if (!results.error) {
+  if (results.error) {
 
-    res.status(200).send(results);
+    console.error('[ERROR]: ' + results.error);
+
+    res.sendStatus(500);
 
   } else {
 
-    res.sendStatus(500);
+    res.status(200).send(results);
 
   }
 
@@ -75,13 +77,15 @@ app.get('/API/getMap/:title', async (req, res) => {
 
   });
 
-  if (!results.error) {
+  if (results.error) {
 
-    res.status(200).send(results);
+    console.error('[ERROR]: ' + results.error);
+
+    res.sendStatus(500);
 
   } else {
 
-    res.sendStatus(500);
+    res.status(200).send(results);
 
   }
 
@@ -110,6 +114,8 @@ app.post('/API/postMap', async (req, res) => {
     pinValues = req.body.pins.map((e) => { return Object.values(e) })
 
     console.log(pinValues);
+
+    res.status(201).send({ id: 123 });
 
   } else {
 
