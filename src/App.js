@@ -5,8 +5,6 @@ import { loader } from './index';
 import background from './img/background_header-bg.png';
 import header from './img/thumbnail_placekeeper-header-icon.png';
 
-import staticMaps from './tests/staticMaps';
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -92,32 +90,73 @@ class App extends React.Component {
   }
 
   GETMaps() {
-    // MOCK
 
-    console.log('get');
+    let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
+    let requestGET = new Request('/API/getMaps', { method: 'GET', headers: requestHEADER });
 
-    let maps = [];
-    
-    staticMaps.forEach((map, i) => {
+    return new Promise((resolve, reject) => {
 
-      let titleHash = { title: map.title, hash: map.hash };
-      maps[i] = titleHash;
+      fetch(requestGET).then((res) => {
+
+        if (res.ok) {
+  
+          return res.json();
+  
+        } else {
+  
+          throw res.status;
+  
+        }
+  
+      }).then((mapTitles) => {
+
+        resolve(mapTitles);
+
+      }).catch((err) => {
+  
+        console.error('[ERROR] ' + err);
+
+        reject({
+
+          error: err
+
+        });
+  
+      });
 
     });
 
-    return maps;
   }
 
   GETMap(hash) {
     // MOCK
 
-    console.log('get => hash: ', hash);
+    // console.log('get => hash: ', hash);
 
-    let hashMap = staticMaps.map(map => map.hash);
-    let i = hashMap.indexOf(hash);
+    // let hashMap = staticMaps.map(map => map.hash);
+    // let i = hashMap.indexOf(hash);
 
-    this.closeModal();
-    console.log(staticMaps[i].pins);
+    // this.closeModal();
+    // console.log(staticMaps[i].pins);
+  }
+
+  async showImportModal() {
+
+    let maps = await this.GETMaps().catch((err) => { 
+
+      return [];
+  
+    });
+
+    this.setState({
+      modal:
+        <ImportModal
+          maps={maps}
+          GETMap={this.GETMap}
+          closeModal={this.closeModal}
+        />
+    });
+
   }
 
   showSaveModal(givenState) {
@@ -126,19 +165,6 @@ class App extends React.Component {
         <SaveModal 
           places={givenState}
           POSTMap={this.POSTMap}
-          closeModal={this.closeModal}
-        />
-    });
-  }
-
-  showImportModal() {
-    let maps = this.GETMaps();
-
-    this.setState({
-      modal:
-        <ImportModal
-          maps={maps}
-          GETMap={this.GETMap}
           closeModal={this.closeModal}
         />
     });
@@ -410,7 +436,7 @@ class SaveModal extends React.Component {
         <div className="modal-input-container">
           <h1 className="modal-input-text">Map Name:</h1>
           <div className="modal-input-element">
-            <input onChange={this.handleInput} type="text" className="modal-input" />
+            <input onChange={this.handleInput} type="text" className="modal-input" maxLength="25" placeholder="Max 25 characters" />
           </div>
         </div>
 
@@ -512,9 +538,8 @@ class ImportModal extends React.Component {
 
           {this.props.maps.map(map => 
             <ImportEntry
-              key={map.hash}
-              hash={map.hash}
-              title={map.title}
+              key={map.Title}
+              title={map.Title}
               GETMap={this.props.GETMap}
             />
           )}
@@ -540,7 +565,7 @@ class ImportEntry extends React.Component {
 
   render() {
     return (
-      <div onClick={this.handleClick} className="map-directory-entry-container" data-id={this.props.hash}>
+      <div onClick={this.handleClick} className="map-directory-entry-container">
         <i className="fas fa-file"></i><h4 className="file-title">{this.props.title}</h4> 
       </div>
     );
@@ -548,7 +573,7 @@ class ImportEntry extends React.Component {
 
   handleClick() {
 
-    this.props.GETMap(this.props.hash);
+    this.props.GETMap(this.props.title);
 
   }
 }

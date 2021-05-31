@@ -1,12 +1,32 @@
-const express = require('express');
 const path = require('path');
+const dotenv = require('dotenv').config({ path: path.join(__dirname, '.env.local') });
+const express = require('express');
 const app = express();
+
+const mysql = require('mysql');
+const maxMySQLConnections = 10;
 
 const port = process.env.PORT || 3000;
 
+var pool = mysql.createPool({
+
+  connectionLimit: maxMySQLConnections,
+
+  host     : process.env.DB_HOST,
+  port     : process.env.DB_PORT,
+  user     : process.env.DB_USER,
+  password : process.env.DB_PASS,
+  database : process.env.DB_USEDB
+
+});
+
+/*
+ *      Middleware functions
+ */
+
 app.use(express.static(path.join(__dirname, 'build')));
 
-app.all('*', function (req, res, next) {
+app.all('*', (req, res, next) => {
   
   console.log(`[SERVER] REQUEST: '${req.method}' | URL: '${req.url}'`);
   
@@ -14,13 +34,33 @@ app.all('*', function (req, res, next) {
   
 });
 
-app.get('/', function (req, res) {
+app.get('/API/getMaps', async (req, res) => {
+
+  let results = await queryMapTitles().catch((err) => { 
+
+    return err;
+
+  });
+
+  if (!results.error) {
+
+    res.status(200).send(results);
+
+  } else {
+
+    res.sendStatus(500);
+
+  }
+
+});
+
+app.get('/*', (req, res) => {
   
   res.status(200).sendFile(path.join(__dirname, 'build', 'index.html'));
   
 });
 
-app.get('*', function (req, res) {
+app.get('*', (req, res) => {
   
   /*
    *   _  _    ___  _  _   
@@ -35,8 +75,42 @@ app.get('*', function (req, res) {
   
 });
 
-app.listen(port, function () {
+/*
+ *      Query Functions
+ */
+
+function queryMapTitles() {
+
+  return new Promise((resolve, reject) => {
+
+    pool.query('SELECT * FROM PLACEKEEPER_MAPS', function(err, results) {
+
+      if (err) {
+    
+        reject({
+
+          error: err
+
+        });
+    
+      } else {
+
+        resolve(results);
+    
+      }
+    
+    });
+
+  });
+
+}
+
+
+app.listen(port, () => {
   
   console.log(`[SERVER] Listening on port: '${port}'`);
   
 });
+
+
+module.exports = pool;
