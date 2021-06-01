@@ -113,6 +113,7 @@ class App extends React.Component {
 
     });
 
+    // 'results' will contain the pin insertIDs from the DB
     if (results) {
 
       this.closeModal();
@@ -132,7 +133,7 @@ class App extends React.Component {
 
         if (res.ok) {
 
-          resolve(true);
+          resolve(res.json());
 
         } else {
 
@@ -258,6 +259,7 @@ class App extends React.Component {
       modal:
         <SaveModal 
           places={givenState}
+          GETMaps={this.GETMaps}
           saveMap={this.saveMap}
           closeModal={this.closeModal}
         />
@@ -576,11 +578,35 @@ class SaveModal extends React.Component {
     });
   }
 
-  handleSave() {
+  async handleSave() {
 
-    if (this.props.places.length) {
+    let numOfPins = this.props.places.length;
+    let newMapTitle = this.state.mapName;
+    let mapTitles = [];
 
-      if (this.state.mapName) {
+    if (numOfPins) {
+
+      if (newMapTitle) {
+
+        /*
+        mapTitles = await this.props.GETMaps().catch((err) => {
+
+          return [];
+    
+        });
+
+        mapTitles = mapTitles.map((e) => { return e.title; });
+
+        if (mapTitles.includes(newMapTitle)) {
+
+          alert('This will overwrite an existing map.');
+
+        } else {
+
+          console.log('no overwrite');
+
+        }
+        */
 
         this.props.saveMap(this.state.mapName, this.props.places);
   

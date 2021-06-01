@@ -47,7 +47,7 @@ app.all('*', (req, res, next) => {
 
 app.get('/API/getMaps', async (req, res) => {
 
-  let results = await queryMapTitles().catch((err) => { 
+  let results = await selectMapTitles().catch((err) => { 
 
     return err;
 
@@ -71,7 +71,7 @@ app.get('/API/getMap/:title', async (req, res) => {
 
   let title = req.params.title;
 
-  let results = await queryMapPins(title).catch((err) => { 
+  let results = await selectMapPins(title).catch((err) => { 
 
     return err;
 
@@ -93,12 +93,14 @@ app.get('/API/getMap/:title', async (req, res) => {
 
 app.post('/API/postMap', async (req, res) => {
 
+  let mapTitle = req.body.title;
+  let mapPins = req.body.pins;
   let validData = true;
   let pinValues;
   let results;
 
-  for (let i = 0; i < req.body.pins.length; i++) {
-    const pin = req.body.pins[i];
+  for (let i = 0; i < mapPins.length; i++) {
+    const pin = mapPins[i];
 
     if (!validateSchema(pin, pinSchema)) {
 
@@ -109,13 +111,27 @@ app.post('/API/postMap', async (req, res) => {
 
   }
 
-  if (req.body.title && validData) {
+  if (mapTitle && validData) {
 
-    pinValues = req.body.pins.map((e) => { return Object.values(e) })
+    pinValues = mapPins.map((e) => { return Object.values(e); });
 
-    console.log(pinValues);
+    results = await insertNewMap(mapTitle, pinValues).catch((err) => {
 
-    res.status(201).send({ id: 123 });
+      return err;
+
+    });
+
+    if (results.error) {
+
+      console.error('[ERROR]: ' + results.error);
+
+      res.sendStatus(500);
+
+    } else {
+
+      res.status(201).send(results);
+
+    }
 
   } else {
 
@@ -150,7 +166,7 @@ app.get('*', (req, res) => {
  *      Query Functions
  */
 
-function queryMapTitles() {
+function selectMapTitles() {
 
   return new Promise((resolve, reject) => {
 
@@ -177,11 +193,11 @@ function queryMapTitles() {
 
 }
 
-function queryMapPins(title) {
+function selectMapPins(title) {
 
   return new Promise((resolve, reject) => {
 
-    pool.query('SELECT name, description, lat, lng FROM PINS WHERE Map = ?', [title],
+    pool.query('SELECT name, description, lat, lng FROM PINS WHERE Map = ?', title,
     function(err, results) {
 
       if (err) {
@@ -198,6 +214,98 @@ function queryMapPins(title) {
     
       }
     
+    });
+
+  });
+
+}
+
+function insertNewMap(title, pinSet) {
+
+  let pinIDs = [];
+
+  return new Promise((resolve, reject) => {
+
+    // Map title
+    pool.query('INSERT INTO MAPS VALUES (?)', title,
+    async function(err, results) {
+
+      if (err) {
+
+        reject({
+
+          error: err
+
+        });
+
+      } else {
+
+        pinIDs = await insertPinSet(pinSet).catch((err) => {
+
+          return err;
+
+        });
+
+        if (pinIDs.error) {
+
+          reject({
+
+            error: err
+  
+          });
+          
+        } else {
+
+          resolve(pinIDs);
+
+        }
+
+      }
+
+    });
+
+  });
+
+}
+
+function insertPinSet(pinSet) {
+
+  let pinIDs = [];
+  let valueSet = '(0, ?, ?, ?, ?, ?)';
+  let setValues = '';
+
+  pinSet.forEach((row, i, array) => {
+
+    // Row fields are escaped here, preventing SQL injection when inserting 'setValues' in the Promised query.
+    let sql = mysql.format(valueSet, row);
+
+    // Concatenating each valueSet
+    setValues += (( i < (array.length - 1) ) ? (sql + ',') : (sql));
+
+  });
+
+  return new Promise((resolve, reject) => {
+
+    pool.query(`INSERT INTO PINS VALUES ${setValues}`,
+    function(err, results) {
+  
+      if (err) {
+
+        reject({
+  
+          error: err
+  
+        });
+  
+      } else {
+
+        for (let i = 0; i < pinSet.length; i++)
+          pinIDs.push(i + results.insertId);
+
+        resolve(pinIDs);
+  
+      }
+  
     });
 
   });
