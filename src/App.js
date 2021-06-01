@@ -478,7 +478,7 @@ class SavedPlace extends React.Component {
   
   handleTrash() {
     this.setState({
-      contents: <ConfirmText confirmTrash={this.confirmTrash} resetTrash={this.resetTrash}/>
+      contents: <ConfirmText confirm={this.confirmTrash} reset={this.resetTrash}/>
     });
   }
 
@@ -504,7 +504,7 @@ class TrashButton extends React.Component {
 class ConfirmText extends React.Component {
   render() {
     return (
-      <div className="are-you-sure">Are you sure?<i onClick={this.props.confirmTrash} className="fas fa-check-circle"></i><i onClick={this.props.resetTrash} className="fas fa-times-circle"></i></div>
+      <div className="are-you-sure">Are you sure?<i onClick={this.props.confirm} className="fas fa-check-circle"></i><i onClick={this.props.reset} className="fas fa-times-circle"></i></div>
     );
   }
 }
@@ -513,13 +513,17 @@ class SaveModal extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { mapName: null };
+    this.state = { mapName: null, submodal: null };
 
+    this.closeSubModal = this.closeSubModal.bind(this);
     this.handleInput = this.handleInput.bind(this);
     this.handleSave = this.handleSave.bind(this);
+    this.writeMap = this.writeMap.bind(this);
   }
 
   render() {
+    let submodal = this.state.submodal;
+
     return (
       <div className="modal-backdrop save-modal">
         <div className="modal-container save-modal">
@@ -567,9 +571,19 @@ class SaveModal extends React.Component {
           <button onClick={this.props.closeModal} type="button" className="modal-close-button action-button">Close</button>
         </div>
 
+        <div id="sub-modal">
+          {submodal}
+        </div>
+
         </div>
       </div>
     );
+  }
+
+  closeSubModal() {
+    this.setState({ 
+      submodal: null
+    });
   }
 
   handleInput(event) {
@@ -588,7 +602,6 @@ class SaveModal extends React.Component {
 
       if (newMapTitle) {
 
-        /*
         mapTitles = await this.props.GETMaps().catch((err) => {
 
           return [];
@@ -599,16 +612,20 @@ class SaveModal extends React.Component {
 
         if (mapTitles.includes(newMapTitle)) {
 
-          alert('This will overwrite an existing map.');
+          this.setState({ 
+            submodal: 
+              <ConfirmModal 
+                message='This will overwrite an existing map. Are you sure?'
+                confirm={() => {this.writeMap(newMapTitle, this.props.places)}}
+                close={this.closeSubModal}
+              /> 
+          });
 
         } else {
 
-          console.log('no overwrite');
+          this.writeMap(newMapTitle, this.props.places);
 
         }
-        */
-
-        this.props.saveMap(this.state.mapName, this.props.places);
   
       } else {
   
@@ -621,6 +638,13 @@ class SaveModal extends React.Component {
       alert('You cannot save an empty map.');
 
     }
+  }
+
+  writeMap(title, places) {
+
+    this.props.saveMap(title, places);
+    this.props.closeModal();
+
   }
 }
 
@@ -695,6 +719,31 @@ class ImportEntry extends React.Component {
 
     this.props.importMap(this.props.title);
 
+  }
+}
+
+class ConfirmModal extends React.Component {
+  render () {
+    return (
+      <div className="modal-backdrop confirm-modal">
+        <div className="modal-container confirm-modal">
+
+        <div className="modal-body confirm-modal">
+          <div className="modal-text confirm-modal">
+
+            {this.props.message}
+
+          </div> 
+        </div>
+
+        <div className="modal-footer confirm-modal">
+          <button onClick={this.props.confirm} type="button" className="yes-button action-button">Yes</button>
+          <button onClick={this.props.close} type="button" className="no-button action-button">No</button>
+        </div>
+
+        </div>
+      </div>
+    );
   }
 }
 

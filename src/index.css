@@ -263,6 +263,15 @@ div.saved-place-entry {
   z-index: 2;
 }
 
+.modal-container.confirm-modal {
+  top: 25%;
+  z-index: 3;
+  width: 250px;
+  height: 200px;
+  min-width: 250px;
+  min-height: 200px;
+}
+
 .modal-header {
   border-bottom: 1px solid rgb(208, 208, 208);
 }
@@ -287,6 +296,13 @@ div.saved-place-entry {
   margin: 0px 20px 16px 20px;
 }
 
+.modal-text.confirm-modal {
+  border: 1px solid black;
+  padding: 25px;
+  margin: 5px;
+  border-radius: 8px;
+}
+
 .modal-description {
   margin-left: 20px;
 }
@@ -294,6 +310,13 @@ div.saved-place-entry {
 .modal-footer {
   border-top: 1px solid rgb(208, 208, 208);
   padding-top: 20px;
+}
+
+.modal-footer.confirm-modal {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 25px;
+  margin-right: 25px;
 }
 
 .modal-x-button {
@@ -325,6 +348,30 @@ div.saved-place-entry {
   float: right;
   margin-right: 20px;
   border-radius: 5px;
+}
+
+.yes-button.action-button {
+  float: none;
+  width: 50px;
+  margin: 3px;
+  border: 2px solid rgb(208, 208, 208);
+  background-color: white;
+}
+
+.yes-button:hover {
+  background-color: lightgreen;
+}
+
+.no-button.action-button {
+  float: none;
+  width: 50px;
+  margin: 3px;
+  border: 2px solid rgb(208, 208, 208);
+  background-color: white;
+}
+
+.no-button:hover {
+  background-color: salmon;
 }
 
 .modal-directory-container {

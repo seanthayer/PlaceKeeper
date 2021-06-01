@@ -220,9 +220,38 @@ function selectMapPins(title) {
 
 }
 
-function insertNewMap(title, pinSet) {
+function dropMapIfExists(title) {
+
+  return new Promise((resolve, reject) => {
+
+    pool.query('DELETE FROM MAPS WHERE Title = ?', title,
+    function(err, results) {
+
+      if (err) {
+
+        reject({
+
+          error: err
+
+        });
+
+      } else {
+
+        resolve(results);
+
+      }
+
+    });
+
+  });
+
+}
+
+async function insertNewMap(title, pinSet) {
 
   let pinIDs = [];
+
+  await dropMapIfExists(title);
 
   return new Promise((resolve, reject) => {
 
