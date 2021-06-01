@@ -14,6 +14,7 @@ class App extends React.Component {
     this.updatePlaces = this.updatePlaces.bind(this);
     this.importMap = this.importMap.bind(this);
     this.saveMap = this.saveMap.bind(this);
+    this.deleteMap = this.deleteMap.bind(this);
     this.POSTMap = this.POSTMap.bind(this);
     this.GETMaps = this.GETMaps.bind(this);
     this.GETMap = this.GETMap.bind(this);
@@ -43,7 +44,7 @@ class App extends React.Component {
                 updatePlaces={this.updatePlaces}
               />
               <ModalButtons
-                places={this.state.places}
+                places={this.state.places} // Not necessary here.
                 showImportModal={this.showImportModal}
                 showSaveModal={this.showSaveModal}
               />
@@ -119,6 +120,12 @@ class App extends React.Component {
       this.closeModal();
 
     }
+
+  }
+
+  async deleteMap(title) {
+
+    console.log('delete => ', title);
 
   }
 
@@ -248,6 +255,7 @@ class App extends React.Component {
         <ImportModal
           maps={maps}
           importMap={this.importMap}
+          deleteMap={this.deleteMap}
           closeModal={this.closeModal}
         />
     });
@@ -366,7 +374,7 @@ class ImportButton extends React.Component {
   }
 
   handleClick() {
-    this.props.showImportModal(this.props.places);
+    this.props.showImportModal(this.props.places); // ???
   }
 }
 
@@ -594,6 +602,7 @@ class SaveModal extends React.Component {
 
   async handleSave() {
 
+    let modalContent = { message: null, confirmText: null, closeText: null };
     let numOfPins = this.props.places.length;
     let newMapTitle = this.state.mapName;
     let mapTitles = [];
@@ -612,10 +621,12 @@ class SaveModal extends React.Component {
 
         if (mapTitles.includes(newMapTitle)) {
 
+          modalContent = { message: 'This will overwrite an existing map. Are you sure?', confirmText: 'Yes', closeText: 'No' };
+
           this.setState({ 
             submodal: 
-              <ConfirmModal 
-                message='This will overwrite an existing map. Are you sure?'
+              <MiniModal 
+                modalContent={modalContent}
                 confirm={() => {this.writeMap(newMapTitle, this.props.places)}}
                 close={this.closeSubModal}
               /> 
@@ -663,7 +674,19 @@ class TableRow extends React.Component {
 }
 
 class ImportModal extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { submodal: null };
+
+    this.closeSubModal = this.closeSubModal.bind(this);
+    this.confirmDelete = this.confirmDelete.bind(this);
+    this.showEntryInfo = this.showEntryInfo.bind(this);
+  }
+
   render() {
+    let submodal = this.state.submodal;
+
     return (
       <div className="modal-backdrop import-modal">
         <div className="modal-container import-modal">
@@ -684,7 +707,7 @@ class ImportModal extends React.Component {
             <ImportEntry
               key={map.title}
               title={map.title}
-              importMap={this.props.importMap}
+              showEntryInfo={() => { this.showEntryInfo(map.title) }}
             />
           )}
 
@@ -695,35 +718,78 @@ class ImportModal extends React.Component {
           <button onClick={this.props.closeModal} type="button" className="modal-close-button action-button">Close</button>
         </div>
 
+        <div id="sub-modal">
+          {submodal}
+        </div>
+
         </div>
       </div>
     );
   }
+
+  closeSubModal() {
+    this.setState({ 
+      submodal: null
+    });
+  }
+
+  confirmDelete(title) {
+    let modalContent = { message: `This will permanently delete map '${title}'. Are you sure?`, confirmText: 'Yes', closeText: 'No' };
+
+    this.closeSubModal();
+
+    this.setState({
+      submodal:
+        <MiniModal 
+          modalContent={modalContent}
+          confirm={() => { this.props.deleteMap(title) }}
+          close={this.closeSubModal}
+        /> 
+    });
+  }
+
+  showEntryInfo(title) {
+    let modalContent = { message: `Map title: ${title}`, confirmText: 'Load', closeText: 'Delete', tertiaryText: 'Close' };
+
+    this.setState({ 
+      submodal:
+        <MiniModal 
+          modalContent={modalContent}
+          confirm={() => { this.props.importMap(title) }}
+          close={() => { this.confirmDelete(title) }}
+          tertiary={this.closeSubModal}
+        /> 
+    });
+  }
 }
 
 class ImportEntry extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handleClick = this.handleClick.bind(this);
-  }
-
   render() {
     return (
-      <div onClick={this.handleClick} className="map-directory-entry-container">
+      <div onClick={this.props.showEntryInfo} className="map-directory-entry-container">
         <i className="fas fa-file"></i><h4 className="file-title">{this.props.title}</h4> 
       </div>
     );
   }
-
-  handleClick() {
-
-    this.props.importMap(this.props.title);
-
-  }
 }
 
-class ConfirmModal extends React.Component {
+class MiniModal extends React.Component {
   render () {
+    //  Expects 'modalContent' object w/
+    //    - message
+    //    - confirmText
+    //    - closeText
+    //    = tertiaryText (optional)
+
+    let message = this.props.modalContent.message;
+    let confirmText = this.props.modalContent.confirmText;
+    let closeText = this.props.modalContent.closeText;
+    let tertiaryText = this.props.modalContent.tertiaryText;
+
+    let confirmButton = (confirmText ? <button onClick={this.props.confirm} type="button" className="yes-button action-button">{confirmText}</button> : null);
+    let closeButton = (closeText ? <button onClick={this.props.close} type="button" className="no-button action-button">{closeText}</button> : null);
+    let tertiaryButton = (tertiaryText ? <button onClick={this.props.tertiary} type="button" className="tertiary-button action-button">{tertiaryText}</button> : null)
+
     return (
       <div className="modal-backdrop confirm-modal">
         <div className="modal-container confirm-modal">
@@ -731,14 +797,15 @@ class ConfirmModal extends React.Component {
         <div className="modal-body confirm-modal">
           <div className="modal-text confirm-modal">
 
-            {this.props.message}
+            {message}
 
           </div> 
         </div>
 
         <div className="modal-footer confirm-modal">
-          <button onClick={this.props.confirm} type="button" className="yes-button action-button">Yes</button>
-          <button onClick={this.props.close} type="button" className="no-button action-button">No</button>
+          {confirmButton}
+          {closeButton}
+          {tertiaryButton}
         </div>
 
         </div>
