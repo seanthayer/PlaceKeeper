@@ -115,6 +115,7 @@ main {
 }
 
 .trash-button-container {
+  height: 19px;
   margin-top: 10px;
   color: crimson;
   font-size: 12px;
@@ -262,6 +263,17 @@ div.saved-place-entry {
   z-index: 2;
 }
 
+.modal-container.confirm-modal {
+  display: flex;
+  flex-direction: column;
+  top: 25%;
+  z-index: 3;
+  width: 250px;
+  height: fit-content;
+  min-width: 250px;
+  min-height: auto;
+}
+
 .modal-header {
   border-bottom: 1px solid rgb(208, 208, 208);
 }
@@ -286,6 +298,14 @@ div.saved-place-entry {
   margin: 0px 20px 16px 20px;
 }
 
+.modal-text.confirm-modal {
+  text-align: center;
+  border: 1px solid black;
+  padding: 25px;
+  margin: 5px;
+  border-radius: 8px;
+}
+
 .modal-description {
   margin-left: 20px;
 }
@@ -293,6 +313,14 @@ div.saved-place-entry {
 .modal-footer {
   border-top: 1px solid rgb(208, 208, 208);
   padding-top: 20px;
+}
+
+.modal-footer.confirm-modal {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 25px;
+  margin-right: 25px;
+  padding-bottom: 20px;
 }
 
 .modal-x-button {
@@ -324,6 +352,45 @@ div.saved-place-entry {
   float: right;
   margin-right: 20px;
   border-radius: 5px;
+}
+
+.yes-button.action-button {
+  float: none;
+  width: fit-content;
+  min-width: 50px;
+  margin: 3px;
+  border: 2px solid rgb(208, 208, 208);
+  background-color: white;
+}
+
+.yes-button:hover {
+  background-color: lightgreen;
+}
+
+.no-button.action-button {
+  float: none;
+  width: fit-content;
+  min-width: 50px;
+  margin: 3px;
+  border: 2px solid rgb(208, 208, 208);
+  background-color: white;
+}
+
+.no-button:hover {
+  background-color: salmon;
+}
+
+.tertiary-button.action-button {
+  float: none;
+  width: fit-content;
+  min-width: 50px;
+  margin: 3px;
+  border: 2px solid rgb(208, 208, 208);
+  background-color: white;
+}
+
+.tertiary-button:hover {
+  background-color: lightgrey;
 }
 
 .modal-directory-container {

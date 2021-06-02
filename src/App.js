@@ -5,8 +5,6 @@ import { loader } from './index';
 import background from './img/background_header-bg.png';
 import header from './img/thumbnail_placekeeper-header-icon.png';
 
-import staticMaps from './tests/staticMaps';
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -14,9 +12,13 @@ class App extends React.Component {
     this.state = { modal: null, places: [] };
 
     this.updatePlaces = this.updatePlaces.bind(this);
+    this.importMap = this.importMap.bind(this);
+    this.saveMap = this.saveMap.bind(this);
+    this.removeMap = this.removeMap.bind(this);
     this.POSTMap = this.POSTMap.bind(this);
     this.GETMaps = this.GETMaps.bind(this);
     this.GETMap = this.GETMap.bind(this);
+    this.DELETEMap = this.DELETEMap.bind(this);
     this.showSaveModal = this.showSaveModal.bind(this);
     this.showImportModal = this.showImportModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
@@ -43,7 +45,7 @@ class App extends React.Component {
                 updatePlaces={this.updatePlaces}
               />
               <ModalButtons
-                places={this.state.places}
+                places={this.state.places} // Not necessary here.
                 showImportModal={this.showImportModal}
                 showSaveModal={this.showSaveModal}
               />
@@ -53,7 +55,6 @@ class App extends React.Component {
               <PlacesSearch />
               <PlacesList 
                 places={this.state.places}
-                updatePlaces={this.updatePlaces}
               />
             </section>
 
@@ -74,51 +75,239 @@ class App extends React.Component {
     });
   }
 
-  POSTMap(title, places) {
-    // MOCK
+  async importMap(title) {
+    const mapInterface = window.mapInterface;
 
-    console.log('post');
+    let mapPins = await this.GETMap(title).catch((err) => {
 
-    let map = { title: title, hash: null, pins: [] };
-
-    places.forEach((pin, i) => {
-
-      map.pins[i] = { name: pin.name, lat: pin.latLng.lat(), lng: pin.latLng.lng() }
-      if (pin.description)  map.pins[i].description = pin.description;
+      alert('Error getting map data.');
+      return null;
 
     });
 
-    this.closeModal();
-    console.log(map);
+    if (mapPins) {
+
+      mapInterface.clearMap();
+      mapInterface.loadMap(mapPins);
+  
+      this.closeModal();
+
+    }
+
+  }
+
+  async saveMap(title, places) {
+
+    let map = { title: title, pins: [] };
+    let results;
+
+    places.forEach((place, i) => {
+
+      map.pins[i] = { map: title, name: place.name, description: null, lat: place.latLng.lat(), lng: place.latLng.lng() };
+      if (place.description) map.pins[i].description = place.description;
+
+    });
+
+    results = await this.POSTMap(map).catch((err) => {
+
+      alert('Error saving map data.');
+      return null;
+
+    });
+
+    // 'results' will contain the pin insertIDs from the DB
+    if (results) {
+
+      this.closeModal();
+
+    }
+
+  }
+
+  async removeMap(title) {
+
+    let results = await this.DELETEMap(title).catch((err) => {
+
+      alert('Error deleting map data.');
+      return null;
+
+    });
+
+    if (results === 204) {
+
+      // Causes visual glitching
+      this.closeModal();
+      this.showImportModal();
+
+    }
+
+  }
+
+  POSTMap(map) {
+
+    let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
+    let requestPOST = new Request('/API/postMap', { method: 'POST', headers: requestHEADER, body: JSON.stringify(map) });
+
+    return new Promise((resolve, reject) => {
+
+      fetch(requestPOST).then((res) => {
+
+        if (res.ok) {
+
+          resolve(res.status);
+
+        } else {
+
+          throw res.status;
+
+        }
+
+      }).catch((err) => {
+
+        console.error('[ERROR] ' + err);
+
+        reject({
+
+          error: err
+
+        });
+
+      });
+
+    });
+
   }
 
   GETMaps() {
-    // MOCK
 
-    console.log('get');
+    let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
+    let requestGET = new Request('/API/getMaps', { method: 'GET', headers: requestHEADER });
 
-    let maps = [];
-    
-    staticMaps.forEach((map, i) => {
+    return new Promise((resolve, reject) => {
 
-      let titleHash = { title: map.title, hash: map.hash };
-      maps[i] = titleHash;
+      fetch(requestGET).then((res) => {
+
+        if (res.ok) {
+  
+          return res.json();
+  
+        } else {
+  
+          throw res.status;
+  
+        }
+  
+      }).then((mapTitles) => {
+
+        resolve(mapTitles);
+
+      }).catch((err) => {
+  
+        console.error('[ERROR] ' + err);
+
+        reject({
+
+          error: err
+
+        });
+  
+      });
 
     });
 
-    return maps;
   }
 
-  GETMap(hash) {
-    // MOCK
+  GETMap(title) {
+    
+    let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
+    let requestGET = new Request('/API/getMap/' + title, { method: 'GET', headers: requestHEADER });
 
-    console.log('get => hash: ', hash);
+    return new Promise((resolve, reject) => {
 
-    let hashMap = staticMaps.map(map => map.hash);
-    let i = hashMap.indexOf(hash);
+      fetch(requestGET).then((res) => {
 
-    this.closeModal();
-    console.log(staticMaps[i].pins);
+        if (res.ok) {
+  
+          return res.json();
+  
+        } else {
+  
+          throw res.status;
+  
+        }
+  
+      }).then((mapPins) => {
+
+        resolve(mapPins);
+
+      }).catch((err) => {
+  
+        console.error('[ERROR] ' + err);
+
+        reject({
+
+          error: err
+
+        });
+  
+      });
+
+    });
+
+  }
+
+  DELETEMap(title) {
+
+    let requestDELETE = new Request('/API/deleteMap/' + title, { method: 'DELETE' });
+
+    return new Promise((resolve, reject) => {
+
+      fetch(requestDELETE).then((res) => {
+
+        if (res.ok) {
+  
+          resolve(res.status);
+  
+        } else {
+  
+          throw res.status;
+  
+        }
+
+      }).catch((err) => {
+  
+        console.error('[ERROR] ' + err);
+
+        reject({
+
+          error: err
+
+        });
+  
+      });
+
+    });
+
+  }
+
+  async showImportModal() {
+
+    let maps = await this.GETMaps().catch((err) => { 
+
+      return [];
+
+    });
+
+    this.setState({
+      modal:
+        <ImportModal
+          maps={maps}
+          importMap={this.importMap}
+          removeMap={this.removeMap}
+          closeModal={this.closeModal}
+        />
+    });
+
   }
 
   showSaveModal(givenState) {
@@ -126,20 +315,8 @@ class App extends React.Component {
       modal:
         <SaveModal 
           places={givenState}
-          POSTMap={this.POSTMap}
-          closeModal={this.closeModal}
-        />
-    });
-  }
-
-  showImportModal() {
-    let maps = this.GETMaps();
-
-    this.setState({
-      modal:
-        <ImportModal
-          maps={maps}
-          GETMap={this.GETMap}
+          GETMaps={this.GETMaps}
+          saveMap={this.saveMap}
           closeModal={this.closeModal}
         />
     });
@@ -245,7 +422,7 @@ class ImportButton extends React.Component {
   }
 
   handleClick() {
-    this.props.showImportModal(this.props.places);
+    this.props.showImportModal(this.props.places); // ???
   }
 }
 
@@ -357,7 +534,7 @@ class SavedPlace extends React.Component {
   
   handleTrash() {
     this.setState({
-      contents: <ConfirmText confirmTrash={this.confirmTrash} resetTrash={this.resetTrash}/>
+      contents: <ConfirmText confirm={this.confirmTrash} reset={this.resetTrash}/>
     });
   }
 
@@ -383,7 +560,7 @@ class TrashButton extends React.Component {
 class ConfirmText extends React.Component {
   render() {
     return (
-      <div className="are-you-sure">Are you sure?<i onClick={this.props.confirmTrash} className="fas fa-check-circle"></i><i onClick={this.props.resetTrash} className="fas fa-times-circle"></i></div>
+      <div className="are-you-sure">Are you sure?<i onClick={this.props.confirm} className="fas fa-check-circle"></i><i onClick={this.props.reset} className="fas fa-times-circle"></i></div>
     );
   }
 }
@@ -392,13 +569,17 @@ class SaveModal extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { mapName: null };
+    this.state = { mapName: null, submodal: null };
 
+    this.closeSubModal = this.closeSubModal.bind(this);
     this.handleInput = this.handleInput.bind(this);
     this.handleSave = this.handleSave.bind(this);
+    this.writeMap = this.writeMap.bind(this);
   }
 
   render() {
+    let submodal = this.state.submodal;
+
     return (
       <div className="modal-backdrop save-modal">
         <div className="modal-container save-modal">
@@ -411,7 +592,7 @@ class SaveModal extends React.Component {
         <div className="modal-input-container">
           <h1 className="modal-input-text">Map Name:</h1>
           <div className="modal-input-element">
-            <input onChange={this.handleInput} type="text" className="modal-input" />
+            <input onChange={this.handleInput} type="text" className="modal-input" maxLength="25" placeholder="Max 25 characters" />
           </div>
         </div>
 
@@ -446,9 +627,19 @@ class SaveModal extends React.Component {
           <button onClick={this.props.closeModal} type="button" className="modal-close-button action-button">Close</button>
         </div>
 
+        <div id="sub-modal">
+          {submodal}
+        </div>
+
         </div>
       </div>
     );
+  }
+
+  closeSubModal() {
+    this.setState({ 
+      submodal: null
+    });
   }
 
   handleInput(event) {
@@ -457,13 +648,45 @@ class SaveModal extends React.Component {
     });
   }
 
-  handleSave() {
+  async handleSave() {
 
-    if (this.props.places.length) {
+    let sanitizedTitle = (this.state.mapName ? this.state.mapName.match(/\w+/gi) : null); // Sanitize input; Note: removes accented chars as well
+    let newMapTitle = (sanitizedTitle ? sanitizedTitle.join('') : null);
 
-      if (this.state.mapName) {
+    let modalContent = { message: null, confirmText: null, closeText: null };
+    let numOfPins = this.props.places.length;
+    let mapTitles = [];
 
-        this.props.POSTMap(this.state.mapName, this.props.places);
+    if (numOfPins) {
+
+      if (newMapTitle) {
+
+        mapTitles = await this.props.GETMaps().catch((err) => {
+
+          return [];
+    
+        });
+
+        mapTitles = mapTitles.map((e) => { return e.title; });
+
+        if (mapTitles.includes(newMapTitle)) {
+
+          modalContent = { message: 'This will overwrite an existing map. Are you sure?', confirmText: 'Yes', closeText: 'No' };
+
+          this.setState({ 
+            submodal: 
+              <MiniModal 
+                modalContent={modalContent}
+                confirm={() => {this.writeMap(newMapTitle, this.props.places)}}
+                close={this.closeSubModal}
+              /> 
+          });
+
+        } else {
+
+          this.writeMap(newMapTitle, this.props.places);
+
+        }
   
       } else {
   
@@ -476,6 +699,13 @@ class SaveModal extends React.Component {
       alert('You cannot save an empty map.');
 
     }
+  }
+
+  writeMap(title, places) {
+
+    this.props.saveMap(title, places);
+    this.props.closeModal();
+
   }
 }
 
@@ -494,7 +724,19 @@ class TableRow extends React.Component {
 }
 
 class ImportModal extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { submodal: null };
+
+    this.closeSubModal = this.closeSubModal.bind(this);
+    this.confirmDelete = this.confirmDelete.bind(this);
+    this.showEntryInfo = this.showEntryInfo.bind(this);
+  }
+
   render() {
+    let submodal = this.state.submodal;
+
     return (
       <div className="modal-backdrop import-modal">
         <div className="modal-container import-modal">
@@ -513,10 +755,9 @@ class ImportModal extends React.Component {
 
           {this.props.maps.map(map => 
             <ImportEntry
-              key={map.hash}
-              hash={map.hash}
+              key={map.title}
               title={map.title}
-              GETMap={this.props.GETMap}
+              showEntryInfo={() => { this.showEntryInfo(map.title) }}
             />
           )}
 
@@ -527,30 +768,99 @@ class ImportModal extends React.Component {
           <button onClick={this.props.closeModal} type="button" className="modal-close-button action-button">Close</button>
         </div>
 
+        <div id="sub-modal">
+          {submodal}
         </div>
+
+        </div>
+      </div>
+    );
+  }
+
+  closeSubModal() {
+    this.setState({ 
+      submodal: null
+    });
+  }
+
+  confirmDelete(title) {
+    let modalContent = { message: `This will permanently delete map '${title}'. Are you sure?`, confirmText: 'Yes', closeText: 'No' };
+
+    this.closeSubModal();
+
+    this.setState({
+      submodal:
+        <MiniModal 
+          modalContent={modalContent}
+          confirm={() => { this.props.removeMap(title) }}
+          close={this.closeSubModal}
+        /> 
+    });
+  }
+
+  showEntryInfo(title) {
+    let modalContent = { message: `Map title: ${title}`, confirmText: 'Load', closeText: 'Delete', tertiaryText: 'Close' };
+
+    this.setState({ 
+      submodal:
+        <MiniModal 
+          modalContent={modalContent}
+          confirm={() => { this.props.importMap(title) }}
+          close={() => { this.confirmDelete(title) }}
+          tertiary={this.closeSubModal}
+        /> 
+    });
+  }
+}
+
+class ImportEntry extends React.Component {
+  render() {
+    return (
+      <div onClick={this.props.showEntryInfo} className="map-directory-entry-container">
+        <i className="fas fa-file"></i><h4 className="file-title">{this.props.title}</h4> 
       </div>
     );
   }
 }
 
-class ImportEntry extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handleClick = this.handleClick.bind(this);
-  }
+class MiniModal extends React.Component {
+  render () {
+    //  Expects 'modalContent' object w/
+    //    - message
+    //    - confirmText
+    //    - closeText
+    //    = tertiaryText (optional)
 
-  render() {
+    let message = this.props.modalContent.message;
+    let confirmText = this.props.modalContent.confirmText;
+    let closeText = this.props.modalContent.closeText;
+    let tertiaryText = this.props.modalContent.tertiaryText;
+
+    let confirmButton = (confirmText ? <button onClick={this.props.confirm} type="button" className="yes-button action-button">{confirmText}</button> : null);
+    let closeButton = (closeText ? <button onClick={this.props.close} type="button" className="no-button action-button">{closeText}</button> : null);
+    let tertiaryButton = (tertiaryText ? <button onClick={this.props.tertiary} type="button" className="tertiary-button action-button">{tertiaryText}</button> : null)
+
     return (
-      <div onClick={this.handleClick} className="map-directory-entry-container" data-id={this.props.hash}>
-        <i className="fas fa-file"></i><h4 className="file-title">{this.props.title}</h4> 
+      <div className="modal-backdrop confirm-modal">
+        <div className="modal-container confirm-modal">
+
+        <div className="modal-body confirm-modal">
+          <div className="modal-text confirm-modal">
+
+            {message}
+
+          </div> 
+        </div>
+
+        <div className="modal-footer confirm-modal">
+          {confirmButton}
+          {closeButton}
+          {tertiaryButton}
+        </div>
+
+        </div>
       </div>
     );
-  }
-
-  handleClick() {
-
-    this.props.GETMap(this.props.hash);
-
   }
 }
 

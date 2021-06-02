@@ -125,6 +125,8 @@ class MapInterface {
 
     this.generateNewPin = this.generateNewPin.bind(this);
     this.generateInfoBox = this.generateInfoBox.bind(this);
+    this.clearMap = this.clearMap.bind(this);
+    this.loadMap = this.loadMap.bind(this);
     this.addPin = this.addPin.bind(this);
     this.removePin = this.removePin.bind(this);
 
@@ -183,10 +185,16 @@ class MapInterface {
     let infoForm_saveButton = infoForm.querySelector('button[name="save"]');
     let infoForm_cancelButton = infoForm.querySelector('button[name="cancel"]');
 
+    let sanitizedPinName;
+    let newPinName;
+
     // Save event
     mapEvent.addDomListener(infoForm_saveButton, 'click', () => {
 
-      if (infoForm_nameField.value) {
+      sanitizedPinName = (infoForm_nameField.value ? infoForm_nameField.value.match(/\w+(, )?/gi) : null); // Sanitize input; Note: removes accented chars as well
+      newPinName = (sanitizedPinName ? sanitizedPinName.join('') : null);
+
+      if (newPinName) {
 
         newPin.infoBox.close();
 
@@ -195,7 +203,7 @@ class MapInterface {
           map:    this.mapEmbed,
           mapDOM: this.mapDOMNode,
           marker: newPin.marker,
-          name:   infoForm_nameField.value,
+          name:   newPinName,
           latLng: newPin.latLng
 
         });
@@ -234,6 +242,57 @@ class MapInterface {
 
     });
     // -
+  }
+
+  clearMap() {
+
+    this.pinList.forEach((pin) => {
+
+      pin.hide();
+
+    });
+
+    this.pinList = [];
+    this.updatePlaces(this.pinList);
+
+  }
+
+  loadMap(newPins) {
+    const google = window.google;
+
+    newPins.forEach((newPin) => {
+
+      let coords = { lat: parseFloat(newPin.lat), lng: parseFloat(newPin.lng) };
+
+      let newLatLng = new google.maps.LatLng(coords);
+
+      let marker = new google.maps.Marker({
+
+        position: newLatLng,
+        map: this.mapEmbed
+
+      });
+
+      let pin = new Pin({
+
+        map:    this.mapEmbed,
+        mapDOM: this.mapDOMNode,
+        marker: marker,
+        name:   newPin.name,
+        latLng: newLatLng
+
+      });
+
+      if (newPin.description) pin.description = newPin.description;
+
+      pin.generateListener();
+
+      this.pinList.push(pin);
+
+    });
+
+    this.updatePlaces(this.pinList);
+
   }
 
   addPin(pin) {
