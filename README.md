@@ -6,9 +6,15 @@
 * [x] Rendering of import & save modals
 * [x] PlacesList complete rendering
 * [x] Import & Save modal rendering and functionality
+* [x] Submodal for confirmations and basic menus
+* [x] Import & Save modal ask for confirmations using submodal
 
 ### Back end
 <ins>Completed</ins>↴
+* [x] NodeJS serves production build
+* [x] Endpoints for API calls
+* [x] MySQL integration and query functions
+* [x] Map creation and deletion / overwriting
 
 ### Gmaps
 <ins>Completed</ins>↴
