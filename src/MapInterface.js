@@ -185,10 +185,16 @@ class MapInterface {
     let infoForm_saveButton = infoForm.querySelector('button[name="save"]');
     let infoForm_cancelButton = infoForm.querySelector('button[name="cancel"]');
 
+    let sanitizedPinName;
+    let newPinName;
+
     // Save event
     mapEvent.addDomListener(infoForm_saveButton, 'click', () => {
 
-      if (infoForm_nameField.value) {
+      sanitizedPinName = (infoForm_nameField.value ? infoForm_nameField.value.match(/\w+(, )?/gi) : null); // Sanitize input; Note: removes accented chars as well
+      newPinName = (sanitizedPinName ? sanitizedPinName.join('') : null);
+
+      if (newPinName) {
 
         newPin.infoBox.close();
 
@@ -197,7 +203,7 @@ class MapInterface {
           map:    this.mapEmbed,
           mapDOM: this.mapDOMNode,
           marker: newPin.marker,
-          name:   infoForm_nameField.value,
+          name:   newPinName,
           latLng: newPin.latLng
 
         });

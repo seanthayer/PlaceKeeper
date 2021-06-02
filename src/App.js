@@ -14,10 +14,11 @@ class App extends React.Component {
     this.updatePlaces = this.updatePlaces.bind(this);
     this.importMap = this.importMap.bind(this);
     this.saveMap = this.saveMap.bind(this);
-    this.deleteMap = this.deleteMap.bind(this);
+    this.removeMap = this.removeMap.bind(this);
     this.POSTMap = this.POSTMap.bind(this);
     this.GETMaps = this.GETMaps.bind(this);
     this.GETMap = this.GETMap.bind(this);
+    this.DELETEMap = this.DELETEMap.bind(this);
     this.showSaveModal = this.showSaveModal.bind(this);
     this.showImportModal = this.showImportModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
@@ -123,9 +124,22 @@ class App extends React.Component {
 
   }
 
-  async deleteMap(title) {
+  async removeMap(title) {
 
-    console.log('delete => ', title);
+    let results = await this.DELETEMap(title).catch((err) => {
+
+      alert('Error deleting map data.');
+      return null;
+
+    });
+
+    if (results === 204) {
+
+      // Causes visual glitching
+      this.closeModal();
+      this.showImportModal();
+
+    }
 
   }
 
@@ -140,7 +154,7 @@ class App extends React.Component {
 
         if (res.ok) {
 
-          resolve(res.json());
+          resolve(res.status);
 
         } else {
 
@@ -242,6 +256,40 @@ class App extends React.Component {
 
   }
 
+  DELETEMap(title) {
+
+    let requestDELETE = new Request('/API/deleteMap/' + title, { method: 'DELETE' });
+
+    return new Promise((resolve, reject) => {
+
+      fetch(requestDELETE).then((res) => {
+
+        if (res.ok) {
+  
+          resolve(res.status);
+  
+        } else {
+  
+          throw res.status;
+  
+        }
+
+      }).catch((err) => {
+  
+        console.error('[ERROR] ' + err);
+
+        reject({
+
+          error: err
+
+        });
+  
+      });
+
+    });
+
+  }
+
   async showImportModal() {
 
     let maps = await this.GETMaps().catch((err) => { 
@@ -255,7 +303,7 @@ class App extends React.Component {
         <ImportModal
           maps={maps}
           importMap={this.importMap}
-          deleteMap={this.deleteMap}
+          removeMap={this.removeMap}
           closeModal={this.closeModal}
         />
     });
@@ -602,9 +650,11 @@ class SaveModal extends React.Component {
 
   async handleSave() {
 
+    let sanitizedTitle = (this.state.mapName ? this.state.mapName.match(/\w+/gi) : null); // Sanitize input; Note: removes accented chars as well
+    let newMapTitle = (sanitizedTitle ? sanitizedTitle.join('') : null);
+
     let modalContent = { message: null, confirmText: null, closeText: null };
     let numOfPins = this.props.places.length;
-    let newMapTitle = this.state.mapName;
     let mapTitles = [];
 
     if (numOfPins) {
@@ -742,7 +792,7 @@ class ImportModal extends React.Component {
       submodal:
         <MiniModal 
           modalContent={modalContent}
-          confirm={() => { this.props.deleteMap(title) }}
+          confirm={() => { this.props.removeMap(title) }}
           close={this.closeSubModal}
         /> 
     });

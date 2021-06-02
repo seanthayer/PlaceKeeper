@@ -141,6 +141,34 @@ app.post('/API/postMap', async (req, res) => {
 
 });
 
+app.delete('/API/deleteMap/:title', async (req, res) => {
+
+  let title = req.params.title;
+
+  let results = await dropMapIfExists(title).catch((err) => { 
+
+    return err;
+
+  });
+
+  if (results.error) {
+
+    console.error('[ERROR]: ' + results.error);
+
+    res.sendStatus(500);
+
+  } else if (results) {
+
+    res.sendStatus(204);
+
+  } else {
+
+    res.sendStatus(404);
+
+  }
+
+});
+
 app.get('/*', (req, res) => {
   
   res.status(200).sendFile(path.join(__dirname, 'build', 'index.html'));
@@ -237,7 +265,7 @@ function dropMapIfExists(title) {
 
       } else {
 
-        resolve(results);
+        resolve(results.affectedRows);
 
       }
 
