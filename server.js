@@ -1,26 +1,39 @@
-const path = require('path');
-const dotenv = require('dotenv').config({ path: path.join(__dirname, '.env.local') });
+/* ------------------------------------------
+ *
+ *                  SERVER
+ * 
+ * ------------------------------------------
+ */
+
+const path    = require('path');
+const dotenv  = require('dotenv').config({ path: path.join(__dirname, '.env.local') });
 const express = require('express');
-const app = express();
+const app     = express();
+const port    = process.env.PORT || 3000;
+
+/* ------------------------------------------
+ *
+ *                 DATABASE
+ * 
+ * ------------------------------------------
+ */
 
 const mysql = require('mysql');
-const maxMySQLConnections = 10;
-
-const port = process.env.PORT || 3000;
+const maxConnections = 10;
 
 const pinSchema = {
 
-  map: 'string',
-  name: 'string',
-  description: 'string',
-  lat: 'number',
-  lng: 'number'
+  map         : 'string',
+  name        : 'string',
+  description : 'string',
+  lat         : 'number',
+  lng         : 'number'
 
 };
 
-var pool = mysql.createPool({
+const pool = mysql.createPool({
 
-  connectionLimit: maxMySQLConnections,
+  connectionLimit: maxConnections,
 
   host     : process.env.DB_HOST,
   port     : process.env.DB_PORT,
@@ -30,14 +43,21 @@ var pool = mysql.createPool({
 
 });
 
-/*
- *      Middleware functions
+/* ------------------------------------------
+ *
+ *                MIDDLEWARE
+ * 
+ * ------------------------------------------
  */
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static( path.join(__dirname, 'build') ));
 
 app.all('*', (req, res, next) => {
+
+  /*	Description:
+   *		Log requests to console.
+   */
   
   console.log(`[SERVER] REQUEST: '${req.method}' | URL: '${req.url}'`);
   
@@ -46,6 +66,16 @@ app.all('*', (req, res, next) => {
 });
 
 app.get('/API/getMaps', async (req, res) => {
+
+  /*	Description:
+   *		Asynchronous function. Queries database for map titles.
+   *
+   *    Returns:
+   *      [
+   *        . . .
+   *        RowDataPacket  { title: 'MAP_TITLE' }
+   *      ]
+   */
 
   let results = await selectMapTitles().catch((err) => { 
 
@@ -68,6 +98,19 @@ app.get('/API/getMaps', async (req, res) => {
 });
 
 app.get('/API/getMap/:title', async (req, res) => {
+
+  /*	Description:
+   *		Asynchronous function. Queries database for specified map pins.
+   *
+   *    Returns:
+   *      [
+   *        . . .
+   *        RowDataPacket   {   name:        'PIN_NAME' 
+   *                            description: 'PIN_DESC' 
+   *                            lat:         'PIN_LAT'
+   *                            lng:         'PIN_LNG'   }
+   *      ]
+   */
 
   let title = req.params.title;
 
@@ -92,6 +135,22 @@ app.get('/API/getMap/:title', async (req, res) => {
 });
 
 app.post('/API/postMap', async (req, res) => {
+
+  /*	Description:
+   *		Asynchronous function. Queries database to insert a new map with title and pins.
+   *
+   *    Expects:
+   *      req.body.title  => 'MAP_TITLE'
+   *      req.body.pins   => 
+   *        [
+   *          . . .
+   *          Object  {   map:          'MAP_TITLE'
+   *                      name:         'PIN_NAME'
+   *                      description:  'PIN_DESC'
+   *                      lat:          'PIN_LAT'
+   *                      lng:          'PIN_LNG'   }
+   *        ]
+   */
 
   let mapTitle = req.body.title;
   let mapPins = req.body.pins;
@@ -143,6 +202,13 @@ app.post('/API/postMap', async (req, res) => {
 
 app.delete('/API/deleteMap/:title', async (req, res) => {
 
+  /*	Description:
+   *		Asynchronous function. Queries database to delete a specified map.
+   *
+   *    Expects:
+   *      req.params.title  => 'MAP_TITLE'
+   */
+
   let title = req.params.title;
 
   let results = await dropMapIfExists(title).catch((err) => { 
@@ -170,6 +236,10 @@ app.delete('/API/deleteMap/:title', async (req, res) => {
 });
 
 app.get('/*', (req, res) => {
+
+  /*	Description:
+   *		Renders homepage for all other middleware requests.
+   */
   
   res.status(200).sendFile(path.join(__dirname, 'build', 'index.html'));
   
@@ -190,11 +260,18 @@ app.get('*', (req, res) => {
   
 });
 
-/*
- *      Query Functions
+/* ------------------------------------------
+ *
+ *                  QUERIES
+ * 
+ * ------------------------------------------
  */
 
 function selectMapTitles() {
+
+  /*	Description:
+   *		Query function. Selects and returns a Promised result for map titles.
+   */
 
   return new Promise((resolve, reject) => {
 
@@ -223,6 +300,10 @@ function selectMapTitles() {
 
 function selectMapPins(title) {
 
+  /*	Description:
+   *		Query function. Selects and returns a Promised result for map pins, given a map title.
+   */
+
   return new Promise((resolve, reject) => {
 
     pool.query('SELECT name, description, lat, lng FROM PINS WHERE Map = ?', title,
@@ -250,6 +331,11 @@ function selectMapPins(title) {
 
 function dropMapIfExists(title) {
 
+  /*	Description:
+   *		Query function. Drops a map given a title (if exists). Cascades on drop to delete corresponding map pins.
+   *    Returns a Promised result with deleted row IDs (if any). 
+   */
+
   return new Promise((resolve, reject) => {
 
     pool.query('DELETE FROM MAPS WHERE Title = ?', title,
@@ -276,6 +362,11 @@ function dropMapIfExists(title) {
 }
 
 async function insertNewMap(title, pinSet) {
+
+  /*	Description:
+   *		Asynchronous query function. Inserts a new map given a title and set of pins.
+   *    Returns a Promised result with an array of the newly inserted row IDs (for the map pins).
+   */
 
   let pinIDs = [];
 
@@ -327,6 +418,11 @@ async function insertNewMap(title, pinSet) {
 
 function insertPinSet(pinSet) {
 
+  /*	Description:
+   *		Query function. Escapes and concatenates a set of pins and inserts them as new rows.
+   *    Returns a Promised result with an array of the newly inserted row IDs (for the map pins).
+   */
+
   let pinIDs = [];
   let valueSet = '(0, ?, ?, ?, ?, ?)';
   let setValues = '';
@@ -369,7 +465,24 @@ function insertPinSet(pinSet) {
 
 }
 
+/* ------------------------------------------
+ *
+ *                  HELPERS
+ * 
+ * ------------------------------------------
+ */
+
 function validateSchema(input, schema) {
+
+  /*	Description:
+   *		Validates proper schema given an input and database schema. Validates proper key name and value type.
+   *
+   *  Expects:
+   *    input   => Object { . . .
+   *                        key: value }
+   *    schema  => Object { . . . 
+   *                        key: value }
+   */
 
   let inputKeys = Object.keys(input);
   let schemaKeys = Object.keys(schema);
@@ -401,12 +514,15 @@ function validateSchema(input, schema) {
 
 }
 
+/* ------------------------------------------
+ *
+ *                    MISC.
+ * 
+ * ------------------------------------------
+ */
 
 app.listen(port, () => {
   
   console.log(`[SERVER] Listening on port: '${port}'`);
   
 });
-
-
-module.exports = pool;
