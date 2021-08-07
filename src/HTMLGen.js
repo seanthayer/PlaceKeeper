@@ -53,6 +53,23 @@ class HTMLGen {
       </div>
     );
   }
+
+  TrashButton() {
+
+    return ReactDOMServer.renderToString(
+      <button type="button" name="trash-button" class="trash-button"><i class="far fa-trash-alt"></i></button>
+    );
+
+  }
+
+  ConfirmText() {
+
+    return ReactDOMServer.renderToString(
+      <div class="are-you-sure">Are you sure?<i class="fas fa-check-circle"></i><i class="fas fa-times-circle"></i></div>
+    );
+
+  }
+
 }
 
 export default HTMLGen;

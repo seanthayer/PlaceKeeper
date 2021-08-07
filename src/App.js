@@ -39,8 +39,6 @@ import header       from './img/thumbnail_placekeeper-header-icon.png';
  * ------------------------------------------
  */
 
-// (What the component is -> what the component renders -> what logical interactions the component handles)
-
 class App extends React.Component {
 
   /*	Description:
@@ -91,13 +89,13 @@ class App extends React.Component {
             <section className="map-and-buttons-container">
 
               <Map
-                updatePlaces={this.updatePlaces}
+                updatePlaces = {this.updatePlaces}
               />
 
               <ModalButtons
-                places={this.state.places}
-                showImportModal={this.showImportModal}
-                showSaveModal={this.showSaveModal}
+                places          = {this.state.places}
+                showImportModal = {this.showImportModal}
+                showSaveModal   = {this.showSaveModal}
               />
 
             </section>
@@ -107,7 +105,7 @@ class App extends React.Component {
               <PlacesSearch />
 
               <PlacesList
-                places={this.state.places}
+                places = {this.state.places}
               />
 
             </section>
@@ -181,11 +179,11 @@ class App extends React.Component {
 
       map.pins[i] = { 
 
-        map: title, 
-        name: place.name, 
-        description: null, 
-        lat: place.latLng.lat(), 
-        lng: place.latLng.lng() 
+        map         : title, 
+        name        : place.name, 
+        description : null, 
+        lat         : place.latLng.lat(), 
+        lng         : place.latLng.lng() 
 
       };
 
@@ -244,11 +242,11 @@ class App extends React.Component {
      *          title:  'MAP_TITLE',
      *          pins:   [
      *                    {
-     *                      map:          'MAP_TITLE',
-     *                      name:         'PIN_NAME',
-     *                      description:  'PIN_DESC',
-     *                      lat:          'PIN_LAT',
-     *                      lng:          'PIN_LNG'
+     *                      map         : 'MAP_TITLE',
+     *                      name        : 'PIN_NAME',
+     *                      description : 'PIN_DESC',
+     *                      lat         : 'PIN_LAT',
+     *                      lng         : 'PIN_LNG'
      *                    },
      *                    . . .
      *                  ]
@@ -345,10 +343,10 @@ class App extends React.Component {
      *  Returns:
      *    [
      *      {
-     *        name:         'PIN_NAME',
-     *        description:  'PIN_DESC',
-     *        lat:          'PIN_LAT',
-     *        lng:          'PIN_LNG'
+     *        name        : 'PIN_NAME',
+     *        description : 'PIN_DESC',
+     *        lat         : 'PIN_LAT',
+     *        lng         : 'PIN_LNG'
      *      },
      *      . . .
      *    ]
@@ -445,10 +443,10 @@ class App extends React.Component {
 
       modal:
         <ImportModal
-          maps={maps}
-          importMap={this.importMap}
-          removeMap={this.removeMap}
-          closeModal={this.closeModal}
+          maps       = {maps}
+          importMap  = {this.importMap}
+          removeMap  = {this.removeMap}
+          closeModal = {this.closeModal}
         />
       
     });
@@ -465,10 +463,10 @@ class App extends React.Component {
 
       modal:
         <SaveModal 
-          places={placesList}
-          GETMaps={this.GETMaps}
-          saveMap={this.saveMap}
-          closeModal={this.closeModal}
+          places     = {placesList}
+          GETMaps    = {this.GETMaps}
+          saveMap    = {this.saveMap}
+          closeModal = {this.closeModal}
         />
       
     });
@@ -527,9 +525,9 @@ class Map extends React.Component {
     
       const mapEmbed = new google.maps.Map(document.querySelector('#map'), {
     
-        center: { lat: 43.815136416911436, lng: -120.6398112171833 },
-        zoom: 5,
-        clickableIcons: false
+        center         : { lat: 43.815136416911436, lng: -120.6398112171833 },
+        zoom           : 5,
+        clickableIcons : false
     
       });
 
@@ -539,7 +537,8 @@ class Map extends React.Component {
       window.mapInterface = mapInterface;
       window.HTMLGen      = new HTMLGen();
 
-      mapInterface.bindFunction(this.props.updatePlaces);
+      // Pass the updatePlaces function to MapInterface. Allows synchronising the map embed and React elements' pin lists.
+      mapInterface.updatePlaces = this.props.updatePlaces;
 
       // This single-use click listener prevents multiple new pin forms from being opened on the map.
       // The MapInterface class then re-generates it whenever the form is closed or a new pin is created.
@@ -572,11 +571,12 @@ class ModalButtons extends React.Component {
       <div className="import-and-save-buttons-container">
 
         <ImportButton
-          showImportModal={this.props.showImportModal}
+          showImportModal = {this.props.showImportModal}
         />
+
         <SaveButton
-          places={this.props.places}
-          showSaveModal={this.props.showSaveModal}
+          places        = {this.props.places}
+          showSaveModal = {this.props.showSaveModal}
         />
 
       </div>
@@ -696,11 +696,11 @@ class PlacesList extends React.Component {
 
             {this.props.places.map(place => 
               <SavedPlace
-                key={place.latLng}
-                name={place.name}
-                description={place.description}
-                latLng={place.latLng}
-                removePlace={this.removePlace}
+                key         = {place.latLng}
+                name        = {place.name}
+                description = {place.description}
+                latLng      = {place.latLng}
+                removePlace = {this.removePlace}
               />
             )}
 
@@ -779,10 +779,10 @@ class SavedPlace extends React.Component {
     this.state = { contents: null };
 
     // Member functions
-    this.panTo = this.panTo.bind(this);
-    this.handleTrash = this.handleTrash.bind(this);
+    this.panTo        = this.panTo.bind(this);
+    this.handleTrash  = this.handleTrash.bind(this);
     this.confirmTrash = this.confirmTrash.bind(this);
-    this.resetTrash = this.resetTrash.bind(this);
+    this.resetTrash   = this.resetTrash.bind(this);
 
     // After the handleTrash member function is bound, render the TrashButton with the functionality.
     this.state.contents = <TrashButton handleTrash={this.handleTrash}/>
@@ -977,10 +977,10 @@ class SaveModal extends React.Component {
 
               {this.props.places.map(place => 
                 <TableRow
-                  key={place.latLng}
-                  name={place.name}
-                  description={place.description}
-                  latLng={place.latLng}
+                  key         = {place.latLng}
+                  name        = {place.name}
+                  description = {place.description}
+                  latLng      = {place.latLng}
                 />
               )}
 
@@ -1066,9 +1066,9 @@ class SaveModal extends React.Component {
 
             submodal: 
               <MiniModal 
-                modalContent={modalContent}
-                confirm={ () => {this.writeMap(newMapTitle, this.props.places)} }
-                close={this.closeSubModal}
+                modalContent = {modalContent}
+                confirm      = { () => {this.writeMap(newMapTitle, this.props.places)} }
+                close        = {this.closeSubModal}
               /> 
             
           });
@@ -1186,9 +1186,9 @@ class ImportModal extends React.Component {
 
           {this.props.maps.map(map => 
             <ImportEntry
-              key={map.title}
-              title={map.title}
-              showEntryInfo={this.showEntryInfo}
+              key           = {map.title}
+              title         = {map.title}
+              showEntryInfo = {this.showEntryInfo}
             />
           )}
 
@@ -1237,9 +1237,9 @@ class ImportModal extends React.Component {
 
       submodal:
         <MiniModal 
-          modalContent={modalContent}
-          confirm={ () => {this.props.removeMap(title)} }
-          close={this.closeSubModal}
+          modalContent = {modalContent}
+          confirm      = { () => {this.props.removeMap(title)} }
+          close        = {this.closeSubModal}
         />
 
     });
@@ -1258,10 +1258,10 @@ class ImportModal extends React.Component {
 
       submodal:
         <MiniModal 
-          modalContent={modalContent}
-          confirm={ () => {this.props.importMap(title)} }
-          close={ () => {this.confirmDelete(title)} }
-          tertiary={this.closeSubModal}
+          modalContent = {modalContent}
+          confirm      = { () => {this.props.importMap(title)} }
+          close        = { () => {this.confirmDelete(title)} }
+          tertiary     = {this.closeSubModal}
         /> 
 
     });
@@ -1302,10 +1302,10 @@ class MiniModal extends React.Component {
    *  Expects props:
    *    - modalContent =>
    *        {
-   *          message:      'BODY_TEXT',
-   *          confirmText:  'CONFIRM_BUTTON_TEXT',
-   *          closeText:    'CLOSE_BUTTON_TEXT',
-   *          tertiaryText: 'TERTIARY_BUTTON_TEXT' (Optional)
+   *          message      : 'BODY_TEXT',
+   *          confirmText  : 'CONFIRM_BUTTON_TEXT',
+   *          closeText    : 'CLOSE_BUTTON_TEXT',
+   *          tertiaryText : 'TERTIARY_BUTTON_TEXT' (Optional)
    *        }
    */
   

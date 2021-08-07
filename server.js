@@ -105,10 +105,10 @@ app.get('/API/getMap/:title', async (req, res) => {
    *  Returns:
    *    [
    *      {
-   *        name:        'PIN_NAME',
-   *        description: 'PIN_DESC',
-   *        lat:         'PIN_LAT',
-   *        lng:         'PIN_LNG'
+   *        name        : 'PIN_NAME',
+   *        description : 'PIN_DESC',
+   *        lat         : 'PIN_LAT',
+   *        lng         : 'PIN_LNG'
    *      },
    *      . . .
    *    ]
@@ -146,19 +146,20 @@ app.post('/API/postMap', async (req, res) => {
    *    - req.body.pins   => 
    *        [
    *          {
-   *            map:          'MAP_TITLE',
-   *            name:         'PIN_NAME',
-   *            description:  'PIN_DESC',
-   *            lat:          'PIN_LAT',
-   *            lng:          'PIN_LNG'   
+   *            map         : 'MAP_TITLE',
+   *            name        : 'PIN_NAME',
+   *            description : 'PIN_DESC',
+   *            lat         : 'PIN_LAT',
+   *            lng         : 'PIN_LNG'   
    *          },
    *          . . .
    *        ]
    */
 
-  let mapTitle = req.body.title;
-  let mapPins = req.body.pins;
+  let mapTitle  = req.body.title;
+  let mapPins   = req.body.pins;
   let validData = true;
+
   let pinValues;
   let results;
 
@@ -427,8 +428,8 @@ function insertPinSet(pinSet) {
    *    Returns a Promised result with an array of the newly inserted row IDs (for the map pins).
    */
 
-  let pinIDs = [];
-  let valueSet = '(0, ?, ?, ?, ?, ?)';
+  let pinIDs    = [];
+  let valueSet  = '(0, ?, ?, ?, ?, ?)';
   let setValues = '';
 
   pinSet.forEach((row, i, array) => {
@@ -495,10 +496,10 @@ function validateSchema(input, schema) {
    *        }
    */
 
-  let inputKeys = Object.keys(input);
-  let schemaKeys = Object.keys(schema);
+  let inputKeys   = Object.keys(input);
+  let schemaKeys  = Object.keys(schema);
 
-  let inputTypes = Object.values(input).map((e) => { return (e != null ? typeof(e) : null); });
+  let inputTypes  = Object.values(input).map((e) => { return (e != null ? typeof(e) : null); });
   let schemaTypes = Object.values(schema);
 
   let validSchema = true;
