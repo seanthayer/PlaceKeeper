@@ -41,7 +41,7 @@ import header       from './img/thumbnail_placekeeper-header-icon.png';
 
 class App extends React.Component {
 
-  /*	Description:
+  /*  Description:
    *    The main App component. Renders all sub-components directly related to App functionality. Handles logical interactions
    *    for updating the places list, sending HTTP requests to the server, and showing / closing modals.
    */
@@ -127,7 +127,7 @@ class App extends React.Component {
 
   updatePlaces(newPlaces) {
 
-    /*	Description:
+    /*  Description:
      *    When the Map component mounts, this function is bound to a constructed MapInterface class. This allows the class to
      *    update the App places list from outside the React hierarchy.
      */
@@ -142,7 +142,7 @@ class App extends React.Component {
 
   async importMap(title) {
 
-    /*	Description:
+    /*  Description:
      *    Clears the current map and renders a new one with the given title.
      */
 
@@ -168,7 +168,7 @@ class App extends React.Component {
 
   async saveMap(title, places) {
 
-    /*	Description:
+    /*  Description:
      *    Saves a map with the given title and places list.
      */
 
@@ -210,7 +210,7 @@ class App extends React.Component {
 
   async removeMap(title) {
 
-    /*	Description:
+    /*  Description:
      *    Removes a map with the given title.
      */
 
@@ -233,7 +233,7 @@ class App extends React.Component {
 
   POSTMap(map) {
 
-    /*	Description:
+    /*  Description:
      *    Sends an HTTP POST request to the server with a map object. Returns a Promised response status, or error.
      * 
      *  Expects:
@@ -288,7 +288,7 @@ class App extends React.Component {
 
   GETMaps() {
 
-    /*	Description:
+    /*  Description:
      *    Sends an HTTP GET request to the server. Returns a Promised array of objects with the server's current map titles, or error.
      *  
      *  Returns:
@@ -337,7 +337,7 @@ class App extends React.Component {
 
   GETMap(title) {
 
-    /*	Description:
+    /*  Description:
      *    Sends an HTTP GET request to the server with a map title. Returns a Promised array of objects with the queried map pins, or error.
      *
      *  Returns:
@@ -391,7 +391,7 @@ class App extends React.Component {
 
   DELETEMap(title) {
 
-    /*	Description:
+    /*  Description:
      *    Sends an HTTP DELETE request to the server with a map title. Returns a Promised response status, or error.
      */
 
@@ -429,7 +429,7 @@ class App extends React.Component {
 
   async showImportModal() {
 
-    /*	Description:
+    /*  Description:
      *    Renders the import modal.
      */
 
@@ -455,7 +455,7 @@ class App extends React.Component {
 
   showSaveModal(placesList) {
 
-    /*	Description:
+    /*  Description:
      *    Renders the save modal with the given places list. This prevents reading a stale state value from the App component.
      */
 
@@ -475,7 +475,7 @@ class App extends React.Component {
 
   closeModal() {
 
-    /*	Description:
+    /*  Description:
      *    Closes the rendered modal.
      */
 
@@ -491,7 +491,7 @@ class App extends React.Component {
 
 class Map extends React.Component {
 
-  /*	Description:
+  /*  Description:
    *    The Map component, signifying the Google Maps embed. Renders a <div> element for the API to link. Upon mount, initiates
    *    API connection, map functionality classes, and global variables.
    * 
@@ -552,7 +552,7 @@ class Map extends React.Component {
 
 class ModalButtons extends React.Component {
 
-  /*	Description:
+  /*  Description:
    *    Renders import and save buttons.
    *  
    *  Expects props:
@@ -588,7 +588,7 @@ class ModalButtons extends React.Component {
 
 class SaveButton extends React.Component {
 
-  /*	Description:
+  /*  Description:
    *    Renders the save modal on click.
    *  
    *  Expects props:
@@ -629,7 +629,7 @@ class SaveButton extends React.Component {
 
 class ImportButton extends React.Component {
 
-  /*	Description:
+  /*  Description:
    *    Renders the import modal on click.
    *  
    *  Expects props:
@@ -665,7 +665,7 @@ class ImportButton extends React.Component {
 
 class PlacesList extends React.Component {
 
-  /*	Description:
+  /*  Description:
    *    Renders the saved places list using SavedPlace sub-components. Can handle removal of a pin from within the list via the
    *    removePlace member function.
    * 
@@ -714,7 +714,7 @@ class PlacesList extends React.Component {
 
   removePlace(placeLatLng) {
 
-    /*	Description:
+    /*  Description:
      *    Removes a pin from the map using the given latLng.
      */
 
@@ -736,7 +736,7 @@ class PlacesSearch extends React.Component {
 
   // **FIX: Incomplete.
 
-  /*	Description:
+  /*  Description:
    *    No current functionality. Renders the saved places search bar.
    */
 
@@ -761,7 +761,7 @@ class PlacesSearch extends React.Component {
 
 class SavedPlace extends React.Component {
 
-  /*	Description:
+  /*  Description:
    *    Renders a saved place list item, representing the information of a pin on the current map. Can handle panning
    *    to a pin and can call to remove a pin.
    *
@@ -817,7 +817,7 @@ class SavedPlace extends React.Component {
 
   panTo() {
 
-    /*	Description:
+    /*  Description:
      *    Pans the map embed to the current entry's latLng.
      */
 
@@ -828,7 +828,7 @@ class SavedPlace extends React.Component {
   
   handleTrash() {
 
-    /*	Description:
+    /*  Description:
      *    Prompts confirmation from the user.
      */
 
@@ -842,7 +842,7 @@ class SavedPlace extends React.Component {
 
   confirmTrash() {
 
-    /*	Description:
+    /*  Description:
      *    Calls removePlace with the current entry's latLng.
      */
 
@@ -852,7 +852,7 @@ class SavedPlace extends React.Component {
 
   resetTrash() {
 
-    /*	Description:
+    /*  Description:
      *    Resets the entry's contents.
      */
 
@@ -868,7 +868,7 @@ class SavedPlace extends React.Component {
 
 class TrashButton extends React.Component {
 
-  /*	Description:
+  /*  Description:
    *    Renders a trash button. Calls a handleTrash function on click.
    *
    *  Expects props:
@@ -887,7 +887,7 @@ class TrashButton extends React.Component {
 
 class ConfirmText extends React.Component {
 
-  /*	Description:
+  /*  Description:
    *    Renders a user confirmation prompt. Calls a confirmation or reset function, depending on click.
    *
    *  Expects props:
@@ -907,7 +907,7 @@ class ConfirmText extends React.Component {
 
 class SaveModal extends React.Component {
 
-  /*	Description:
+  /*  Description:
    *    Renders the save modal using information from the places list to populate TableRow sub-components. Can handle consolidating input
    *    of a new map and can call to save the new map to the server.
    * 
@@ -1020,7 +1020,7 @@ class SaveModal extends React.Component {
 
   handleInput(event) {
 
-    /*	Description:
+    /*  Description:
      *    Records the map name inputted by the user.
      */
 
@@ -1034,7 +1034,7 @@ class SaveModal extends React.Component {
 
   async handleSave() {
 
-    /*	Description:
+    /*  Description:
      *    Consolidate map and pin information to save on the server.
      */
 
@@ -1095,7 +1095,7 @@ class SaveModal extends React.Component {
 
   writeMap(title, places) {
 
-    /*	Description:
+    /*  Description:
      *    Calls to save the map with title and places, then calls to close the modal.
      */
 
@@ -1108,7 +1108,7 @@ class SaveModal extends React.Component {
 
 class TableRow extends React.Component {
 
-  /*	Description:
+  /*  Description:
    *    Renders a table row with the specified name, description, and latitude & longitude.
    *
    *  Expects props:
@@ -1135,7 +1135,7 @@ class TableRow extends React.Component {
 
 class ImportModal extends React.Component {
 
-  /*	Description:
+  /*  Description:
    *    Renders the import modal, generating entries from the server map list. Can call to delete or load a map from the server.
    * 
    *  Expects props:
@@ -1225,7 +1225,7 @@ class ImportModal extends React.Component {
 
   confirmDelete(title) {
 
-    /*	Description:
+    /*  Description:
      *    Prompts the user to confirm a delete action on a map. Uses the sub-modal.
      */
 
@@ -1248,7 +1248,7 @@ class ImportModal extends React.Component {
 
   showEntryInfo(title) {
 
-    /*	Description:
+    /*  Description:
      *    Renders the sub-modal, listing the selected entry's title and three action buttons (Load, Delete, Close).
      */
 
@@ -1272,7 +1272,7 @@ class ImportModal extends React.Component {
 
 class ImportEntry extends React.Component {
 
-  /*	Description:
+  /*  Description:
    *    Renders an import entry. Calls to show entry info on click.
    * 
    *  Expects props:
@@ -1296,7 +1296,7 @@ class ImportEntry extends React.Component {
 
 class MiniModal extends React.Component {
 
-  /*	Description:
+  /*  Description:
    *    Renders a mini modal for small confirmation menus, etc. 
    * 
    *  Expects props:

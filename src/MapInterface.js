@@ -7,7 +7,7 @@
 
 class Pin {
 
-  /*	Description:
+  /*  Description:
    *    The standard Pin class. Generated and used to represent every pin on the map embed. Each pin has member functions that
    *    handle its listener generation, infobox generation & handling, and hiding from the map.
    *
@@ -50,7 +50,7 @@ class Pin {
 
   showInfo(event) {
 
-    /*	Description:
+    /*  Description:
      *    Calls HTMLGen to generate the current pin's infobox. Then handles logical interactions with member function _handleInfoBox().
      *
      *  Expects:
@@ -166,7 +166,7 @@ class Pin {
 
 class MapInterface {
 
-  /*	Description:
+  /*  Description:
    *    Used to handle all interactions directly associated with the map embed. e.g. Generating new pins, removing pins,
    *    loading / clearing map, synchronising the pin list with React components, etc.
    *
@@ -196,7 +196,7 @@ class MapInterface {
 
   generateNewPin(event) {
 
-    /*	Description:
+    /*  Description:
      *    Calls HTMLGen to generate a new pin form. Prepares a generic pin object to be passed to member function
      *    _handleNewPinForm() for handling logical interactions and constructing a new Pin instance.
      * 
@@ -235,7 +235,7 @@ class MapInterface {
 
   generateInfoBox(latLng, html) {
 
-    /*	Description:
+    /*  Description:
      *    Calls the Maps API to generate an infobox on the map embed at the given latLng and with the given HTML content.
      *
      *  Expects:
@@ -259,7 +259,7 @@ class MapInterface {
 
   _handleNewPinForm(newPin) {
 
-    /*	Description:
+    /*  Description:
      *    Handles logical interactions for a new pin form. Consolidates user input and pin information to generate a new Pin instance.
      *
      *  Expects:
@@ -345,7 +345,7 @@ class MapInterface {
 
   clearMap() {
 
-    /*	Description:
+    /*  Description:
      *    Hide all currently displayed pins and clear the map's pin list, then update the React places list.
      */
 
@@ -364,7 +364,7 @@ class MapInterface {
 
   loadMap(newPins) {
 
-    /*	Description:
+    /*  Description:
      *    Render a new map with the given pin list, then update the React places list.
      *
      *  Expects:
@@ -420,7 +420,7 @@ class MapInterface {
 
   addPin(pin) {
 
-    /*	Expects:
+    /*  Expects:
      *    - pin => A Pin instance.
      */
 
@@ -431,7 +431,7 @@ class MapInterface {
 
   removePin(pin) {
 
-    /*	Expects:
+    /*  Expects:
      *    - pin => A Pin instance.
      */
 

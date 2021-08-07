@@ -55,8 +55,8 @@ app.use(express.static( path.join(__dirname, 'build') ));
 
 app.all('*', (req, res, next) => {
 
-  /*	Description:
-   *		Log requests to console.
+  /*  Description:
+   *    Log requests to console.
    */
   
   console.log(`[SERVER] REQUEST: '${req.method}' | URL: '${req.url}'`);
@@ -67,8 +67,8 @@ app.all('*', (req, res, next) => {
 
 app.get('/API/getMaps', async (req, res) => {
 
-  /*	Description:
-   *		Asynchronous function. Queries database for map titles.
+  /*  Description:
+   *    Asynchronous function. Queries database for map titles.
    *
    *  Returns:
    *    [
@@ -99,8 +99,8 @@ app.get('/API/getMaps', async (req, res) => {
 
 app.get('/API/getMap/:title', async (req, res) => {
 
-  /*	Description:
-   *		Asynchronous function. Queries database for specified map pins.
+  /*  Description:
+   *    Asynchronous function. Queries database for specified map pins.
    *
    *  Returns:
    *    [
@@ -138,8 +138,8 @@ app.get('/API/getMap/:title', async (req, res) => {
 
 app.post('/API/postMap', async (req, res) => {
 
-  /*	Description:
-   *		Asynchronous function. Queries database to insert a new map with title and pins.
+  /*  Description:
+   *    Asynchronous function. Queries database to insert a new map with title and pins.
    *
    *  Expects:
    *    - req.body.title  => 'MAP_TITLE'
@@ -207,8 +207,8 @@ app.post('/API/postMap', async (req, res) => {
 
 app.delete('/API/deleteMap/:title', async (req, res) => {
 
-  /*	Description:
-   *		Asynchronous function. Queries database to delete a specified map.
+  /*  Description:
+   *    Asynchronous function. Queries database to delete a specified map.
    *
    *  Expects:
    *    - req.params.title  => 'MAP_TITLE'
@@ -242,8 +242,8 @@ app.delete('/API/deleteMap/:title', async (req, res) => {
 
 app.get('/*', (req, res) => {
 
-  /*	Description:
-   *		Renders homepage for all other middleware requests.
+  /*  Description:
+   *    Renders homepage for all other middleware requests.
    */
   
   res.status(200).sendFile(path.join(__dirname, 'build', 'index.html'));
@@ -274,8 +274,8 @@ app.get('*', (req, res) => {
 
 function selectMapTitles() {
 
-  /*	Description:
-   *		Query function. Selects and returns a Promised result for map titles.
+  /*  Description:
+   *    Query function. Selects and returns a Promised result for map titles.
    */
 
   return new Promise((resolve, reject) => {
@@ -305,8 +305,8 @@ function selectMapTitles() {
 
 function selectMapPins(title) {
 
-  /*	Description:
-   *		Query function. Selects and returns a Promised result for map pins, given a map title.
+  /*  Description:
+   *    Query function. Selects and returns a Promised result for map pins, given a map title.
    */
 
   return new Promise((resolve, reject) => {
@@ -336,8 +336,8 @@ function selectMapPins(title) {
 
 function dropMapIfExists(title) {
 
-  /*	Description:
-   *		Query function. Drops a map given a title (if exists). Cascades on drop to delete corresponding map pins.
+  /*  Description:
+   *    Query function. Drops a map given a title (if exists). Cascades on drop to delete corresponding map pins.
    *    Returns a Promised result with deleted row IDs (if any). 
    */
 
@@ -368,8 +368,8 @@ function dropMapIfExists(title) {
 
 async function insertNewMap(title, pinSet) {
 
-  /*	Description:
-   *		Asynchronous query function. Inserts a new map given a title and set of pins.
+  /*  Description:
+   *    Asynchronous query function. Inserts a new map given a title and set of pins.
    *    Returns a Promised result with an array of the newly inserted row IDs (for the map pins).
    */
 
@@ -423,8 +423,8 @@ async function insertNewMap(title, pinSet) {
 
 function insertPinSet(pinSet) {
 
-  /*	Description:
-   *		Query function. Escapes and concatenates a set of pins and inserts them as new rows.
+  /*  Description:
+   *    Query function. Escapes and concatenates a set of pins and inserts them as new rows.
    *    Returns a Promised result with an array of the newly inserted row IDs (for the map pins).
    */
 
@@ -479,8 +479,8 @@ function insertPinSet(pinSet) {
 
 function validateSchema(input, schema) {
 
-  /*	Description:
-   *		Validates proper schema given an input and database schema. Validates proper key name and value type.
+  /*  Description:
+   *    Validates proper schema given an input and database schema. Validates proper key name and value type.
    *
    *  Expects:
    *    - input  =>
