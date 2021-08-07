@@ -21,9 +21,11 @@ import './index.css';
  * ------------------------------------------
  */
 
+const apiKey = process.env.REACT_APP_GMAPS_APIKEY;
+
 const loader = new Loader({
 
-  apiKey  : `${process.env.REACT_APP_GMAPS_APIKEY}`,
+  apiKey  : (apiKey ? apiKey : null),
   version : 'weekly'
 
 });
