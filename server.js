@@ -70,11 +70,11 @@ app.get('/API/getMaps', async (req, res) => {
   /*	Description:
    *		Asynchronous function. Queries database for map titles.
    *
-   *    Returns:
-   *      [
-   *        . . .
-   *        RowDataPacket  { title: 'MAP_TITLE' }
-   *      ]
+   *  Returns:
+   *    [
+   *      { title: 'MAP_TITLE' },
+   *      . . .
+   *    ]
    */
 
   let results = await selectMapTitles().catch((err) => { 
@@ -102,14 +102,16 @@ app.get('/API/getMap/:title', async (req, res) => {
   /*	Description:
    *		Asynchronous function. Queries database for specified map pins.
    *
-   *    Returns:
-   *      [
-   *        . . .
-   *        RowDataPacket   {   name:        'PIN_NAME' 
-   *                            description: 'PIN_DESC' 
-   *                            lat:         'PIN_LAT'
-   *                            lng:         'PIN_LNG'   }
-   *      ]
+   *  Returns:
+   *    [
+   *      {
+   *        name:        'PIN_NAME',
+   *        description: 'PIN_DESC',
+   *        lat:         'PIN_LAT',
+   *        lng:         'PIN_LNG'
+   *      },
+   *      . . .
+   *    ]
    */
 
   let title = req.params.title;
@@ -139,16 +141,18 @@ app.post('/API/postMap', async (req, res) => {
   /*	Description:
    *		Asynchronous function. Queries database to insert a new map with title and pins.
    *
-   *    Expects:
-   *      req.body.title  => 'MAP_TITLE'
-   *      req.body.pins   => 
+   *  Expects:
+   *    - req.body.title  => 'MAP_TITLE'
+   *    - req.body.pins   => 
    *        [
+   *          {
+   *            map:          'MAP_TITLE',
+   *            name:         'PIN_NAME',
+   *            description:  'PIN_DESC',
+   *            lat:          'PIN_LAT',
+   *            lng:          'PIN_LNG'   
+   *          },
    *          . . .
-   *          Object  {   map:          'MAP_TITLE'
-   *                      name:         'PIN_NAME'
-   *                      description:  'PIN_DESC'
-   *                      lat:          'PIN_LAT'
-   *                      lng:          'PIN_LNG'   }
    *        ]
    */
 
@@ -205,8 +209,8 @@ app.delete('/API/deleteMap/:title', async (req, res) => {
   /*	Description:
    *		Asynchronous function. Queries database to delete a specified map.
    *
-   *    Expects:
-   *      req.params.title  => 'MAP_TITLE'
+   *  Expects:
+   *    - req.params.title  => 'MAP_TITLE'
    */
 
   let title = req.params.title;
@@ -478,10 +482,17 @@ function validateSchema(input, schema) {
    *		Validates proper schema given an input and database schema. Validates proper key name and value type.
    *
    *  Expects:
-   *    input   => Object { . . .
-   *                        key: value }
-   *    schema  => Object { . . . 
-   *                        key: value }
+   *    - input  =>
+   *        {
+   *          key: value,
+   *          . . .
+   *        }
+   * 
+   *    - schema =>
+   *        {
+   *          key: value,
+   *          . . .
+   *        }
    */
 
   let inputKeys = Object.keys(input);

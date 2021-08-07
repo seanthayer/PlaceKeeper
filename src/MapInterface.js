@@ -246,6 +246,8 @@ class MapInterface {
 
   clearMap() {
 
+    // **FIX: Clearing map does not close a new pin form, if one is rendered.
+
     this.pinList.forEach((pin) => {
 
       pin.hide();
