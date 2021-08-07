@@ -1,10 +1,26 @@
+/* ------------------------------------------
+ *
+ *                  IMPORT
+ * 
+ * ------------------------------------------
+ */
+
 import ReactDOMServer from 'react-dom/server';
 
-// ReactDOMServer has a convenient function "renderToString()" which allows a component to be composed
-// using a given data set, and returned as an HTML string. Similar to Handlebars.
+/* ------------------------------------------
+ *
+ *                  HTMLGEN
+ * 
+ * ------------------------------------------
+ */
 
 class HTMLGen {
+
+  // ReactDOMServer has a convenient function "renderToString()" which allows a component to be composed
+  // using a given data set, and returned as an HTML string. Similar to Handlebars.
+
   NewPinForm() {
+
     return ReactDOMServer.renderToString(
       <div className="pin-infoform-container">
   
@@ -29,9 +45,11 @@ class HTMLGen {
   
       </div>
     );
+
   }
 
   PinInfo(context) {
+
     let latLng = context.latLng;
     let name = context.name;
     let description = null;
@@ -52,7 +70,32 @@ class HTMLGen {
 
       </div>
     );
+
   }
+
+  TrashButton() {
+
+    return ReactDOMServer.renderToString(
+      <button type="button" name="trash-button" class="trash-button"><i class="far fa-trash-alt"></i></button>
+    );
+
+  }
+
+  ConfirmText() {
+
+    return ReactDOMServer.renderToString(
+      <div class="are-you-sure">Are you sure?<i class="fas fa-check-circle"></i><i class="fas fa-times-circle"></i></div>
+    );
+
+  }
+
 }
+
+/* ------------------------------------------
+ *
+ *                  EXPORT
+ * 
+ * ------------------------------------------
+ */
 
 export default HTMLGen;
