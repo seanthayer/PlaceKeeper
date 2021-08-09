@@ -6,6 +6,7 @@ PlaceKeeper is a full stack application and currently featured with,
 * Node.js (using Express)
 * A MySQL database (emulated with Docker)
 * React (using Create React App)
+* Emotion (for component specific CSS)
 
 PlaceKeeper's primary goal is to serve as a hands-on learning opportunity. As a secondary outcome, PlaceKeeper exhibits a full stack implementation and acts as a reference point for future projects.
 
@@ -20,6 +21,7 @@ PlaceKeeper's primary goal is to serve as a hands-on learning opportunity. As a 
    * [x] Import & Save modal rendering and functionality
    * [x] Submodal for confirmations and basic menus
    * [x] Import & Save modal ask for confirmations using submodal
+   * [x] Apply CSS on a component level using Emotion
 
    ### Back-end
    <ins>Completed</ins>↴
@@ -37,7 +39,6 @@ PlaceKeeper's primary goal is to serve as a hands-on learning opportunity. As a 
    ### Ideas
    * Front-end↴
       * Stylize using Material UI
-      * CSS using Emotion
       * Expand UX & UI
 
    * Back-end↴

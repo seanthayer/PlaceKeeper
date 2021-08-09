@@ -1,3 +1,5 @@
+/** @jsxImportSource @emotion/react */
+
 /* ------------------------------------------
  *
  *                  IMPORT
@@ -9,8 +11,123 @@ import React        from 'react';
 import MapInterface from './MapInterface';
 import HTMLGen      from './HTMLGen';
 import { loader }   from './index';
+
+import { Global, css, jsx } from '@emotion/react';
+
 import background   from './img/background_header-bg.png';
 import header       from './img/thumbnail_placekeeper-header-icon.png';
+
+/* ------------------------------------------
+ *
+ *               GLOBAL STYLES
+ * 
+ * ------------------------------------------
+ */
+
+const globalStyles = css`
+
+  body {
+    margin: 0;
+    background: #181818;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    min-width: 881px;
+    border-bottom: 2px solid black;
+    background-color: white;
+  }
+
+  main {
+    margin: 25px;
+  }
+
+  .page-button {
+    padding: 15px;
+  }
+
+`;
+
+// Modal styles
+
+const modalPos = css`
+
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+`;
+
+const modalBackdrop = css`
+
+  ${modalPos};
+  z-index: 1;
+  background-color: rgba(0,0,0,0.85);
+
+`;
+
+const modalContainer = css`
+
+  ${modalPos};
+  z-index: 2;
+  width: 700px;
+  min-width: 700px;
+  min-height: 675px;
+  margin: 40px auto;
+  background-color: #fff;
+  border-radius: 15px;
+
+  .modal-header {
+    border-bottom: 1px solid rgb(208, 208, 208);
+  }
+
+  .modal-body {
+    overflow: auto;
+  }
+
+  .modal-footer {
+    border-top: 1px solid rgb(208, 208, 208);
+    padding-top: 20px;
+  }
+
+  .modal-title {
+    margin-left: 20px;
+    margin-top: 10px;
+    font-size: 22px;
+  }
+
+  .modal-description {
+    margin-left: 20px;
+  }
+
+  .modal-x-button {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    padding: 0;
+    font-size: 25px;
+    border: none;
+    background: none;
+    color: rgb(125, 125, 125);
+  }
+
+  .modal-close-button {
+    width: 80px;
+    border: 2px solid rgb(208, 208, 208);
+    background-color: #fff;
+  }
+
+  .action-button {
+    height: 50px;
+    float: right;
+    margin-right: 20px;
+    border-radius: 5px;
+  }
+
+`;
 
 /* ------------------------------------------
  *
@@ -69,24 +186,91 @@ class App extends React.Component {
 
   render() {
 
+    /* -----------------------
+     *    COMPONENT STYLES
+     * -----------------------
+     */
+
+    const titleStyle = css`
+
+      display: inline-block;
+      font-family: 'Roboto Slab';
+      font-size: 56px;
+      margin: 47px 20px 49px 25px;
+      border: 1px solid black;
+      border-radius: 10px;
+      padding: 0 10px 0 10px;
+      background: white;
+    
+    `;
+
+    const imgSize = css`
+    
+      height: 160px;
+      width: 180px;
+    
+    `;
+
+    const imgContStyle = css`
+
+      ${imgSize};
+      display: flex;
+      margin: 5px 25px 5px 25px;
+      border: 1px solid black;
+      border-radius: 10px;
+      background: white;
+    
+    `;
+
+    const contentContStyle = css`
+    
+      display: flex;
+      justify-content: space-between;
+    
+    `;
+
+    const mapAndButtonsContStyle = css`
+    
+      display: flex;
+      flex-direction: column;
+      flex: 1 1;
+      min-width: 484px;
+      margin-right: 10px;
+    
+    `;
+
+    const savedPlacesContStyle = css`
+    
+      flex: 0 0;
+      margin-left: 10px;
+    
+    `;
+
+    /* -----------------------
+     *       HTML CONTENT
+     * -----------------------
+     */
+
     let modal = this.state.modal;
 
     return (
       <div className="PlaceKeeper">
 
+        <Global styles={globalStyles} />
+
         <header className="PK-header" style={{ backgroundImage: `url(${background})` }}>
 
-          <h1 className="site-title">PlaceKeeper</h1>
+          <h1 className="site-title" css={titleStyle}>PlaceKeeper</h1>
 
-          <div className="header-image-container"><img className="header-image" src={ `${header}` } alt="PlaceKeeper"/></div>
+          <div className="header-image-container" css={imgContStyle}><img className="header-image" css={imgSize} src={ `${header}` } alt="PlaceKeeper"/></div>
 
         </header>
   
         <main>
 
-          <div className="content-container">
+          <div className="content-container" css={contentContStyle}>
 
-            <section className="map-and-buttons-container">
+            <section className="map-and-buttons-container" css={mapAndButtonsContStyle}>
 
               <Map
                 updatePlaces = {this.updatePlaces}
@@ -100,7 +284,7 @@ class App extends React.Component {
 
             </section>
 
-            <section className="saved-places-container">
+            <section className="saved-places-container" css={savedPlacesContStyle}>
 
               <PlacesSearch />
 
@@ -507,8 +691,17 @@ class Map extends React.Component {
 
   render() {
 
+    const mapStyle = css`
+    
+      width: 100%;
+      height: 720px;
+      border: 1px solid black;
+      border-radius: 5px;
+
+    `;
+
     return (
-      <div id="map"></div>
+      <div id="map" css={mapStyle}></div>
     );
 
   }
@@ -567,8 +760,16 @@ class ModalButtons extends React.Component {
 
   render() {
 
+    const buttonsStyle = css`
+    
+      display: flex;
+      justify-content: space-between;
+      margin: 35px;
+
+    `;
+
     return (
-      <div className="import-and-save-buttons-container">
+      <div className="import-and-save-buttons-container" css={buttonsStyle}>
 
         <ImportButton
           showImportModal = {this.props.showImportModal}
@@ -612,7 +813,7 @@ class SaveButton extends React.Component {
     return (
       <div className="save-map-element">
 
-        <button onClick={this.handleClick} type="button" className="save-map-button">Save Map</button>
+        <button onClick={this.handleClick} type="button" className="save-map-button page-button">Save Map</button>
 
       </div>
     );
@@ -648,7 +849,7 @@ class ImportButton extends React.Component {
     return (
       <div className="import-map-element">
 
-        <button onClick={this.handleClick} type="button" className="import-map-button">Import Map</button>
+        <button onClick={this.handleClick} type="button" className="import-map-button page-button">Import Map</button>
 
       </div>
     );
@@ -686,15 +887,58 @@ class PlacesList extends React.Component {
 
   render() {
 
+    /* -----------------------
+     *    COMPONENT STYLES
+     * -----------------------
+     */
+
+    const titleStyle = css`
+    
+      margin: 0;
+      margin-top: 5px;
+      padding: 5px 5px 0px 5px;
+      border: 1px solid black;
+      border-radius: 5px 5px 0 0;
+      background: white;
+      font-family: 'Roboto';
+      font-weight: 500;
+    
+    `;
+
+    const listStyle = css`
+    
+      max-height: 652px;
+      height: 652px;
+      border: 1px solid black;
+      border-top: 0;
+      border-radius: 0 0 5px 5px;
+      background: dimgrey;
+      overflow: auto;
+    
+    `;
+
+    const elementStyle = css`
+    
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    
+    `;
+
+    /* -----------------------
+     *       HTML CONTENT
+     * -----------------------
+     */
+
     return (
       <div className="saved-places-list-parent">
 
-        <h5 className="saved-places-list-title">Saved Places</h5>
+        <h5 className="saved-places-list-title" css={titleStyle}>Saved Places</h5>
 
-        <div className="saved-places-list-container">
-          <ul className="saved-places-list-element">
+        <div className="saved-places-list-container" css={listStyle}>
+          <ul className="saved-places-list-element" css={elementStyle}>
 
-            {this.props.places.map(place => 
+            {this.props.places.map(place =>
               <SavedPlace
                 key         = {place.latLng}
                 name        = {place.name}
@@ -742,15 +986,41 @@ class PlacesSearch extends React.Component {
 
   render() {
 
+    /* -----------------------
+     *    COMPONENT STYLES
+     * -----------------------
+     */
+
+    const containerStyle = css`
+    
+      display: flex;
+      padding: 5px 3px 5px 3px;
+      border: 1px solid black;
+      border-radius: 5px;
+      background: dimgrey;
+    
+    `;
+
+    const elementStyle = css`
+    
+      margin: 2px;
+    
+    `;
+
+    /* -----------------------
+     *       HTML CONTENT
+     * -----------------------
+     */
+
     return (
-      <div className="search-bar-container">
-        <div className="search-bar-element">
+      <div className="search-bar-container" css={containerStyle}>
+        <div className="search-bar-element" css={elementStyle}>
 
           <input type="text" name="filter-text" className="search-bar-input" />
 
         </div>
 
-        <button className="search-bar-button">Search</button>
+        <button className="search-bar-button" css={elementStyle}>Search</button>
 
       </div>
     );
@@ -791,6 +1061,51 @@ class SavedPlace extends React.Component {
 
   render() {
 
+    /* -----------------------
+     *    COMPONENT STYLES
+     * -----------------------
+     */
+
+    const entryStyle = css`
+    
+      margin: 10px 15px 10px 15px;
+      padding: 10px;
+      border: 1px solid black;
+      border-radius: 5px;
+      background: white;
+
+    `;
+
+    const titleStyle = css`
+    
+      margin: 0;
+      font-size: 14px;
+    
+    `;
+
+    const latLngStyle = css`
+    
+      padding: 0;
+      border: 0;
+      background: none;
+      color: cornflowerblue;
+      font-size: 8px;
+
+      &:hover {
+        text-decoration: underline;
+      }
+
+      &:active {
+        color: aqua;
+      }
+    
+    `;
+
+    /* -----------------------
+     *       HTML CONTENT
+     * -----------------------
+     */
+
     let description = null;
     
     if (this.props.description)
@@ -798,16 +1113,16 @@ class SavedPlace extends React.Component {
 
     return(
       <li>
-        <div className="saved-place-entry" name={this.props.name} data-description={description} data-latlng={this.props.latLng}>
+        <div className="saved-place-entry" css={entryStyle} name={this.props.name} data-description={description} data-latlng={this.props.latLng}>
 
-        <h5 className="saved-place-entry-title">{this.props.name}</h5>
-        <button onClick={this.panTo} type="button" name="saved-place-entry-latLng" className="saved-place-entry-latLng">({this.props.latLng.lat()}, {this.props.latLng.lng()})</button>
+          <h5 className="saved-place-entry-title" css={titleStyle}>{this.props.name}</h5>
+          <button onClick={this.panTo} type="button" name="saved-place-entry-latLng" className="saved-place-entry-latLng" css={latLngStyle}>({this.props.latLng.lat()}, {this.props.latLng.lng()})</button>
 
-        <div className="trash-button-container">
-          
-          {this.state.contents}
+          <div className="trash-button-container">
+            
+            {this.state.contents}
 
-        </div>
+          </div>
 
         </div>
       </li>
@@ -938,69 +1253,146 @@ class SaveModal extends React.Component {
 
   render() {
 
+    /* -----------------------
+     *    COMPONENT STYLES
+     * -----------------------
+     */
+
+    const bodyStyle = css`
+    
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+      max-height: 400px;
+    
+    `;
+
+    const inputStyle = css`
+    
+      display: flex;
+    
+    `;
+    
+    const inputPromptStyle = css`
+    
+      margin-left: 40px;
+      font-size: 22px;
+    
+    `;
+
+    const inputEleStyle = css`
+    
+      margin-top: 18px;
+      margin-left: 5px;
+    
+    `;
+
+    const saveButtonStyle = css`
+    
+      width: 150px;
+      border: 0px;
+      color: white;
+      background-color: rgb(0,135,189);
+    
+    `;
+
+    const tableStyle = css`
+    
+      flex: none;
+    
+    `;
+
+    const tableHeaderStyle = css`
+    
+      background-color: gray;
+      color: white;
+      font-weight: 100;
+      font-size: 14px;
+
+      th {
+        width: 186px;
+      }
+    
+    `;
+
+    const tableContentStyles = css`
+    
+      table, th, td {
+        text-align: center;
+        border: 2px solid black;
+        padding: 10px;
+      }
+    
+    `;
+
+    /* -----------------------
+     *       HTML CONTENT
+     * -----------------------
+     */
+
     let submodal = this.state.submodal;
 
     return (
-      <div className="modal-backdrop save-modal">
-        <div className="modal-container save-modal">
+      <div className="modal-backdrop save-modal" css={modalBackdrop}>
+        <div className="modal-container save-modal" css={modalContainer}>
 
-        <div className="modal-header">
+          <div className="modal-header">
 
-          <h2 className="modal-title">Saving Map</h2>
-          <button onClick={this.props.closeModal} type="button" className="modal-x-button">&times;</button>
+            <h2 className="modal-title">Saving Map</h2>
+            <button onClick={this.props.closeModal} type="button" className="modal-x-button">&times;</button>
 
-        </div>
-
-        <div className="modal-input-container">
-          <h1 className="modal-input-text">Map Name:</h1>
-
-          <div className="modal-input-element">
-            <input onChange={this.handleInput} type="text" className="modal-input" maxLength="25" placeholder="Max 25 characters" />
           </div>
 
-        </div>
+          <div className="modal-input-container" css={inputStyle}>
+            <h1 className="modal-input-text" css={inputPromptStyle}>Map Name:</h1>
 
-        <div className="modal-description">
-          <p>You're about to save the following locations:</p>
-        </div>
+            <div className="modal-input-element">
+              <input onChange={this.handleInput} type="text" className="modal-input" css={inputEleStyle} maxLength="25" placeholder="Max 25 characters" />
+            </div>
 
-        <div className="modal-body save-modal">
+          </div>
 
-          <table className="modal-table">
-            <tbody>
+          <div className="modal-description">
+            <p>You're about to save the following locations:</p>
+          </div>
 
-              <tr className="modal-table-header">
-                <th className="table-header-name">Pin Name</th>
-                <th className="table-header-latitude">Latitude</th>
-                <th className="table-header-longitude">Longitude</th>
-              </tr>
+          <div className="modal-body save-modal" css={bodyStyle}>
 
-              {this.props.places.map(place => 
-                <TableRow
-                  key         = {place.latLng}
-                  name        = {place.name}
-                  description = {place.description}
-                  latLng      = {place.latLng}
-                />
-              )}
+            <table className="modal-table" css={[tableStyle, tableContentStyles]}>
+              <tbody>
 
-            </tbody>
-          </table>
+                <tr className="modal-table-header" css={tableHeaderStyle}>
+                  <th className="table-header-name">Pin Name</th>
+                  <th className="table-header-latitude">Latitude</th>
+                  <th className="table-header-longitude">Longitude</th>
+                </tr>
 
-        </div>
+                {this.props.places.map(place => 
+                  <TableRow
+                    key         = {place.latLng}
+                    name        = {place.name}
+                    description = {place.description}
+                    latLng      = {place.latLng}
+                  />
+                )}
 
-        <div className="modal-footer">
+              </tbody>
+            </table>
 
-          <button onClick={this.handleSave} type="button" className="modal-save-button action-button">Save</button>
-          <button onClick={this.props.closeModal} type="button" className="modal-close-button action-button">Close</button>
+          </div>
 
-        </div>
+          <div className="modal-footer">
 
-        <div id="sub-modal">
+            <button onClick={this.handleSave} type="button" className="modal-save-button action-button" css={saveButtonStyle}>Save</button>
+            <button onClick={this.props.closeModal} type="button" className="modal-close-button action-button">Close</button>
 
-          {submodal}
+          </div>
 
-        </div>
+          <div id="sub-modal">
+
+            {submodal}
+
+          </div>
 
         </div>
       </div>
@@ -1119,8 +1511,15 @@ class TableRow extends React.Component {
 
   render() {
 
+    const rowStyle = css`
+    
+      background-color: rgb(208, 208, 208);
+      color: black;
+    
+    `;
+
     return (
-      <tr className="modal-table-row" data-name={this.props.name} data-description={this.props.description} data-latlng={this.props.latLng}>
+      <tr className="modal-table-row" css={rowStyle} data-name={this.props.name} data-description={this.props.description} data-latlng={this.props.latLng}>
 
         <td className="table-row-name">{this.props.name}</td>
         <td className="table-row-latitude">{this.props.latLng.lat()}</td>
@@ -1164,48 +1563,72 @@ class ImportModal extends React.Component {
 
   render() {
 
+    /* -----------------------
+     *    COMPONENT STYLES
+     * -----------------------
+     */
+
+    const bodyStyle = css`
+    
+      overflow-x: auto;
+      margin: 0px 20px 16px 20px;
+    
+    `;
+
+    const directoryStyle = css`
+    
+      height: 300px;
+      border: 1px solid black;
+    
+    `;
+
+    /* -----------------------
+     *       HTML CONTENT
+     * -----------------------
+     */
+
     let submodal = this.state.submodal;
 
     return (
-      <div className="modal-backdrop import-modal">
-        <div className="modal-container import-modal">
+      <div className="modal-backdrop import-modal" css={modalBackdrop}>
+        <div className="modal-container import-modal" css={modalContainer}>
 
-        <div className="modal-header">
+          <div className="modal-header">
 
-          <h2 className="modal-title">Import Map</h2>
-          <button onClick={this.props.closeModal} type="button" className="modal-x-button">&times;</button>
-
-        </div>
-
-        <div className="modal-description">
-          <p>Available Maps:</p>
-        </div>
-
-        <div className="modal-body import-modal">
-          <div className="modal-directory-container">
-
-          {this.props.maps.map(map => 
-            <ImportEntry
-              key           = {map.title}
-              title         = {map.title}
-              showEntryInfo = {this.showEntryInfo}
-            />
-          )}
+            <h2 className="modal-title">Import Map</h2>
+            <button onClick={this.props.closeModal} type="button" className="modal-x-button">&times;</button>
 
           </div>
-        </div>
 
-        <div className="modal-footer">
+          <div className="modal-description">
+            <p>Available Maps:</p>
+          </div>
 
-          <button onClick={this.props.closeModal} type="button" className="modal-close-button action-button">Close</button>
+          <div className="modal-body import-modal" css={bodyStyle}>
+            <div className="modal-directory-container" css={directoryStyle}>
 
-        </div>
+            {this.props.maps.map(map => 
+              <ImportEntry
+                key           = {map.title}
+                title         = {map.title}
+                showEntryInfo = {this.showEntryInfo}
+              />
+            )}
 
-        <div id="sub-modal">
+            </div>
+          </div>
 
-          {submodal}
-          
-        </div>
+          <div className="modal-footer">
+
+            <button onClick={this.props.closeModal} type="button" className="modal-close-button action-button">Close</button>
+
+          </div>
+
+          <div id="sub-modal">
+
+            {submodal}
+            
+          </div>
 
         </div>
       </div>
@@ -1282,10 +1705,48 @@ class ImportEntry extends React.Component {
 
   render() {
 
-    return (
-      <div onClick={ () => {this.props.showEntryInfo(this.props.title)} } className="map-directory-entry-container">
+    /* -----------------------
+     *    COMPONENT STYLES
+     * -----------------------
+     */
 
-        <i className="fas fa-file"></i><h4 className="file-title">{this.props.title}</h4> 
+    const entryStyle = css`
+    
+      display: inline-block;
+      margin: 8px;
+      border: 1px solid black;
+      padding: 10px;
+
+      &:hover .fas.fa-file {
+        color: lightgreen;
+      }
+    
+    `;
+
+    const fileIconStyle = css`
+    
+      color: green;
+    
+    `;
+
+    const fileTitleStyle = css`
+    
+      display: inline;
+      margin-left: 8px;
+      cursor: default;
+      user-select: none;
+    
+    `;
+
+    /* -----------------------
+     *       HTML CONTENT
+     * -----------------------
+     */
+
+    return (
+      <div onClick={ () => {this.props.showEntryInfo(this.props.title)} } className="map-directory-entry-container" css={entryStyle}>
+
+        <i className="fas fa-file" css={fileIconStyle}></i><h4 className="file-title" css={fileTitleStyle}>{this.props.title}</h4> 
 
       </div>
     );
@@ -1311,34 +1772,129 @@ class MiniModal extends React.Component {
   
   render() {
 
+    /* -----------------------
+     *    COMPONENT STYLES
+     * -----------------------
+     */
+
+    const containerStyle = css`
+    
+      display: flex;
+      flex-direction: column;
+      top: 25%;
+      z-index: 3;
+      width: 250px;
+      height: fit-content;
+      min-width: 250px;
+      min-height: auto;
+    
+    `;
+
+    const textStyle = css`
+    
+      text-align: center;
+      border: 1px solid black;
+      padding: 25px;
+      margin: 5px;
+      border-radius: 8px;
+    
+    `;
+
+    const footerStyle = css`
+    
+      display: flex;
+      justify-content: space-between;
+      margin-left: 20px;
+      margin-right: 20px;
+      padding-bottom: 20px;
+    
+    `;
+
+    const genericButtonStyle = css`
+    
+      height: 50px;
+      border-radius: 5px;
+    
+    `;
+
+    const yesButtonStyle = css`
+
+      ${genericButtonStyle};
+      width: fit-content;
+      min-width: 55px;
+      margin: 3px;
+      border: 2px solid rgb(208, 208, 208);
+      background-color: white;
+
+      &:hover {
+        background-color: lightgreen;
+      }
+    
+    `;
+
+    const noButtonStyle = css`
+    
+      ${genericButtonStyle};
+      width: fit-content;
+      min-width: 55px;
+      margin: 3px;
+      border: 2px solid rgb(208, 208, 208);
+      background-color: white;
+
+      &:hover {
+        background-color: salmon;
+      }
+    
+    `;
+
+    const tertiaryButtonStyle = css`
+    
+      ${genericButtonStyle};
+      width: fit-content;
+      min-width: 55px;
+      margin: 3px;
+      border: 2px solid rgb(208, 208, 208);
+      background-color: white;
+
+      &:hover {
+        background-color: lightgrey;
+      }
+    
+    `;
+
+    /* -----------------------
+     *       HTML CONTENT
+     * -----------------------
+     */
+
     let message       = this.props.modalContent.message;
     let confirmText   = this.props.modalContent.confirmText;
     let closeText     = this.props.modalContent.closeText;
     let tertiaryText  = this.props.modalContent.tertiaryText;
 
-    let confirmButton   = (confirmText  ? <button onClick={this.props.confirm} type="button" className="yes-button action-button">{confirmText}</button>        : null);
-    let closeButton     = (closeText    ? <button onClick={this.props.close} type="button" className="no-button action-button">{closeText}</button>             : null);
-    let tertiaryButton  = (tertiaryText ? <button onClick={this.props.tertiary} type="button" className="tertiary-button action-button">{tertiaryText}</button> : null);
+    let confirmButton   = (confirmText  ? <button onClick={this.props.confirm} type="button" className="yes-button" css={yesButtonStyle}>{confirmText}</button>             : null);
+    let closeButton     = (closeText    ? <button onClick={this.props.close} type="button" className="no-button" css={noButtonStyle}>{closeText}</button>                   : null);
+    let tertiaryButton  = (tertiaryText ? <button onClick={this.props.tertiary} type="button" className="tertiary-button" css={tertiaryButtonStyle}>{tertiaryText}</button> : null);
 
     return (
-      <div className="modal-backdrop confirm-modal">
-        <div className="modal-container confirm-modal">
+      <div className="modal-backdrop confirm-modal" css={modalBackdrop}>
+        <div className="modal-container confirm-modal" css={[modalContainer, containerStyle]}>
 
-        <div className="modal-body confirm-modal">
-          <div className="modal-text confirm-modal">
+          <div className="modal-body confirm-modal">
+            <div className="modal-text confirm-modal" css={textStyle}>
 
-            {message}
+              {message}
 
-          </div> 
-        </div>
+            </div> 
+          </div>
 
-        <div className="modal-footer confirm-modal">
+          <div className="modal-footer confirm-modal" css={footerStyle}>
 
-          {confirmButton}
-          {closeButton}
-          {tertiaryButton}
+            {confirmButton}
+            {closeButton}
+            {tertiaryButton}
 
-        </div>
+          </div>
 
         </div>
       </div>
