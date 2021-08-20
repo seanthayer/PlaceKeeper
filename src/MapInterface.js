@@ -279,14 +279,14 @@ class MapInterface {
     let infoForm_saveButton   = infoForm.querySelector('button[name="save"]');
     let infoForm_cancelButton = infoForm.querySelector('button[name="cancel"]');
 
-    let sanitizedPinName;
+    let formattedPinName;
     let newPinName;
 
     // Save event
     mapEvent.addDomListener(infoForm_saveButton, 'click', () => {
 
-      sanitizedPinName  = (infoForm_nameField.value ? infoForm_nameField.value.match(/\w+(, )?/gi)  : null); // Sanitize input; Note: removes accented chars as well
-      newPinName        = (sanitizedPinName         ? sanitizedPinName.join('')                     : null);
+      formattedPinName  = (infoForm_nameField.value ? infoForm_nameField.value.trim()       : null);
+      newPinName        = (formattedPinName         ? formattedPinName.replace(/\s+/g, ' ') : null);
 
       if (newPinName) {
 

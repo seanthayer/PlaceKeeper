@@ -5,6 +5,8 @@
  * ------------------------------------------
  */
 
+const { Sequelize, DataTypes, Model } = require('sequelize');
+
 const path    = require('path');
 const dotenv  = require('dotenv').config({ path: path.join(__dirname, '.env.local') });
 const express = require('express');
@@ -18,8 +20,62 @@ const port    = process.env.PORT || 3000;
  * ------------------------------------------
  */
 
-const mysql = require('mysql');
+const mysql = require('mysql'); // *
 const maxConnections = 10;
+
+const sequelize = new Sequelize(
+  process.env.DB_USEDB,
+  process.env.DB_USER,
+  process.env.DB_PASS,
+  {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    dialect: 'mysql',
+    pool: {
+      max: maxConnections,
+      idle: 30000,
+      acquire: 60000
+    }
+  }
+);
+
+/*
+class Map extends Model {}
+class Pin extends Model {}
+
+Pin.init({
+
+  map: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+
+  description: {
+    type: DataTypes.STRING,
+  },
+
+  lat: {
+    type: DataTypes.DOUBLE,
+    allowNull: false
+  },
+
+  lng: {
+    type: DataTypes.DOUBLE,
+    allowNull: false
+  },
+},
+{
+
+  sequelize,
+  modelName: 'Pin'
+
+});
+*/
 
 const pinSchema = {
 

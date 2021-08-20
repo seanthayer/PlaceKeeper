@@ -1,38 +1,34 @@
 CREATE TABLE MAPS (
-  `Title` varchar(25) NOT NULL,
+  `Title` VARCHAR(25) NOT NULL,
   PRIMARY KEY (`Title`)
 );
 
 CREATE TABLE PINS (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `Map` varchar(25) NOT NULL,
-  `Name` varchar(30) NOT NULL,
-  `Description` varchar(200) DEFAULT NULL,
-  `Lat` double SIGNED NOT NULL,
-  `Lng` double SIGNED NOT NULL,
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
+  `Map` VARCHAR(25) NOT NULL,
+  `Name` VARCHAR(30) NOT NULL,
+  `Description` VARCHAR(200) DEFAULT NULL,
+  `Lat` DOUBLE NOT NULL,
+  `Lng` DOUBLE NOT NULL,
   PRIMARY KEY (`ID`),
   FOREIGN KEY (`Map`) REFERENCES MAPS(`Title`) ON DELETE CASCADE
 );
 
 INSERT INTO MAPS VALUES
-('testMap1'),
-('testMap2');
+('Some Interesting Cities'),
+('Just Some Places');
 
-INSERT INTO PINS VALUES 
-(0, 'testMap1', 'Portland, OR', "Oregon's most populous city.", 45.50386578962426, -122.67520817154383),
-(0, 'testMap1', 'Vancouver, BC', "British Columbia's largest city, and nicknamed 'Hollywood North.'", 49.2821770651017, -123.11982860343056),
-(0, 'testMap1', 'Oregon State University', "Go Beavs!", 44.56374453650576, -123.27950160440479),
-(0, 'testMap1', 'Denver, CO', null, 39.737022801180196, -104.98684948794832),
-(0, 'testMap1', 'San Jose, CA', "The center of Silicon Valley.", 37.337399570316116, -121.88758476686715),
-(0, 'testMap1', 'Golden Gate Bridge', null, 37.820213941760045, -122.47850317381773);
+INSERT INTO PINS VALUES
+(DEFAULT, 'Some Interesting Cities', 'New York, NY', "The Big Apple!", 40.74839296355595, -73.98566227667868),
+(DEFAULT, 'Some Interesting Cities', 'Denver, CO', "The Mile High City!", 39.73917171007916, -104.98884104501485),
+(DEFAULT, 'Some Interesting Cities', 'Portland, OR', "Oregon's most populous city and home to the \"Silicon Forest.\"", 45.52307233319237, -122.67647536600623),
+(DEFAULT, 'Some Interesting Cities', 'Vancouver, BC', "British Columbia's largest city, and nicknamed \"Hollywood North.\"", 49.282215558413725, -123.11981183962428),
+(DEFAULT, 'Some Interesting Cities', 'San Jose, CA', "The heart of Silicon Valley!", 37.33744652790177, -121.88674475913967);
 
-INSERT INTO PINS VALUES 
-(0, 'testMap2', 'newport', null, 44.63643777124538, -124.05271227815938),
-(0, 'testMap2', 'tillamook', null, 45.456267343939025, -123.84339555819759),
-(0, 'testMap2', 'astoria', null, 46.187395112985676, -123.83143014844462),
-(0, 'testMap2', 'test2', null, 47.58803911372809, -117.07035294114988),
-(0, 'testMap2', 'test3', null, 45.96301583448037, -112.54398575364988),
-(0, 'testMap2', 'test4', null, 40.56016902590379, -116.41336998283307),
-(0, 'testMap2', 'test5', null, 51.19004188033802, -114.08426842033307),
-(0, 'testMap2', 'test6', null, 52.11698751339873, -106.52567467033307),
-(0, 'testMap2', 'test7', null, 36.0806581189727, -114.90310964668652);
+INSERT INTO PINS VALUES
+(DEFAULT, 'Just Some Places', 'Oregon State University', "Go Beavs!", 44.56585836693244, -123.27601243717307),
+(DEFAULT, 'Just Some Places', 'Japan', null, 36.57439717438821, 138.8892300200594),
+(DEFAULT, 'Just Some Places', 'Germany', null, 51.02433112685012, 10.283990366006943),
+(DEFAULT, 'Just Some Places', 'Puerto Rico', null, 18.242239373384724, -66.53137972870934),
+(DEFAULT, 'Just Some Places', 'Washington, DC', null, 38.90510279445902, -77.03460472328669),
+(DEFAULT, 'Just Some Places', 'Yellowstone National Park', null, 44.41560769034242, -110.59853292434082);
