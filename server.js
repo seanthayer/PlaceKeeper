@@ -20,7 +20,6 @@ const port    = process.env.PORT || 3000;
  * ------------------------------------------
  */
 
-// const mysql = require('mysql'); // *
 const maxConnections = 10;
 
 const sequelize = new Sequelize(
@@ -43,14 +42,22 @@ const sequelize = new Sequelize(
   }
 );
 
+/* -----------------------
+ *       SEQ MODELS
+ * -----------------------
+ */
+
 class Maps extends Model {}
 class Pins extends Model {}
+
+// Initialize attributes
 
 Maps.init({
 
   title: {
     type: DataTypes.STRING,
-    allowNull:false
+    allowNull:false,
+    unique: true
   },
 },
 {
@@ -89,7 +96,29 @@ Pins.init({
   tableName: 'PINS'
 });
 
+// Set relations
+
+Pins.belongsTo(Maps, {
+
+  targetKey: 'title',
+  foreignKey: {
+    name: 'map',
+    allowNull: false
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
+
+});
+Maps.hasMany(Pins, {
+
+  sourceKey: 'title',
+  foreignKey: 'map'
+
+});
+
+
 syncModels();
+
 
 /* ------------------------------------------
  *
@@ -125,22 +154,18 @@ app.get('/API/getMaps', async (req, res) => {
    *    ]
    */
 
-  let results = await selectMapTitles().catch((err) => { 
+  try {
 
-    return err;
-
-  });
-
-  if (results.error) {
-
-    console.error('[ERROR]: ' + results.error);
-
-    res.sendStatus(500);
-
-  } else {
+    let results = await selectMapTitles();
 
     res.status(200).send(results);
+    
+  } catch (err) {
 
+    console.error('[ERROR]: ' + err);
+
+    res.sendStatus(500);
+    
   }
 
 });
@@ -164,22 +189,18 @@ app.get('/API/getMap/:title', async (req, res) => {
 
   let title = req.params.title;
 
-  let results = await selectMapPins(title).catch((err) => { 
+  try {
 
-    return err;
-
-  });
-
-  if (results.error) {
-
-    console.error('[ERROR]: ' + results.error);
-
-    res.sendStatus(500);
-
-  } else {
+    let results = await selectMapPins(title);
 
     res.status(200).send(results);
+    
+  } catch (err) {
 
+    console.error('[ERROR]: ' + err);
+
+    res.sendStatus(500);
+    
   }
 
 });
@@ -211,22 +232,18 @@ app.post('/API/postMap', async (req, res) => {
 
   if (mapTitle) {
 
-    results = await insertNewMap(mapTitle, mapPins).catch((err) => {
+    try {
 
-      return err;
-
-    });
-
-    if (results.error) {
-
-      console.error('[ERROR]: ' + results.error);
-
-      res.sendStatus(500);
-
-    } else {
+      results = await insertNewMap(mapTitle, mapPins);
 
       res.status(201).send(results);
+      
+    } catch (err) {
 
+      console.error('[ERROR]: ' + err);
+
+      res.sendStatus(500);
+      
     }
 
   } else {
@@ -248,28 +265,28 @@ app.delete('/API/deleteMap/:title', async (req, res) => {
 
   let title = req.params.title;
 
-  let results = await deleteMap(title).catch((err) => { 
+  try {
 
-    return err;
+    let results = await deleteMap(title);
 
-  });
+    if (results) {
 
-  if (results.error) {
+      res.sendStatus(204)
+      
+    } else {
 
-    console.error('[ERROR]: ' + results.error);
+      console.error('[ERROR]: Map not found');
+
+      res.sendStatus(404);
+
+    }
+    
+  } catch (err) {
+
+    console.error('[ERROR]: ' + err);
 
     res.sendStatus(500);
-
-  } else if (results) {
-
-    res.sendStatus(204);
-
-  } else {
-
-    console.error('[ERROR]: Map not found');
-
-    res.sendStatus(404);
-
+    
   }
 
 });
@@ -318,7 +335,7 @@ async function mapExists(title) {
     
   } catch (err) {
     
-    return 0;
+    throw err;
 
   }
 
@@ -336,7 +353,7 @@ async function selectMapTitles() {
 
   }).catch((err) => {
 
-    return { error: err };
+    throw err;
 
   });
 
@@ -355,7 +372,7 @@ async function selectMapPins(title) {
 
   }).catch((err) => {
 
-    return { error: err };
+    throw err;
 
   });
 
@@ -368,22 +385,31 @@ async function deleteMap(title) {
    *    Returns a Promised result with number of deleted rows.
    */
 
-  if ( await mapExists(title) ) {
+  try {
 
-    return await Maps.destroy({
+    if ( await mapExists(title) ) {
 
-      where: { title: title }
+      return await Maps.destroy({
   
-    }).catch((err) => {
-  
-      return { error: err };
-  
-    });
+        where: { title: title }
     
-  } else {
+      }).catch((err) => {
+    
+        throw err;
+    
+      });
+      
+    } else {
+  
+      return 0;
+  
+    }
+  
+    
+  } catch (err) {
 
-    return 0;
-
+    throw err;
+    
   }
 
 }
@@ -409,13 +435,11 @@ async function insertNewMap(title, pinSet) {
 
     newPinIDs = newPins.map((e) => { return e.id; });
   
-    console.log(newPinIDs);
-  
     return newPinIDs;
     
   } catch (err) {
 
-    return { error: err };
+    throw err;
     
   }
 
