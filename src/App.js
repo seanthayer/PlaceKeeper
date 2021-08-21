@@ -49,7 +49,10 @@ const globalStyles = css`
 
 `;
 
-// Modal styles
+/* -----------------------
+ *      MODAL STYLES
+ * -----------------------
+ */
 
 const modalPos = css`
 
@@ -1430,8 +1433,9 @@ class SaveModal extends React.Component {
      *    Consolidate map and pin information to save on the server.
      */
 
-    let sanitizedTitle  = (this.state.mapName ? this.state.mapName.match(/\w+/gi) : null); // Sanitize input; Note: removes accented chars as well
-    let newMapTitle     = (sanitizedTitle     ? sanitizedTitle.join('')           : null);
+    let formattedTitle  = (this.state.mapName ? this.state.mapName.trim()           : null); 
+    let newMapTitle     = (formattedTitle     ? formattedTitle.replace(/\s+/g, ' ') : null);
+        newMapTitle     = (newMapTitle        ? newMapTitle.replace(/\s/g, '-')     : null);
 
     let modalContent  = { message: null, confirmText: null, closeText: null };
     let numOfPins     = this.props.places.length;

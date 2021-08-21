@@ -5,6 +5,8 @@
  * ------------------------------------------
  */
 
+const { Sequelize, DataTypes, Model } = require('sequelize');
+
 const path    = require('path');
 const dotenv  = require('dotenv').config({ path: path.join(__dirname, '.env.local') });
 const express = require('express');
@@ -18,30 +20,105 @@ const port    = process.env.PORT || 3000;
  * ------------------------------------------
  */
 
-const mysql = require('mysql');
 const maxConnections = 10;
 
-const pinSchema = {
+const sequelize = new Sequelize(
+  process.env.DB_USEDB,
+  process.env.DB_USER,
+  process.env.DB_PASS,
+  {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    dialect: 'mysql',
+    pool: {
+      max: maxConnections,
+      idle: 30000,
+      acquire: 60000
+    },
+    define: {
+      freezeTableName: true
+    },
+    logging: (msg) => { console.log('[SEQ]', msg); }
+  }
+);
 
-  map         : 'string',
-  name        : 'string',
-  description : 'string',
-  lat         : 'number',
-  lng         : 'number'
+/* -----------------------
+ *       SEQ MODELS
+ * -----------------------
+ */
 
-};
+class Maps extends Model {}
+class Pins extends Model {}
 
-const pool = mysql.createPool({
+// Initialize attributes
 
-  connectionLimit: maxConnections,
+Maps.init({
 
-  host     : process.env.DB_HOST,
-  port     : process.env.DB_PORT,
-  user     : process.env.DB_USER,
-  password : process.env.DB_PASS,
-  database : process.env.DB_USEDB
+  title: {
+    type: DataTypes.STRING,
+    allowNull:false,
+    unique: true
+  },
+},
+{
+  sequelize,
+  tableName: 'MAPS'
+});
+
+Pins.init({
+
+  map: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+
+  description: {
+    type: DataTypes.STRING,
+  },
+
+  lat: {
+    type: DataTypes.DOUBLE,
+    allowNull: false
+  },
+
+  lng: {
+    type: DataTypes.DOUBLE,
+    allowNull: false
+  },
+},
+{
+  sequelize,
+  tableName: 'PINS'
+});
+
+// Set relations
+
+Pins.belongsTo(Maps, {
+
+  targetKey: 'title',
+  foreignKey: {
+    name: 'map',
+    allowNull: false
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
 
 });
+Maps.hasMany(Pins, {
+
+  sourceKey: 'title',
+  foreignKey: 'map'
+
+});
+
+
+syncModels();
+
 
 /* ------------------------------------------
  *
@@ -77,22 +154,18 @@ app.get('/API/getMaps', async (req, res) => {
    *    ]
    */
 
-  let results = await selectMapTitles().catch((err) => { 
+  try {
 
-    return err;
-
-  });
-
-  if (results.error) {
-
-    console.error('[ERROR]: ' + results.error);
-
-    res.sendStatus(500);
-
-  } else {
+    let results = await selectMapTitles();
 
     res.status(200).send(results);
+    
+  } catch (err) {
 
+    console.error('[ERROR]: ' + err);
+
+    res.sendStatus(500);
+    
   }
 
 });
@@ -116,22 +189,18 @@ app.get('/API/getMap/:title', async (req, res) => {
 
   let title = req.params.title;
 
-  let results = await selectMapPins(title).catch((err) => { 
+  try {
 
-    return err;
-
-  });
-
-  if (results.error) {
-
-    console.error('[ERROR]: ' + results.error);
-
-    res.sendStatus(500);
-
-  } else {
+    let results = await selectMapPins(title);
 
     res.status(200).send(results);
+    
+  } catch (err) {
 
+    console.error('[ERROR]: ' + err);
+
+    res.sendStatus(500);
+    
   }
 
 });
@@ -158,43 +227,23 @@ app.post('/API/postMap', async (req, res) => {
 
   let mapTitle  = req.body.title;
   let mapPins   = req.body.pins;
-  let validData = true;
 
-  let pinValues;
   let results;
 
-  for (let i = 0; i < mapPins.length; i++) {
-    const pin = mapPins[i];
+  if (mapTitle) {
 
-    if (!validateSchema(pin, pinSchema)) {
+    try {
 
-      validData = false;
-      break;
-
-    }
-
-  }
-
-  if (mapTitle && validData) {
-
-    pinValues = mapPins.map((e) => { return Object.values(e); });
-
-    results = await insertNewMap(mapTitle, pinValues).catch((err) => {
-
-      return err;
-
-    });
-
-    if (results.error) {
-
-      console.error('[ERROR]: ' + results.error);
-
-      res.sendStatus(500);
-
-    } else {
+      results = await insertNewMap(mapTitle, mapPins);
 
       res.status(201).send(results);
+      
+    } catch (err) {
 
+      console.error('[ERROR]: ' + err);
+
+      res.sendStatus(500);
+      
     }
 
   } else {
@@ -216,26 +265,28 @@ app.delete('/API/deleteMap/:title', async (req, res) => {
 
   let title = req.params.title;
 
-  let results = await dropMapIfExists(title).catch((err) => { 
+  try {
 
-    return err;
+    let results = await deleteMap(title);
 
-  });
+    if (results) {
 
-  if (results.error) {
+      res.sendStatus(204)
+      
+    } else {
 
-    console.error('[ERROR]: ' + results.error);
+      console.error('[ERROR]: Map not found');
+
+      res.sendStatus(404);
+
+    }
+    
+  } catch (err) {
+
+    console.error('[ERROR]: ' + err);
 
     res.sendStatus(500);
-
-  } else if (results) {
-
-    res.sendStatus(204);
-
-  } else {
-
-    res.sendStatus(404);
-
+    
   }
 
 });
@@ -272,201 +323,125 @@ app.get('*', (req, res) => {
  * ------------------------------------------
  */
 
-function selectMapTitles() {
+async function mapExists(title) {
+
+  let exists;
+
+  try {
+
+    exists = await Maps.count({ where: { title: title } });
+
+    return exists;
+    
+  } catch (err) {
+    
+    throw err;
+
+  }
+
+}
+
+async function selectMapTitles() {
 
   /*  Description:
    *    Query function. Selects and returns a Promised result for map titles.
    */
 
-  return new Promise((resolve, reject) => {
+  return await Maps.findAll({
 
-    pool.query('SELECT title FROM MAPS',
-    function(err, results) {
+    attributes: ['title']
 
-      if (err) {
-    
-        reject({
+  }).catch((err) => {
 
-          error: err
-
-        });
-    
-      } else {
-
-        resolve(results);
-    
-      }
-    
-    });
+    throw err;
 
   });
 
 }
 
-function selectMapPins(title) {
+async function selectMapPins(title) {
 
   /*  Description:
    *    Query function. Selects and returns a Promised result for map pins, given a map title.
    */
 
-  return new Promise((resolve, reject) => {
+  return await Pins.findAll({
 
-    pool.query('SELECT name, description, lat, lng FROM PINS WHERE Map = ?', title,
-    function(err, results) {
+    attributes: ['name', 'description', 'lat', 'lng'],
+    where: { map: title }
 
-      if (err) {
-    
-        reject({
+  }).catch((err) => {
 
-          error: err
-          
-        });
-    
-      } else {
-
-        resolve(results);
-    
-      }
-    
-    });
+    throw err;
 
   });
 
 }
 
-function dropMapIfExists(title) {
+async function deleteMap(title) {
 
   /*  Description:
-   *    Query function. Drops a map given a title (if exists). Cascades on drop to delete corresponding map pins.
-   *    Returns a Promised result with deleted row IDs (if any). 
+   *    Query function. Deletes a map given a title (if exists). Cascades on delete to remove corresponding map pins.
+   *    Returns a Promised result with number of deleted rows.
    */
 
-  return new Promise((resolve, reject) => {
+  try {
 
-    pool.query('DELETE FROM MAPS WHERE Title = ?', title,
-    function(err, results) {
+    if ( await mapExists(title) ) {
 
-      if (err) {
+      return await Maps.destroy({
+  
+        where: { title: title }
+    
+      }).catch((err) => {
+    
+        throw err;
+    
+      });
+      
+    } else {
+  
+      return 0;
+  
+    }
+  
+    
+  } catch (err) {
 
-        reject({
-
-          error: err
-
-        });
-
-      } else {
-
-        resolve(results.affectedRows);
-
-      }
-
-    });
-
-  });
+    throw err;
+    
+  }
 
 }
 
 async function insertNewMap(title, pinSet) {
 
   /*  Description:
-   *    Asynchronous query function. Inserts a new map given a title and set of pins.
+   *    Query function. Inserts a new map given a title and set of pins.
    *    Returns a Promised result with an array of the newly inserted row IDs (for the map pins).
    */
 
-  let pinIDs = [];
+  let newPins;
+  let newPinIDs;
 
-  await dropMapIfExists(title);
+  try {
 
-  return new Promise((resolve, reject) => {
+    // Likely a better way to handle overwriting an existing map instead of completely deleting and recreating it.
+    await deleteMap(title);
 
-    // Map title
-    pool.query('INSERT INTO MAPS VALUES (?)', title,
-    async function(err, results) {
+    await Maps.create({ title: title });
 
-      if (err) {
+    newPins = await Pins.bulkCreate(pinSet, { validate: true });
 
-        reject({
-
-          error: err
-
-        });
-
-      } else {
-
-        pinIDs = await insertPinSet(pinSet).catch((err) => {
-
-          return err;
-
-        });
-
-        if (pinIDs.error) {
-
-          reject({
-
-            error: err
+    newPinIDs = newPins.map((e) => { return e.id; });
   
-          });
-          
-        } else {
+    return newPinIDs;
+    
+  } catch (err) {
 
-          resolve(pinIDs);
-
-        }
-
-      }
-
-    });
-
-  });
-
-}
-
-function insertPinSet(pinSet) {
-
-  /*  Description:
-   *    Query function. Escapes and concatenates a set of pins and inserts them as new rows.
-   *    Returns a Promised result with an array of the newly inserted row IDs (for the map pins).
-   */
-
-  let pinIDs    = [];
-  let valueSet  = '(0, ?, ?, ?, ?, ?)';
-  let setValues = '';
-
-  pinSet.forEach((row, i, array) => {
-
-    // Row fields are escaped here, preventing SQL injection when inserting 'setValues' in the Promised query.
-    let sql = mysql.format(valueSet, row);
-
-    // Concatenating each valueSet
-    setValues += (( i < (array.length - 1) ) ? (sql + ',') : (sql));
-
-  });
-
-  return new Promise((resolve, reject) => {
-
-    pool.query(`INSERT INTO PINS VALUES ${setValues}`,
-    function(err, results) {
-  
-      if (err) {
-
-        reject({
-  
-          error: err
-  
-        });
-  
-      } else {
-
-        for (let i = 0; i < pinSet.length; i++)
-          pinIDs.push(i + results.insertId);
-
-        resolve(pinIDs);
-  
-      }
-  
-    });
-
-  });
+    throw err;
+    
+  }
 
 }
 
@@ -477,52 +452,25 @@ function insertPinSet(pinSet) {
  * ------------------------------------------
  */
 
-function validateSchema(input, schema) {
+async function syncModels() {
 
-  /*  Description:
-   *    Validates proper schema given an input and database schema. Validates proper key name and value type.
-   *
-   *  Expects:
-   *    - input  =>
-   *        {
-   *          key: value,
-   *          . . .
-   *        }
-   * 
-   *    - schema =>
-   *        {
-   *          key: value,
-   *          . . .
-   *        }
-   */
+  console.log('[SERVER] Syncing Models...');
 
-  let inputKeys   = Object.keys(input);
-  let schemaKeys  = Object.keys(schema);
+  try {
 
-  let inputTypes  = Object.values(input).map((e) => { return (e != null ? typeof(e) : null); });
-  let schemaTypes = Object.values(schema);
+    await sequelize.sync();
+  
+    console.log('[SERVER] Database Models synced!');
 
-  let validSchema = true;
+    return true;
+    
+  } catch (err) {
+  
+    console.error('[ERROR] Database Models not synced: ', err);
 
-  for (let i = 0; i < inputKeys.length; i++) {
-
-    const inputKey = inputKeys[i];
-    const schemaKey = schemaKeys[i];
-
-    const inputType = inputTypes[i];
-    const schemaType = (inputType != null ? schemaTypes[i] : null);
-
-    if ((inputKey != schemaKey) ||
-        (inputType != schemaType)) {
-
-      validSchema = false;
-      break;
-
-    }
+    return false;
     
   }
-
-  return validSchema;
 
 }
 
