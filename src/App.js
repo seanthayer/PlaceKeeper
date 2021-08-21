@@ -49,7 +49,10 @@ const globalStyles = css`
 
 `;
 
-// Modal styles
+/* -----------------------
+ *      MODAL STYLES
+ * -----------------------
+ */
 
 const modalPos = css`
 
