@@ -7,6 +7,7 @@ PlaceKeeper is a full stack application and currently featured with,
 * A MySQL database (emulated with Docker)
 * React (using Create React App)
 * Emotion (for component specific CSS)
+* Sequelize (handling database interactions)
 
 PlaceKeeper's primary goal is to serve as a hands-on learning opportunity. As a secondary outcome, PlaceKeeper exhibits a full stack implementation and acts as a reference point for future projects.
 
@@ -29,6 +30,7 @@ PlaceKeeper's primary goal is to serve as a hands-on learning opportunity. As a 
    * [x] Endpoints for API calls
    * [x] MySQL integration and query functions
    * [x] Map creation and deletion / overwriting
+   * [x] Database interactions handled by Sequelize
 
    ### Gmaps
    <ins>Completed</ins>↴
