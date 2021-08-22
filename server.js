@@ -404,7 +404,6 @@ async function deleteMap(title) {
       return 0;
   
     }
-  
     
   } catch (err) {
 

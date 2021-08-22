@@ -12,8 +12,6 @@ import { Loader } from '@googlemaps/js-api-loader';
 
 import './index.css';
 
-// import reportWebVitals from './reportWebVitals';
-
 /* ------------------------------------------
  *
  *                   MAIN

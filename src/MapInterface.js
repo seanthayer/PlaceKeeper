@@ -1,5 +1,14 @@
 /* ------------------------------------------
  *
+ *                  IMPORT
+ * 
+ * ------------------------------------------
+ */
+
+import HTMLGen from './HTMLGen';
+
+/* ------------------------------------------
+ *
  *                    PIN
  * 
  * ------------------------------------------
@@ -59,7 +68,6 @@ class Pin {
 
     const mapEvent      = window.mapEvent;
     const mapInterface  = window.mapInterface;
-    const HTMLGen       = window.HTMLGen;
 
     let context = {
 
@@ -105,7 +113,6 @@ class Pin {
 
     const mapEvent     = window.mapEvent;
     const mapInterface = window.mapInterface;
-    const HTMLGen      = window.HTMLGen;
 
     let infoBoxDOM              = this.mapDOM.querySelector(`.pin-infobox-container[data-latlng="${this.latLng}"]`);
     let infoBox_buttonContainer = infoBoxDOM.querySelector('.trash-button-container');
@@ -206,7 +213,6 @@ class MapInterface {
 
     const google   = window.google;
     const mapEvent = window.mapEvent;
-    const HTMLGen  = window.HTMLGen;
 
     let newInfoForm = this.generateInfoBox(event.latLng, HTMLGen.NewPinForm());
 
