@@ -9,17 +9,25 @@ import ReactDOMServer from 'react-dom/server';
 
 /* ------------------------------------------
  *
- *                  HTMLGEN
+ *                  MAPDOM
  * 
  * ------------------------------------------
  */
 
-class HTMLGen {
+function getMapElement(e) {
 
-  // ReactDOMServer has a convenient function "renderToString()" which allows a component to be composed
-  // using a given data set, and returned as an HTML string. Similar to Handlebars.
+  // switch typeof val,
+  //    case 'InfoBox'
+  //    . . .
+  //
+  // .pin-infobox-container[data-latlng="${infoBox.getPosition()}"] -- use this
+  return e.querySelector();
 
-  static NewPinForm() {
+}
+
+const HTMLGen = {
+
+  NewPinForm() {
 
     return ReactDOMServer.renderToString(
       <div className="pin-infoform-container">
@@ -46,16 +54,13 @@ class HTMLGen {
       </div>
     );
 
-  }
+  },
 
-  static PinInfo(context) {
+  PinInfo(context) {
 
-    let latLng = context.latLng;
-    let name = context.name;
-    let description = null;
-    
-    if (context.description) 
-      description = <div className="pin-infobox-description"><p>{context.description}</p></div>;
+    let latLng      =  context.latLng;
+    let name        =  context.name;
+    let description = (context.description ? <div className="pin-infobox-description"><p>{context.description}</p></div> : null);
 
     return ReactDOMServer.renderToString(
       <div className="pin-infobox-container" data-latlng={latLng}>
@@ -71,17 +76,17 @@ class HTMLGen {
       </div>
     );
 
-  }
+  },
 
-  static TrashButton() {
+  TrashButton() {
 
     return ReactDOMServer.renderToString(
       <button type="button" name="trash-button" class="trash-button"><i class="far fa-trash-alt"></i></button>
     );
 
-  }
+  },
 
-  static ConfirmText() {
+  ConfirmText() {
 
     return ReactDOMServer.renderToString(
       <div class="are-you-sure">Are you sure?<i class="fas fa-check-circle"></i><i class="fas fa-times-circle"></i></div>
@@ -98,4 +103,9 @@ class HTMLGen {
  * ------------------------------------------
  */
 
-export default HTMLGen;
+export default {
+
+  getMapElement,
+  HTMLGen
+
+};

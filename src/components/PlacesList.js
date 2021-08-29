@@ -117,7 +117,7 @@ class PlacesList extends React.Component {
      *    Removes a pin from the map using the given latLng.
      */
 
-    const mapInterface = window.mapInterface;
+    const mapController = window.mapController;
 
     let pList         = Array.from(this.props.places);
     let pListLatLngs  = pList.map(place => place.latLng);
@@ -125,7 +125,7 @@ class PlacesList extends React.Component {
 
     let pin = pList[i];
 
-    mapInterface.removePin(pin);
+    mapController.removePin(pin);
 
   }
 
@@ -238,8 +238,8 @@ class SavedPlace extends React.Component {
      *    Pans the map embed to the current entry's latLng.
      */
 
-    const mapInterface = window.mapInterface;
-    mapInterface.mapEmbed.panTo(this.props.latLng);
+    const mapController = window.mapController;
+    mapController.mapEmbed.panTo(this.props.latLng);
 
   }
   

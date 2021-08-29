@@ -9,19 +9,19 @@
 
 import React from 'react';
 
-import Map          from './components/Map';
-import ModalButtons from './components/ModalButtons';
-import PlacesList   from './components/PlacesList';
-import PlacesSearch from './components/PlacesSearch';
-import SaveModal    from './components/SaveModal';
-import ImportModal  from './components/ImportModal';
+import Map          from 'components/Map';
+import ModalButtons from 'components/ModalButtons';
+import PlacesList   from 'components/PlacesList';
+import PlacesSearch from 'components/PlacesSearch';
+import SaveModal    from 'components/SaveModal';
+import ImportModal  from 'components/ImportModal';
 
-import { globalStyles } from './GlobalStyles';
+import { globalStyles } from 'GlobalStyles';
 
 import { Global, css } from '@emotion/react';
 
-import background from './img/background_header-bg.png';
-import header     from './img/thumbnail_placekeeper-header-icon.png';
+import background from 'img/background_header-bg.png';
+import header     from 'img/thumbnail_placekeeper-header-icon.png';
 
 /* ------------------------------------------
  *
@@ -209,7 +209,7 @@ class App extends React.Component {
   updatePlaces(newPlaces) {
 
     /*  Description:
-     *    When the Map component mounts, this function is bound to a constructed MapInterface class. This allows the class to
+     *    When the Map component mounts, this function is bound to a constructed MapController class. This allows the class to
      *    update the App places list from outside the React hierarchy.
      */
 
@@ -227,7 +227,7 @@ class App extends React.Component {
      *    Clears the current map and renders a new one with the given title.
      */
 
-    const mapInterface = window.mapInterface;
+    const mapController = window.mapController;
 
     let mapPins = await this.GETMap(title).catch((err) => {
 
@@ -238,8 +238,8 @@ class App extends React.Component {
 
     if (mapPins) {
 
-      mapInterface.clearMap();
-      mapInterface.loadMap(mapPins);
+      mapController.clearMap();
+      mapController.loadMap(mapPins);
   
       this.closeModal();
 

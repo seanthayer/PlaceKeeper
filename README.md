@@ -42,6 +42,7 @@ PlaceKeeper's primary goal is to serve as a hands-on learning opportunity. As a 
    * Front-end↴
       * Stylize using Material UI
       * Expand UX & UI
+      * Make components more generic/reusable
 
    * Back-end↴
       * Authentication and user accounts
