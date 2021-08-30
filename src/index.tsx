@@ -19,11 +19,11 @@ import './index.css';
  * ------------------------------------------
  */
 
-const apiKey = process.env.REACT_APP_GMAPS_APIKEY;
+const apiKey = process.env.REACT_APP_GMAPS_APIKEY || null;
 
-const loader = new Loader({
+var loader = new Loader({
 
-  apiKey  : (apiKey ? apiKey : null),
+  apiKey  : (apiKey as string),
   version : 'weekly'
 
 });

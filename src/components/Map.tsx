@@ -13,6 +13,8 @@ import { css }      from '@emotion/react';
 import MapController from 'MapAPI';
 import { loader }    from 'index';
 
+import type { Pin } from 'MapAPI';
+
 /* ------------------------------------------
  *
  *                    MAP
@@ -60,7 +62,13 @@ interface MapEventHandler {
 
 }
 
-class Map extends React.Component {
+type MapProps = {
+
+  updatePlaces(places: Array<Pin>): void;
+
+}
+
+class Map extends React.Component<MapProps> {
 
   /*  Description:
    *    The Map component, signifying the Google Maps embed. Renders a <div> element for the API to link. Upon mount, initiates
@@ -100,7 +108,7 @@ class Map extends React.Component {
 
       const google      = window.google;
       const mapEvent    = google.maps.event;
-      const mapDOMNode  = <HTMLDivElement>document.getElementById('map');
+      const mapDOMNode  = (document.getElementById('map') as HTMLDivElement);
 
       try {
 

@@ -660,3 +660,5 @@ class MapController {
  */
 
 export default MapController;
+
+export type { PinPrimitive, Pin };
