@@ -181,7 +181,8 @@ app.get('/API/getMap/:title', async (req, res) => {
    *        name        : 'PIN_NAME',
    *        description : 'PIN_DESC',
    *        lat         : 'PIN_LAT',
-   *        lng         : 'PIN_LNG'
+   *        lng         : 'PIN_LNG',
+   *        createdAt   : x
    *      },
    *      . . .
    *    ]
@@ -367,7 +368,7 @@ async function selectMapPins(title) {
 
   return await Pins.findAll({
 
-    attributes: ['name', 'description', 'lat', 'lng'],
+    attributes: ['name', 'description', 'lat', 'lng', 'createdAt'],
     where: { map: title }
 
   }).catch((err) => {

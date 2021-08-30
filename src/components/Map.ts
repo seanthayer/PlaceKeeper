@@ -11,7 +11,7 @@ import * as React   from 'react';
 import { css }      from '@emotion/react';
 
 import MapController from 'MapAPI';
-import { loader }   from 'index';
+import { loader }    from 'index';
 
 /* ------------------------------------------
  *
@@ -24,8 +24,8 @@ declare global {
 
   interface Window {
 
-    mapEvent : MapEventHandler;
-    mapController   : MapController;
+    mapEvent      : MapEventHandler;
+    mapController : MapController;
 
   }
 
@@ -100,27 +100,27 @@ class Map extends React.Component {
 
       const google      = window.google;
       const mapEvent    = google.maps.event;
-      const mapDOMNode  = (document.getElementById('map') as HTMLDivElement);
+      const mapDOMNode  = <HTMLDivElement>document.getElementById('map');
 
-      if (mapDOMNode) {
+      try {
 
         const mapEmbed = new google.maps.Map(mapDOMNode, {
-    
+  
           center         : { lat: 43.815136416911436, lng: -120.6398112171833 },
           zoom           : 5,
           clickableIcons : false
       
         });
-
+  
         window.mapEvent = mapEvent;
-
-        const mapController = new MapController(mapEmbed, this.props.updatePlaces);
+  
+        const mapController = new MapController(mapEmbed, mapDOMNode, this.props.updatePlaces);
   
         window.mapController = mapController;
-
-      } else {
-
-        console.error(new Error('Map DOM Node not found!'));
+        
+      } catch (err) {
+       
+        console.error(new Error(err));
 
       }
 

@@ -14,23 +14,20 @@ import ReactDOMServer from 'react-dom/server';
  * ------------------------------------------
  */
 
-function getMapElement(e) {
+function getElementByLatLng(latLng) {
 
-  // switch typeof val,
-  //    case 'InfoBox'
-  //    . . .
-  //
-  // .pin-infobox-container[data-latlng="${infoBox.getPosition()}"] -- use this
-  return e.querySelector();
+  return unknown;
 
 }
 
 const HTMLGen = {
 
-  NewPinForm() {
+  NewPinForm(context) {
+
+    let latLng = context.latLng;
 
     return ReactDOMServer.renderToString(
-      <div className="pin-infoform-container">
+      <div className="pin-infoform-container" data-latlng={latLng}>
   
         <h2 className="pin-infoform-title">Create New Pin</h2>
   

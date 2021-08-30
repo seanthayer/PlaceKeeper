@@ -230,8 +230,7 @@ class SaveModal extends React.Component {
      *    Consolidate map and pin information to save on the server.
      */
 
-    let formattedTitle  = (this.state.mapName ? this.state.mapName.trim()           : null); 
-    let newMapTitle     = (formattedTitle     ? formattedTitle.replace(/\s+/g, ' ') : null);
+    let formattedTitle  = this.state.mapName.trim().replace(/\s+/g, ' ');
 
     let modalContent  = { message: null, confirmText: null, closeText: null };
     let numOfPins     = this.props.places.length;
@@ -239,7 +238,7 @@ class SaveModal extends React.Component {
 
     if (numOfPins) {
 
-      if (newMapTitle) {
+      if (formattedTitle) {
 
         mapTitles = await this.props.GETMaps().catch((err) => {
 
@@ -250,7 +249,7 @@ class SaveModal extends React.Component {
         mapTitles = mapTitles.map( (e) => { return e.title; } );
 
         // Check if the current name will overwrite an existing map.
-        if ( mapTitles.includes(newMapTitle) ) {
+        if ( mapTitles.includes(formattedTitle) ) {
 
           modalContent = { message: 'This will overwrite an existing map. Are you sure?', confirmText: 'Yes', closeText: 'No' };
 
@@ -259,7 +258,7 @@ class SaveModal extends React.Component {
             submodal: 
               <MiniModal 
                 modalContent = {modalContent}
-                confirm      = { () => {this.writeMap(newMapTitle, this.props.places)} }
+                confirm      = { () => {this.writeMap(formattedTitle, this.props.places)} }
                 close        = {this.closeSubModal}
               /> 
             
@@ -267,7 +266,7 @@ class SaveModal extends React.Component {
 
         } else {
 
-          this.writeMap(newMapTitle, this.props.places);
+          this.writeMap(formattedTitle, this.props.places);
 
         }
   
