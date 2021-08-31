@@ -27,18 +27,7 @@ export function getElementByLatLng(latLng: google.maps.LatLng): HTMLDivElement {
 
 // - - - -
 
-interface HTMLGen {
-
-  NewPinForm(context: { latLng: google.maps.LatLng | google.maps.LatLngLiteral }): string;
-
-  PinInfo(context: { latLng: google.maps.LatLng | google.maps.LatLngLiteral, name: string, description?: string }): string;
-
-  TrashButton(): string;
-  ConfirmText(): string;
-
-}
-
-export const HTML: HTMLGen = {
+export const HTML: app.dom.HTMLGen = {
 
   NewPinForm(context) {
 

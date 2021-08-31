@@ -7,7 +7,7 @@
  * ------------------------------------------
  */
 
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import Map          from 'components/Map';
 import ModalButtons from 'components/ModalButtons';
@@ -22,6 +22,8 @@ import { Global, css } from '@emotion/react';
 
 import background from 'img/background_header-bg.png';
 import header     from 'img/thumbnail_placekeeper-header-icon.png';
+
+import type { Pin } from 'MapAPI';
 
 /* ------------------------------------------
  *
@@ -53,14 +55,21 @@ import header     from 'img/thumbnail_placekeeper-header-icon.png';
  * ------------------------------------------
  */
 
-class App extends React.Component {
+interface AppState {
+
+  modal  : ReactElement | null;
+  places : Array<Pin>;
+
+}
+
+class App extends React.Component<{}, AppState> {
 
   /*  Description:
    *    The main App component. Renders all sub-components directly related to App functionality. Handles logical interactions
    *    for updating the places list, sending HTTP requests to the server, and showing / closing modals.
    */
 
-  constructor(props) {
+  constructor(props: object) {
 
     super(props);
 
@@ -206,7 +215,7 @@ class App extends React.Component {
 
   }
 
-  updatePlaces(newPlaces) {
+  updatePlaces(places: Array<Pin>) {
 
     /*  Description:
      *    When the Map component mounts, this function is bound to a constructed MapController class. This allows the class to
@@ -215,13 +224,13 @@ class App extends React.Component {
 
     this.setState({
 
-      places: newPlaces
+      places: places
 
     });
 
   }
 
-  async importMap(title) {
+  async importMap(title: string) {
 
     /*  Description:
      *    Clears the current map and renders a new one with the given title.
@@ -229,12 +238,17 @@ class App extends React.Component {
 
     const mapController = window.mapController;
 
-    let mapPins = await this.GETMap(title).catch((err) => {
+    let map = 
+      await this.GETMap(title).catch((err) => {
 
-      alert('Error getting map data.');
-      return null;
+        alert('Error getting map data.');
+        return null;
 
-    });
+      });
+
+    // - - - -
+
+    let mapPins = (map ? map.pins : null);
 
     if (mapPins) {
 
@@ -247,13 +261,13 @@ class App extends React.Component {
 
   }
 
-  async saveMap(title, places) {
+  async saveMap(title: string, places: Array<Pin>) {
 
     /*  Description:
      *    Saves a map with the given title and places list.
      */
 
-    let map = { title: title, pins: [] };
+    let map: app.map.POST = { title: title, pins: [] };
     let results;
 
     places.forEach((place, i) => {
@@ -262,45 +276,39 @@ class App extends React.Component {
 
         map         : title, 
         name        : place.name, 
-        description : null, 
+        description : (place.description ? place.description : null), 
         lat         : place.latLng.lat(), 
         lng         : place.latLng.lng() 
 
       };
 
-      if (place.description)
-        map.pins[i].description = place.description;
-
     });
 
-    results = await this.POSTMap(map).catch((err) => {
+    results = 
+      await this.POSTMap(map).catch((err) => {
 
-      alert('Error saving map data.');
-      return null;
+        alert('Error saving map data.');
+        return null;
 
-    });
+      });
 
-    // 'results' will contain the pin insertIDs from the DB
-    if (results) {
-
-      this.closeModal();
-
-    }
+    results && this.closeModal();
 
   }
 
-  async removeMap(title) {
+  async removeMap(title: string) {
 
     /*  Description:
      *    Removes a map with the given title.
      */
 
-    let results = await this.DELETEMap(title).catch((err) => {
+    let results = 
+      await this.DELETEMap(title).catch((err) => {
 
-      alert('Error deleting map data.');
-      return null;
+        alert('Error deleting map data.');
+        return null;
 
-    });
+      });
 
     if (results === 204) {
 
@@ -312,7 +320,7 @@ class App extends React.Component {
 
   }
 
-  POSTMap(map) {
+  POSTMap(map: app.map.POST): Promise<number> {
 
     /*  Description:
      *    Sends an HTTP POST request to the server with a map object. Returns a Promised response status, or error.
@@ -367,7 +375,7 @@ class App extends React.Component {
 
   }
 
-  GETMaps() {
+  GETMaps(): Promise<Array<app.map.Metadata>> {
 
     /*  Description:
      *    Sends an HTTP GET request to the server. Returns a Promised array of objects with the server's current map titles, or error.
@@ -416,7 +424,7 @@ class App extends React.Component {
 
   }
 
-  GETMap(title) {
+  GETMap(title: string): Promise<app.map.GET> {
 
     /*  Description:
      *    Sends an HTTP GET request to the server with a map title. Returns a Promised array of objects with the queried map pins, or error.
@@ -470,7 +478,7 @@ class App extends React.Component {
 
   }
 
-  DELETEMap(title) {
+  DELETEMap(title: string): Promise<number> {
 
     /*  Description:
      *    Sends an HTTP DELETE request to the server with a map title. Returns a Promised response status, or error.
@@ -514,11 +522,12 @@ class App extends React.Component {
      *    Renders the import modal.
      */
 
-    let maps = await this.GETMaps().catch((err) => { 
+    let maps =
+      await this.GETMaps().catch((err) => { 
 
-      return [];
+        return [];
 
-    });
+      });
 
     this.setState({
 
@@ -534,7 +543,7 @@ class App extends React.Component {
 
   }
 
-  showSaveModal(placesList) {
+  showSaveModal(placesList: Array<Pin>) {
 
     /*  Description:
      *    Renders the save modal with the given places list. This prevents reading a stale state value from the App component.

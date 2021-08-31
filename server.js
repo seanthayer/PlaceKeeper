@@ -156,7 +156,7 @@ app.get('/API/getMaps', async (req, res) => {
 
   try {
 
-    let results = await selectMapTitles();
+    let results = await selectMapsMetadata();
 
     res.status(200).send(results);
     
@@ -192,7 +192,14 @@ app.get('/API/getMap/:title', async (req, res) => {
 
   try {
 
-    let results = await selectMapPins(title);
+    let results = { 
+
+      meta: {
+        title: await selectMapMetadata(title)
+      }, 
+      pins: await selectMapPins(title)
+    
+    };
 
     res.status(200).send(results);
     
@@ -342,7 +349,7 @@ async function mapExists(title) {
 
 }
 
-async function selectMapTitles() {
+async function selectMapsMetadata() {
 
   /*  Description:
    *    Query function. Selects and returns a Promised result for map titles.
@@ -350,7 +357,22 @@ async function selectMapTitles() {
 
   return await Maps.findAll({
 
-    attributes: ['title']
+    attributes: ['title', 'createdAt']
+
+  }).catch((err) => {
+
+    throw err;
+
+  });
+
+}
+
+async function selectMapMetadata(title) {
+
+  return await Maps.findOne({
+
+    attributes: ['title', 'createdAt'],
+    where: { title: title }
 
   }).catch((err) => {
 
@@ -433,7 +455,7 @@ async function insertNewMap(title, pinSet) {
 
     newPins = await Pins.bulkCreate(pinSet, { validate: true });
 
-    newPinIDs = newPins.map((e) => { return e.id; });
+    newPinIDs = newPins.map((e) => e.id);
   
     return newPinIDs;
     

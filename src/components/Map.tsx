@@ -77,7 +77,6 @@ class Map extends React.Component<MapProps> {
     loader.load().then(() => {
 
       const google      = window.google;
-      const mapEvent    = google.maps.event;
       const mapDOMNode  = (document.getElementById('map') as HTMLDivElement);
 
       try {
