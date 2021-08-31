@@ -16,7 +16,9 @@ import React from 'react';
  * ------------------------------------------
  */
 
-class TrashButton extends React.Component {
+type TrashProps = app.component.misc.trashButton.Props;
+
+class TrashButton extends React.Component<TrashProps> {
 
   /*  Description:
    *    Renders a trash button. Calls a handleTrash function on click.
@@ -35,7 +37,9 @@ class TrashButton extends React.Component {
 
 }
 
-class ConfirmText extends React.Component {
+type ConfirmProps = app.component.misc.confirmText.Props;
+
+class ConfirmText extends React.Component<ConfirmProps> {
 
   /*  Description:
    *    Renders a user confirmation prompt. Calls a confirmation or reset function, depending on click.

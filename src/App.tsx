@@ -55,16 +55,16 @@ import type { Pin } from 'MapAPI';
  * ------------------------------------------
  */
 
-type state = app.component.superApp.State;
+type State = app.component.rootApp.State;
 
-class App extends React.Component<{}, state> {
+class App extends React.Component<{}, State> {
 
   /*  Description:
    *    The main App component. Renders all sub-components directly related to App functionality. Handles logical interactions
    *    for updating the places list, sending HTTP requests to the server, and showing / closing modals.
    */
 
-  constructor(props: object) {
+  constructor(props: State) {
 
     super(props);
 

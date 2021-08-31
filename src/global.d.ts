@@ -2,9 +2,9 @@ declare module "*.png";
 
 declare namespace app {
 
-  declare namespace component {
+   namespace component {
 
-    declare namespace superApp { 
+    namespace rootApp {
 
       interface State {
 
@@ -15,7 +15,7 @@ declare namespace app {
 
     }
 
-    declare namespace importModal {
+    namespace importModal {
 
       interface Props {
 
@@ -33,7 +33,7 @@ declare namespace app {
       
       }
 
-      declare namespace entry {
+      namespace entry {
 
         interface Props {
 
@@ -47,13 +47,13 @@ declare namespace app {
 
     }
 
-    declare namespace saveModal {
+    namespace saveModal {
 
 
 
     }
 
-    declare namespace miniModal {
+    namespace miniModal {
 
       interface Props {
 
@@ -74,11 +74,55 @@ declare namespace app {
 
     }
 
+    namespace modalButtons {
+
+      interface SaveProps {
+
+        showSaveModal(placesList: Array<Pin>): void;
+        places: Array<Pin>;
+
+      }
+
+      interface ImportProps {
+
+        showImportModal(): void;
+
+      }
+
+      interface Props extends SaveProps, ImportProps {}
+
+    }
+
+    namespace misc {
+
+      namespace trashButton {
+
+        interface Props {
+
+          handleTrash(): void;
+
+        }
+
+      }
+
+      namespace confirmText {
+
+        interface Props {
+
+          confirm(): void;
+          reset(): void;
+
+        }
+
+      }
+
+    }
+
   }
 
   // - - - -
 
-  declare namespace dom {
+  namespace dom {
 
     interface HTMLGen {
 
@@ -95,7 +139,7 @@ declare namespace app {
 
   // - - - -
 
-  declare namespace map {
+  namespace map {
 
     interface POST {
 
@@ -132,7 +176,7 @@ declare namespace app {
 
   // - - - -
   
-  declare namespace pin {
+  namespace pin {
   
     interface InfoBox {
   

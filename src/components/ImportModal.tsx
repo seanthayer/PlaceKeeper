@@ -20,10 +20,10 @@ import MiniModal from 'components/MiniModal';
  * ------------------------------------------
  */
 
-type modalProps = app.component.importModal.Props;
-type modalState = app.component.importModal.State;
+type ModalProps = app.component.importModal.Props;
+type ModalState = app.component.importModal.State;
 
-class ImportModal extends React.Component<modalProps, modalState> {
+class ImportModal extends React.Component<ModalProps, ModalState> {
 
   /*  Description:
    *    Renders the import modal, generating entries from the server map list. Can call to delete or load a map from the server.
@@ -39,7 +39,7 @@ class ImportModal extends React.Component<modalProps, modalState> {
    *        ]
    */
   
-  constructor(props: modalProps) {
+  constructor(props: ModalProps) {
 
     super(props);
 
@@ -185,9 +185,9 @@ class ImportModal extends React.Component<modalProps, modalState> {
 
 }
 
-type entryProps = app.component.importModal.entry.Props;
+type EntryProps = app.component.importModal.entry.Props;
 
-class ImportEntry extends React.Component<entryProps> {
+class ImportEntry extends React.Component<EntryProps> {
 
   /*  Description:
    *    Renders an import entry. Calls to show entry info on click.

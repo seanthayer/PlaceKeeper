@@ -19,9 +19,9 @@ import { modalBaseStyles } from 'GlobalStyles';
  * ------------------------------------------
  */
 
-type modalProps = app.component.miniModal.Props;
+type ModalProps = app.component.miniModal.Props;
 
-class MiniModal extends React.Component<modalProps> {
+class MiniModal extends React.Component<ModalProps> {
 
   /*  Description:
    *    Renders a mini modal for small confirmation menus, etc. 
