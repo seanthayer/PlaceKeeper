@@ -55,14 +55,9 @@ import type { Pin } from 'MapAPI';
  * ------------------------------------------
  */
 
-interface AppState {
+type state = app.component.superApp.State;
 
-  modal  : ReactElement | null;
-  places : Array<Pin>;
-
-}
-
-class App extends React.Component<{}, AppState> {
+class App extends React.Component<{}, state> {
 
   /*  Description:
    *    The main App component. Renders all sub-components directly related to App functionality. Handles logical interactions
@@ -525,10 +520,11 @@ class App extends React.Component<{}, AppState> {
     let maps =
       await this.GETMaps().catch((err) => { 
 
-        return [];
+        return null;
 
       });
 
+    if (maps)
     this.setState({
 
       modal:

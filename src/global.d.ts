@@ -2,6 +2,55 @@ declare module "*.png";
 
 declare namespace app {
 
+  declare namespace component {
+
+    declare namespace superApp { 
+
+      interface State {
+
+        modal  : ReactElement | null;
+        places : Array<Pin>;
+      
+      }
+
+    }
+
+    declare namespace importModal {
+
+      interface Props {
+
+        closeModal(): void;
+        importMap(title: string): void;
+        removeMap(title: string): void;
+      
+        maps: Array<app.map.Metadata>;
+      
+      }
+
+      interface State {
+
+        submodal: ReactElement | null;
+      
+      }
+
+      declare namespace entry {
+
+        interface Props {
+
+          showEntryInfo(title: string): void;
+
+          title: string;
+
+        }
+      
+      }
+
+    }
+
+  }
+
+  // - - - -
+
   declare namespace dom {
 
     interface HTMLGen {

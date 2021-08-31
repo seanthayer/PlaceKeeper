@@ -299,12 +299,12 @@ class MapController {
    *    - mapDOMNode => The DOM node that holds the associated map embed.
    */
 
+  updateReact: (places: Array<Pin>) => void;
+
   mapEmbed: google.maps.Map;
 
   pinList: Array<Pin>;
   newPinForm: google.maps.InfoWindow | null;
-
-  updateReact: (places: Array<Pin>) => void;
 
   // - - - -
 

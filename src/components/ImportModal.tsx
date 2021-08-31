@@ -10,8 +10,8 @@
 import React   from 'react';
 import { css } from '@emotion/react';
 
-import { modalBaseStyles } from '../GlobalStyles';
-import MiniModal from './MiniModal';
+import { modalBaseStyles } from 'GlobalStyles';
+import MiniModal from 'components/MiniModal';
 
 /* ------------------------------------------
  *
@@ -20,7 +20,10 @@ import MiniModal from './MiniModal';
  * ------------------------------------------
  */
 
-class ImportModal extends React.Component {
+type modalProps = app.component.importModal.Props;
+type modalState = app.component.importModal.State;
+
+class ImportModal extends React.Component<modalProps, modalState> {
 
   /*  Description:
    *    Renders the import modal, generating entries from the server map list. Can call to delete or load a map from the server.
@@ -36,7 +39,7 @@ class ImportModal extends React.Component {
    *        ]
    */
   
-  constructor(props) {
+  constructor(props: modalProps) {
 
     super(props);
 
@@ -134,7 +137,7 @@ class ImportModal extends React.Component {
 
   }
 
-  confirmDelete(title) {
+  confirmDelete(title: string) {
 
     /*  Description:
      *    Prompts the user to confirm a delete action on a map. Uses the sub-modal.
@@ -157,7 +160,7 @@ class ImportModal extends React.Component {
 
   }
 
-  showEntryInfo(title) {
+  showEntryInfo(title: string) {
 
     /*  Description:
      *    Renders the sub-modal, listing the selected entry's title and three action buttons (Load, Delete, Close).
@@ -181,7 +184,9 @@ class ImportModal extends React.Component {
 
 }
 
-class ImportEntry extends React.Component {
+type entryProps = app.component.importModal.entry.Props;
+
+class ImportEntry extends React.Component<entryProps> {
 
   /*  Description:
    *    Renders an import entry. Calls to show entry info on click.
