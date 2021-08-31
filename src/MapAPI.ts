@@ -39,7 +39,7 @@ interface PinPrototype {
 
 }
 
-interface PinContext {
+interface PinData {
 
   name         : string;
   description? : string;
@@ -47,7 +47,7 @@ interface PinContext {
 
 }
 
-interface PinObject extends PinPrototype, PinContext {}
+interface PinObject extends PinPrototype, PinData {}
 
 /* ------------------------------------------
  *
@@ -108,7 +108,7 @@ class Pin implements PinObject {
 
   private _generateListener(): void {
 
-    const mapEvent     = window.mapEvent;
+    const mapEvent     = window.google.maps.event;
     this.clickListener = mapEvent.addListenerOnce(this.marker, 'click', this.showInfo);
     
   }
@@ -120,11 +120,11 @@ class Pin implements PinObject {
      *
      */
 
-    const mapEvent      = window.mapEvent;
+    const mapEvent      = window.google.maps.event;
     const mapController = window.mapController;
     const mapEmbed      = this.controller.mapEmbed;
 
-    let context: PinContext = {
+    let context: PinData = {
 
       name        : this.name,
       latLng      : this.latLng,
@@ -132,7 +132,7 @@ class Pin implements PinObject {
 
     }
 
-    let infoWindow = mapController.API.generateInfoBox({ pos: this.latLng, html: MapDOM.HTMLGen.PinInfo(context) });
+    let infoWindow = mapController.API.generateInfoBox({ pos: this.latLng, html: MapDOM.HTML.PinInfo(context) });
 
     if (infoWindow) {
 
@@ -144,8 +144,8 @@ class Pin implements PinObject {
 
         this.infoBox = {
 
-          window  : (infoWindow as google.maps.InfoWindow),
-          DOMNode : MapDOM.getElementByLatLng( (infoWindow as google.maps.InfoWindow).getPosition() )
+          window  : infoWindow!,
+          DOMNode : MapDOM.getElementByLatLng( (infoWindow!.getPosition() as google.maps.LatLng) )
 
         };
 
@@ -159,7 +159,7 @@ class Pin implements PinObject {
 
   private _handleInfoBox(infoBox: PinInfoBox): void {
 
-    const mapEvent = window.mapEvent;
+    const mapEvent = window.google.maps.event;
 
     let trashButton = <HTMLButtonElement> infoBox.DOMNode.querySelector(`.trash-button-container > button.trash-button`);
 
@@ -184,7 +184,7 @@ class Pin implements PinObject {
 
   private _confirmDelete(infoBox: PinInfoBox): void {
 
-    const mapEvent      = window.mapEvent;
+    const mapEvent      = window.google.maps.event;
     const mapController = window.mapController;
 
     let buttonContainer = <HTMLDivElement>    infoBox.DOMNode.querySelector(`.trash-button-container`);
@@ -196,7 +196,7 @@ class Pin implements PinObject {
 
     // Hide the trash button and prompt the user for confirmation.
     buttonContainer.removeChild(trashButton);
-    buttonContainer.insertAdjacentHTML('afterbegin', MapDOM.HTMLGen.ConfirmText());
+    buttonContainer.insertAdjacentHTML('afterbegin', MapDOM.HTML.ConfirmText());
 
     // Query select for listener interactions.
     confirmText = <HTMLElement> buttonContainer.querySelector('.are-you-sure');
@@ -214,7 +214,7 @@ class Pin implements PinObject {
     mapEvent.addDomListenerOnce(xButton, 'click', () => {
 
       buttonContainer.removeChild(confirmText);
-      buttonContainer.insertAdjacentHTML('afterbegin', MapDOM.HTMLGen.TrashButton());
+      buttonContainer.insertAdjacentHTML('afterbegin', MapDOM.HTML.TrashButton());
 
       // Reset the infobox by clearing listeners and calling the handler again.
       mapEvent.clearInstanceListeners(infoBox);
@@ -268,7 +268,6 @@ class MapController {
    */
 
   mapEmbed: google.maps.Map;
-  mapDOMNode: HTMLDivElement;
 
   pinList: Array<Pin>;
   newPinForm: google.maps.InfoWindow | null;
@@ -277,12 +276,11 @@ class MapController {
 
   // - - - -
 
-  constructor(mapEmbed: google.maps.Map, mapDOMNode: HTMLDivElement, updateReact: (places: Array<Pin>) => void) {
+  constructor(mapEmbed: google.maps.Map, updateReact: (places: Array<Pin>) => void) {
 
-    const mapEvent = window.mapEvent;
+    const mapEvent = window.google.maps.event;
 
     this.mapEmbed   = mapEmbed;
-    this.mapDOMNode = mapDOMNode;
     
     this.pinList    = [];
     this.newPinForm = null;
@@ -401,10 +399,10 @@ class MapController {
      */
 
     const google   = window.google;
-    const mapEvent = window.mapEvent;
+    const mapEvent = google.maps.event;
 
     let marker = this.API.generateMarker(this.mapEmbed, latLng);
-    let infoForm = this.API.generateInfoBox({ pos: latLng, html: MapDOM.HTMLGen.NewPinForm() });
+    let infoForm = this.API.generateInfoBox({ pos: latLng, html: MapDOM.HTML.NewPinForm({ latLng }) });
 
     if (marker && infoForm) {
 
@@ -416,11 +414,11 @@ class MapController {
 
         let pin: PinPrototype = {
   
-          marker  : (marker as google.maps.Marker),
+          marker  : marker!,
           infoBox : {
 
-            window  : (infoForm as google.maps.InfoWindow),
-            DOMNode : MapDOM.getElementByLatLng( (infoForm as google.maps.InfoWindow).getPosition() )
+            window  : infoForm!,
+            DOMNode : MapDOM.getElementByLatLng( (infoForm!.getPosition() as google.maps.LatLng) )
 
           },
           latLng  : latLng
@@ -434,20 +432,6 @@ class MapController {
     }
 
   }
-
-  // generateInfoBox(latLng: google.maps.LatLng, html: string | Node): google.maps.InfoWindow | null {
-
-  //   /*  Description:
-  //    *    Calls the Maps API to generate an infobox on the map embed at the given latLng and with the given HTML content.
-  //    *
-  //    *  Expects:
-  //    *    - latLng => An API latLng object denoting the coordinates to generate the infobox.
-  //    *    - html   => The HTML content to display within the infobox.
-  //    */
-
-
-
-  // }
 
   private _handleNewPinForm(pin: PinPrototype, infoBox: PinInfoBox): void {
 
@@ -463,7 +447,7 @@ class MapController {
      *        }
      */
 
-    const mapEvent = window.mapEvent;
+    const mapEvent = window.google.maps.event;
 
     let nameField    = <HTMLInputElement>    infoBox.DOMNode.querySelector('input.pin-infoform-name');
     let descField    = <HTMLTextAreaElement> infoBox.DOMNode.querySelector('textarea.pin-infoform-description');
@@ -568,11 +552,11 @@ class MapController {
 
     if ('createdAt' in pins[0]) {
 
-      pinObjs = this.parsePinPrimitives( (pins as Array<PinPrimitive>) );
+      pinObjs = this._parsePinPrimitives( (pins as Array<PinPrimitive>) );
       
     }
 
-    this.pinList = this.instancePinObjects(pinObjs || pins);
+    this.pinList = this._instancePinObjects(pinObjs || pins);
     
     this.updateReact(this.pinList);
 
@@ -601,7 +585,7 @@ class MapController {
 
   }
 
-  parsePinPrimitives(pins: Array<PinPrimitive>): Array<PinObject> {
+  private _parsePinPrimitives(pins: Array<PinPrimitive>): Array<PinObject> {
 
     let arr: Array<PinObject> = [];
 
@@ -634,7 +618,7 @@ class MapController {
 
   }
 
-  instancePinObjects(pins: Array<PinObject>): Array<Pin> {
+  private _instancePinObjects(pins: Array<PinObject>): Array<Pin> {
 
     let arr: Array<Pin> = [];
 
@@ -661,4 +645,4 @@ class MapController {
 
 export default MapController;
 
-export type { PinPrimitive, Pin };
+export type { PinPrimitive, PinData, Pin };

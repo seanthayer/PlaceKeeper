@@ -26,39 +26,10 @@ declare global {
 
   interface Window {
 
-    mapEvent      : MapEventHandler;
+    mapDOMNode    : HTMLDivElement;
     mapController : MapController;
 
   }
-
-}
-
-interface MapEventHandler {
-
-  // Ripped from @types/google.maps/index.d.ts, 'google.maps.event' methods
-
-  addDomListener(
-      instance: object, eventName: string, handler: Function,
-      capture?: boolean): google.maps.MapsEventListener;
-
-  addDomListenerOnce(
-      instance: object, eventName: string, handler: Function,
-      capture?: boolean): google.maps.MapsEventListener;
-
-  addListener(instance: object, eventName: string, handler: Function):
-      google.maps.MapsEventListener;
-
-  addListenerOnce(
-      instance: object, eventName: string,
-      handler: Function): google.maps.MapsEventListener;
-
-  clearInstanceListeners(instance: object): void;
-
-  clearListeners(instance: object, eventName: string): void;
-
-  removeListener(listener: google.maps.MapsEventListener): void;
-
-  trigger(instance: object, eventName: string, ...eventArgs: any[]): void;
 
 }
 
@@ -79,7 +50,6 @@ class Map extends React.Component<MapProps> {
    *
    *  Global vars generated and assigned here:
    *    - window.google
-   *    - window.mapEvent
    *    - window.mapController
    */
 
@@ -120,9 +90,7 @@ class Map extends React.Component<MapProps> {
       
         });
   
-        window.mapEvent = mapEvent;
-  
-        const mapController = new MapController(mapEmbed, mapDOMNode, this.props.updatePlaces);
+        const mapController = new MapController(mapEmbed, this.props.updatePlaces);
   
         window.mapController = mapController;
         

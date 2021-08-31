@@ -5,7 +5,8 @@
  * ------------------------------------------
  */
 
-import ReactDOMServer from 'react-dom/server';
+import * as React from 'react';
+import * as ReactDOMServer from 'react-dom/server';
 
 /* ------------------------------------------
  *
@@ -14,13 +15,30 @@ import ReactDOMServer from 'react-dom/server';
  * ------------------------------------------
  */
 
-function getElementByLatLng(latLng) {
+export const mapDOMNode = (document.getElementById('map') as HTMLDivElement);
 
-  return unknown;
+// - - - -
+
+export function getElementByLatLng(latLng: google.maps.LatLng): HTMLDivElement {
+
+  return (mapDOMNode.querySelector(`div [data-latlng="${latLng}"]`) as HTMLDivElement);
 
 }
 
-const HTMLGen = {
+// - - - -
+
+interface HTMLGen {
+
+  NewPinForm(context: { latLng: google.maps.LatLng | google.maps.LatLngLiteral }): string;
+
+  PinInfo(context: { latLng: google.maps.LatLng | google.maps.LatLngLiteral, name: string, description?: string }): string;
+
+  TrashButton(): string;
+  ConfirmText(): string;
+
+}
+
+export const HTML: HTMLGen = {
 
   NewPinForm(context) {
 
@@ -36,10 +54,10 @@ const HTMLGen = {
           <legend>Pin Details</legend>
   
           <label htmlFor="pin-infoform-name">Name:</label>
-          <input type="text" className="pin-infoform-name" name="name" maxLength="30" placeholder="Max 30 characters" /><br/><br/>
+          <input type="text" className="pin-infoform-name" name="name" maxLength={30} placeholder="Max 30 characters" /><br/><br/>
   
           <label htmlFor="pin-infoform-description">Description</label><br/>
-          <textarea className="pin-infoform-description" name="description" rows="4" cols="28" maxLength="200" placeholder="Max 200 characters"></textarea><br/>
+          <textarea className="pin-infoform-description" name="description" rows={4} cols={28} maxLength={200} placeholder="Max 200 characters"></textarea><br/>
   
           <div className="pin-infoform-buttons-container">
             <button type="button" name="cancel">Cancel</button>
@@ -78,7 +96,7 @@ const HTMLGen = {
   TrashButton() {
 
     return ReactDOMServer.renderToString(
-      <button type="button" name="trash-button" class="trash-button"><i class="far fa-trash-alt"></i></button>
+      <button type="button" name="trash-button" className="trash-button"><i className="far fa-trash-alt"></i></button>
     );
 
   },
@@ -86,7 +104,7 @@ const HTMLGen = {
   ConfirmText() {
 
     return ReactDOMServer.renderToString(
-      <div class="are-you-sure">Are you sure?<i class="fas fa-check-circle"></i><i class="fas fa-times-circle"></i></div>
+      <div className="are-you-sure">Are you sure?<i className="fas fa-check-circle"></i><i className="fas fa-times-circle"></i></div>
     );
 
   }
@@ -102,7 +120,8 @@ const HTMLGen = {
 
 export default {
 
-  getMapElement,
-  HTMLGen
+  mapDOMNode,
+  getElementByLatLng,
+  HTML
 
 };
