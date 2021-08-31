@@ -47,6 +47,33 @@ declare namespace app {
 
     }
 
+    declare namespace saveModal {
+
+
+
+    }
+
+    declare namespace miniModal {
+
+      interface Props {
+
+        actionPrimary(): void;
+        actionSecondary(): void;
+        actionTertiary: (() => void) | undefined;
+
+        content: {
+
+          message       : string;
+          confirmText   : string;
+          closeText     : string;
+          tertiaryText? : string;
+
+        }
+
+      }
+
+    }
+
   }
 
   // - - - -

@@ -10,7 +10,7 @@
 import React   from 'react';
 import { css } from '@emotion/react';
 
-import { modalBaseStyles } from '../GlobalStyles';
+import { modalBaseStyles } from 'GlobalStyles';
 
 /* ------------------------------------------
  *
@@ -19,7 +19,9 @@ import { modalBaseStyles } from '../GlobalStyles';
  * ------------------------------------------
  */
 
-class MiniModal extends React.Component {
+type modalProps = app.component.miniModal.Props;
+
+class MiniModal extends React.Component<modalProps> {
 
   /*  Description:
    *    Renders a mini modal for small confirmation menus, etc. 
@@ -131,14 +133,14 @@ class MiniModal extends React.Component {
      * -----------------------
      */
 
-    let message       = this.props.modalContent.message;
-    let confirmText   = this.props.modalContent.confirmText;
-    let closeText     = this.props.modalContent.closeText;
-    let tertiaryText  = this.props.modalContent.tertiaryText;
+    let message       = this.props.content.message;
+    let confirmText   = this.props.content.confirmText;
+    let closeText     = this.props.content.closeText;
+    let tertiaryText  = this.props.content.tertiaryText;
 
-    let confirmButton   = (confirmText  ? <button onClick={this.props.confirm} type="button" className="yes-button" css={yesButtonStyle}>{confirmText}</button>             : null);
-    let closeButton     = (closeText    ? <button onClick={this.props.close} type="button" className="no-button" css={noButtonStyle}>{closeText}</button>                   : null);
-    let tertiaryButton  = (tertiaryText ? <button onClick={this.props.tertiary} type="button" className="tertiary-button" css={tertiaryButtonStyle}>{tertiaryText}</button> : null);
+    let confirmButton   = (confirmText  ? <button onClick={this.props.actionPrimary} type="button" className="yes-button" css={yesButtonStyle}>{confirmText}</button>             : null);
+    let closeButton     = (closeText    ? <button onClick={this.props.actionSecondary} type="button" className="no-button" css={noButtonStyle}>{closeText}</button>                   : null);
+    let tertiaryButton  = (tertiaryText ? <button onClick={this.props.actionTertiary} type="button" className="tertiary-button" css={tertiaryButtonStyle}>{tertiaryText}</button> : null);
 
     return (
       <div className="modal-backdrop confirm-modal" css={modalBaseStyles.modalBackdrop}>

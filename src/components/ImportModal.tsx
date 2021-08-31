@@ -151,9 +151,10 @@ class ImportModal extends React.Component<modalProps, modalState> {
 
       submodal:
         <MiniModal 
-          modalContent = {modalContent}
-          confirm      = { () => {this.props.removeMap(title)} }
-          close        = {this.closeSubModal}
+          content         = {modalContent}
+          actionPrimary   = { () => {this.props.removeMap(title)} }
+          actionSecondary = {this.closeSubModal}
+          actionTertiary  = {undefined}
         />
 
     });
@@ -172,10 +173,10 @@ class ImportModal extends React.Component<modalProps, modalState> {
 
       submodal:
         <MiniModal 
-          modalContent = {modalContent}
-          confirm      = { () => {this.props.importMap(title)} }
-          close        = { () => {this.confirmDelete(title)} }
-          tertiary     = {this.closeSubModal}
+          content         = {modalContent}
+          actionPrimary   = { () => {this.props.importMap(title)} }
+          actionSecondary = { () => {this.confirmDelete(title)} }
+          actionTertiary  = {this.closeSubModal}
         /> 
 
     });
