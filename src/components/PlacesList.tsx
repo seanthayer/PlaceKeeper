@@ -7,11 +7,12 @@
  * ------------------------------------------
  */
 
-import React   from 'react';
-import { css } from '@emotion/react';
+import React from 'react';
 
-import { TrashButton, ConfirmText } from './Misc';
-import app from 'global';
+import * as Styles from 'styles/components/PlacesList.styles';
+
+import TrashButton from 'components/misc/TrashButton';
+import ConfirmText from 'components/misc/ConfirmText';
 
 /* ------------------------------------------
  *
@@ -45,56 +46,13 @@ class PlacesList extends React.Component<ListProps> {
 
   render() {
 
-    /* -----------------------
-     *    COMPONENT STYLES
-     * -----------------------
-     */
-
-    const titleStyle = css`
-    
-      margin: 0;
-      margin-top: 5px;
-      padding: 5px 5px 0px 5px;
-      border: 1px solid black;
-      border-radius: 5px 5px 0 0;
-      background: white;
-      font-family: 'Roboto';
-      font-weight: 500;
-    
-    `;
-
-    const listStyle = css`
-    
-      max-height: 652px;
-      height: 652px;
-      border: 1px solid black;
-      border-top: 0;
-      border-radius: 0 0 5px 5px;
-      background: dimgrey;
-      overflow: auto;
-    
-    `;
-
-    const elementStyle = css`
-    
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    
-    `;
-
-    /* -----------------------
-     *       HTML CONTENT
-     * -----------------------
-     */
-
     return (
       <div className="saved-places-list-parent">
 
-        <h5 className="saved-places-list-title" css={titleStyle}>Saved Places</h5>
+        <h5 className="saved-places-list-title" css={Styles.title}>Saved Places</h5>
 
-        <div className="saved-places-list-container" css={listStyle}>
-          <ul className="saved-places-list-element" css={elementStyle}>
+        <div className="saved-places-list-container" css={Styles.list}>
+          <ul className="saved-places-list-element" css={Styles.element}>
 
             {this.props.places.map(place =>
               <SavedPlace
@@ -154,7 +112,6 @@ class SavedPlace extends React.Component<placeProps, placeState> {
 
     super(props);
 
-    // Member functions
     this.panTo        = this.panTo.bind(this);
     this.handleTrash  = this.handleTrash.bind(this);
     this.confirmTrash = this.confirmTrash.bind(this);
@@ -166,51 +123,6 @@ class SavedPlace extends React.Component<placeProps, placeState> {
 
   render() {
 
-    /* -----------------------
-     *    COMPONENT STYLES
-     * -----------------------
-     */
-
-    const entryStyle = css`
-    
-      margin: 10px 15px 10px 15px;
-      padding: 10px;
-      border: 1px solid black;
-      border-radius: 5px;
-      background: white;
-
-    `;
-
-    const titleStyle = css`
-    
-      margin: 0;
-      font-size: 14px;
-    
-    `;
-
-    const latLngStyle = css`
-    
-      padding: 0;
-      border: 0;
-      background: none;
-      color: cornflowerblue;
-      font-size: 8px;
-
-      &:hover {
-        text-decoration: underline;
-      }
-
-      &:active {
-        color: aqua;
-      }
-    
-    `;
-
-    /* -----------------------
-     *       HTML CONTENT
-     * -----------------------
-     */
-
     let description = null;
     
     if (this.props.description)
@@ -218,10 +130,10 @@ class SavedPlace extends React.Component<placeProps, placeState> {
 
     return(
       <li>
-        <div className="saved-place-entry" css={entryStyle} data-name={this.props.name} data-description={description} data-latlng={this.props.latLng}>
+        <div className="saved-place-entry" css={Styles.placeEntry} data-name={this.props.name} data-description={description} data-latlng={this.props.latLng}>
 
-          <h5 className="saved-place-entry-title" css={titleStyle}>{this.props.name}</h5>
-          <button onClick={this.panTo} type="button" name="saved-place-entry-latLng" className="saved-place-entry-latLng" css={latLngStyle}>({this.props.latLng.lat()}, {this.props.latLng.lng()})</button>
+          <h5 className="saved-place-entry-title" css={Styles.placeTitle}>{this.props.name}</h5>
+          <button onClick={this.panTo} type="button" name="saved-place-entry-latLng" className="saved-place-entry-latLng" css={Styles.placeLatLng}>({this.props.latLng.lat()}, {this.props.latLng.lng()})</button>
 
           <div className="trash-button-container">
             

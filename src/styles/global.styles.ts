@@ -56,7 +56,7 @@ const modalPos = css`
 
 `;
 
-const modalBaseStyles = {
+const modalBase = {
 
   modalBackdrop: css`
 
@@ -127,4 +127,4 @@ const modalBaseStyles = {
   `
 }
 
-export { globalStyles, modalBaseStyles };
+export { globalStyles, modalBase };

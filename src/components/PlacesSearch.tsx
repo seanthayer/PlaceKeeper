@@ -7,8 +7,9 @@
  * ------------------------------------------
  */
 
-import React   from 'react';
-import { css } from '@emotion/react';
+import React from 'react';
+
+import * as Styles from 'styles/components/PlacesSearch.styles';
 
 /* ------------------------------------------
  *
@@ -27,41 +28,15 @@ class PlacesSearch extends React.Component {
 
   render() {
 
-    /* -----------------------
-     *    COMPONENT STYLES
-     * -----------------------
-     */
-
-    const containerStyle = css`
-    
-      display: flex;
-      padding: 5px 3px 5px 3px;
-      border: 1px solid black;
-      border-radius: 5px;
-      background: dimgrey;
-    
-    `;
-
-    const elementStyle = css`
-    
-      margin: 2px;
-    
-    `;
-
-    /* -----------------------
-     *       HTML CONTENT
-     * -----------------------
-     */
-
     return (
-      <div className="search-bar-container" css={containerStyle}>
-        <div className="search-bar-element" css={elementStyle}>
+      <div className="search-bar-container" css={Styles.container}>
+        <div className="search-bar-element" css={Styles.element}>
 
           <input type="text" name="filter-text" className="search-bar-input" />
 
         </div>
 
-        <button className="search-bar-button" css={elementStyle}>Search</button>
+        <button className="search-bar-button" css={Styles.element}>Search</button>
 
       </div>
     );

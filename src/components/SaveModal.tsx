@@ -7,10 +7,11 @@
  * ------------------------------------------
  */
 
-import React   from 'react';
-import { css } from '@emotion/react';
+import React from 'react';
 
-import { modalBaseStyles } from '../GlobalStyles';
+import { modalBase } from 'styles/global.styles';
+import * as Styles   from 'styles/components/SaveModal.styles';
+
 import MiniModal from './MiniModal';
 
 import type { Pin } from 'MapAPI';
@@ -59,88 +60,11 @@ class SaveModal extends React.Component<ModalProps, ModalState> {
 
   render() {
 
-    /* -----------------------
-     *    COMPONENT STYLES
-     * -----------------------
-     */
-
-    const bodyStyle = css`
-    
-      display: flex;
-      justify-content: center;
-      margin-bottom: 10px;
-      max-height: 400px;
-    
-    `;
-
-    const inputStyle = css`
-    
-      display: flex;
-    
-    `;
-    
-    const inputPromptStyle = css`
-    
-      margin-left: 40px;
-      font-size: 22px;
-    
-    `;
-
-    const inputEleStyle = css`
-    
-      margin-top: 18px;
-      margin-left: 5px;
-    
-    `;
-
-    const saveButtonStyle = css`
-    
-      width: 150px;
-      border: 0px;
-      color: white;
-      background-color: rgb(0,135,189);
-    
-    `;
-
-    const tableStyle = css`
-    
-      flex: none;
-    
-    `;
-
-    const tableHeaderStyle = css`
-    
-      background-color: gray;
-      color: white;
-      font-weight: 100;
-      font-size: 14px;
-
-      th {
-        width: 186px;
-      }
-    
-    `;
-
-    const tableContentStyles = css`
-    
-      table, th, td {
-        text-align: center;
-        border: 2px solid black;
-        padding: 10px;
-      }
-    
-    `;
-
-    /* -----------------------
-     *       HTML CONTENT
-     * -----------------------
-     */
-
     let submodal = this.state.submodal;
 
     return (
-      <div className="modal-backdrop save-modal" css={modalBaseStyles.modalBackdrop}>
-        <div className="modal-container save-modal" css={modalBaseStyles.modalContainer}>
+      <div className="modal-backdrop save-modal" css={modalBase.modalBackdrop}>
+        <div className="modal-container save-modal" css={modalBase.modalContainer}>
 
           <div className="modal-header">
 
@@ -149,11 +73,11 @@ class SaveModal extends React.Component<ModalProps, ModalState> {
 
           </div>
 
-          <div className="modal-input-container" css={inputStyle}>
-            <h1 className="modal-input-text" css={inputPromptStyle}>Map Name:</h1>
+          <div className="modal-input-container" css={Styles.input}>
+            <h1 className="modal-input-text" css={Styles.inputPrompt}>Map Name:</h1>
 
             <div className="modal-input-element">
-              <input onChange={this.handleInput} type="text" className="modal-input" css={inputEleStyle} maxLength={25} placeholder="Max 25 characters" />
+              <input onChange={this.handleInput} type="text" className="modal-input" css={Styles.inputElement} maxLength={25} placeholder="Max 25 characters" />
             </div>
 
           </div>
@@ -162,12 +86,12 @@ class SaveModal extends React.Component<ModalProps, ModalState> {
             <p>You're about to save the following locations:</p>
           </div>
 
-          <div className="modal-body save-modal" css={bodyStyle}>
+          <div className="modal-body save-modal" css={Styles.body}>
 
-            <table className="modal-table" css={[tableStyle, tableContentStyles]}>
+            <table className="modal-table" css={[Styles.table, Styles.tableContent]}>
               <tbody>
 
-                <tr className="modal-table-header" css={tableHeaderStyle}>
+                <tr className="modal-table-header" css={Styles.tableHeader}>
                   <th className="table-header-name">Pin Name</th>
                   <th className="table-header-latitude">Latitude</th>
                   <th className="table-header-longitude">Longitude</th>
@@ -189,7 +113,7 @@ class SaveModal extends React.Component<ModalProps, ModalState> {
 
           <div className="modal-footer">
 
-            <button onClick={this.handleSave} type="button" className="modal-save-button action-button" css={saveButtonStyle}>Save</button>
+            <button onClick={this.handleSave} type="button" className="modal-save-button action-button" css={Styles.saveButton}>Save</button>
             <button onClick={this.props.closeModal} type="button" className="modal-close-button action-button">Close</button>
 
           </div>
@@ -320,15 +244,8 @@ class TableRow extends React.Component<RowProps> {
 
   render() {
 
-    const rowStyle = css`
-    
-      background-color: rgb(208, 208, 208);
-      color: black;
-    
-    `;
-
     return (
-      <tr className="modal-table-row" css={rowStyle} data-name={this.props.name} data-description={this.props.description} data-latlng={this.props.latLng}>
+      <tr className="modal-table-row" css={Styles.tableRow} data-name={this.props.name} data-description={this.props.description} data-latlng={this.props.latLng}>
 
         <td className="table-row-name">{this.props.name}</td>
         <td className="table-row-latitude">{this.props.latLng.lat()}</td>

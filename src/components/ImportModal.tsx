@@ -7,10 +7,11 @@
  * ------------------------------------------
  */
 
-import React   from 'react';
-import { css } from '@emotion/react';
+import React from 'react';
 
-import { modalBaseStyles } from 'GlobalStyles';
+import { modalBase } from 'styles/global.styles';
+import * as Styles   from 'styles/components/ImportModal.styles';
+
 import MiniModal from 'components/MiniModal';
 
 /* ------------------------------------------
@@ -54,35 +55,11 @@ class ImportModal extends React.Component<ModalProps, ModalState> {
 
   render() {
 
-    /* -----------------------
-     *    COMPONENT STYLES
-     * -----------------------
-     */
-
-    const bodyStyle = css`
-    
-      overflow-x: auto;
-      margin: 0px 20px 16px 20px;
-    
-    `;
-
-    const directoryStyle = css`
-    
-      height: 300px;
-      border: 1px solid black;
-    
-    `;
-
-    /* -----------------------
-     *       HTML CONTENT
-     * -----------------------
-     */
-
     let submodal = this.state.submodal;
 
     return (
-      <div className="modal-backdrop import-modal" css={modalBaseStyles.modalBackdrop}>
-        <div className="modal-container import-modal" css={modalBaseStyles.modalContainer}>
+      <div className="modal-backdrop import-modal" css={modalBase.modalBackdrop}>
+        <div className="modal-container import-modal" css={modalBase.modalContainer}>
 
           <div className="modal-header">
 
@@ -95,8 +72,8 @@ class ImportModal extends React.Component<ModalProps, ModalState> {
             <p>Available Maps:</p>
           </div>
 
-          <div className="modal-body import-modal" css={bodyStyle}>
-            <div className="modal-directory-container" css={directoryStyle}>
+          <div className="modal-body import-modal" css={Styles.body}>
+            <div className="modal-directory-container" css={Styles.directory}>
 
             {this.props.maps.map(map => 
               <ImportEntry
@@ -199,48 +176,10 @@ class ImportEntry extends React.Component<EntryProps> {
 
   render() {
 
-    /* -----------------------
-     *    COMPONENT STYLES
-     * -----------------------
-     */
-
-    const entryStyle = css`
-    
-      display: inline-block;
-      margin: 8px;
-      border: 1px solid black;
-      padding: 10px;
-
-      &:hover .fas.fa-file {
-        color: lightgreen;
-      }
-    
-    `;
-
-    const fileIconStyle = css`
-    
-      color: green;
-    
-    `;
-
-    const fileTitleStyle = css`
-    
-      display: inline;
-      margin-left: 8px;
-      cursor: default;
-      user-select: none;
-    
-    `;
-
-    /* -----------------------
-     *       HTML CONTENT
-     * -----------------------
-     */
-
     return (
-      <div onClick={ () => {this.props.showEntryInfo(this.props.title)} } className="map-directory-entry-container" css={entryStyle}>
+      <div onClick={ () => {this.props.showEntryInfo(this.props.title)} } className="map-directory-entry-container" css={Styles.entry}>
 
-        <i className="fas fa-file" css={fileIconStyle}></i><h4 className="file-title" css={fileTitleStyle}>{this.props.title}</h4> 
+        <i className="fas fa-file" css={Styles.entryFileIcon}></i><h4 className="file-title" css={Styles.entryFileTitle}>{this.props.title}</h4> 
 
       </div>
     );

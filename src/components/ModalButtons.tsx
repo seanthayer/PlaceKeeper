@@ -7,8 +7,9 @@
  * ------------------------------------------
  */
 
-import React   from 'react';
-import { css } from '@emotion/react';
+import React from 'react';
+
+import * as Styles from 'styles/components/ModalButtons.styles';
 
 /* ------------------------------------------
  *
@@ -36,16 +37,8 @@ class ModalButtons extends React.Component<ButtonsProps> {
 
   render() {
 
-    const buttonsStyle = css`
-    
-      display: flex;
-      justify-content: space-between;
-      margin: 35px;
-
-    `;
-
     return (
-      <div className="import-and-save-buttons-container" css={buttonsStyle}>
+      <div className="import-and-save-buttons-container" css={Styles.buttons}>
 
         <ImportButton
           showImportModal = {this.props.showImportModal}

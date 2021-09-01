@@ -1,11 +1,25 @@
+/* ------------------------------------------
+ *
+ *                  IMPORT
+ * 
+ * ------------------------------------------
+ */
+
 import type { Pin } from 'MapAPI';
+
+/* ------------------------------------------
+ *
+ *                DECLARATIONS
+ * 
+ * ------------------------------------------
+ */
 
 export = app;
 export as namespace app;
 
 declare namespace app {
 
-  module "*.png";
+  declare module "*.png";
 
    namespace component {
 

@@ -16,9 +16,10 @@ import PlacesSearch from 'components/PlacesSearch';
 import SaveModal    from 'components/SaveModal';
 import ImportModal  from 'components/ImportModal';
 
-import { globalStyles } from 'GlobalStyles';
+import { globalStyles } from 'styles/global.styles';
 
-import { Global, css } from '@emotion/react';
+import { Global }  from '@emotion/react';
+import * as Styles from 'styles/App.styles';
 
 import background from 'img/background_header-bg.png';
 import header     from 'img/thumbnail_placekeeper-header-icon.png';
@@ -70,7 +71,6 @@ class App extends React.Component<{}, State> {
 
     this.state = { modal: null, places: [] };
 
-    // Member functions
     this.updatePlaces     = this.updatePlaces.bind(this);
     this.importMap        = this.importMap.bind(this);
     this.saveMap          = this.saveMap.bind(this);
@@ -87,71 +87,6 @@ class App extends React.Component<{}, State> {
 
   render() {
 
-    /* -----------------------
-     *    COMPONENT STYLES
-     * -----------------------
-     */
-
-    const titleStyle = css`
-
-      display: inline-block;
-      font-family: 'Roboto Slab';
-      font-size: 56px;
-      margin: 47px 20px 49px 25px;
-      border: 1px solid black;
-      border-radius: 10px;
-      padding: 0 10px 0 10px;
-      background: white;
-    
-    `;
-
-    const imgSize = css`
-    
-      height: 160px;
-      width: 180px;
-    
-    `;
-
-    const imgContStyle = css`
-
-      ${imgSize};
-      display: flex;
-      margin: 5px 25px 5px 25px;
-      border: 1px solid black;
-      border-radius: 10px;
-      background: white;
-    
-    `;
-
-    const contentContStyle = css`
-    
-      display: flex;
-      justify-content: space-between;
-    
-    `;
-
-    const mapAndButtonsContStyle = css`
-    
-      display: flex;
-      flex-direction: column;
-      flex: 1 1;
-      min-width: 484px;
-      margin-right: 10px;
-    
-    `;
-
-    const savedPlacesContStyle = css`
-    
-      flex: 0 0;
-      margin-left: 10px;
-    
-    `;
-
-    /* -----------------------
-     *       HTML CONTENT
-     * -----------------------
-     */
-
     let modal = this.state.modal;
 
     return (
@@ -161,17 +96,17 @@ class App extends React.Component<{}, State> {
 
         <header className="PK-header" style={{ backgroundImage: `url(${background})` }}>
 
-          <h1 className="site-title" css={titleStyle}>PlaceKeeper</h1>
+          <h1 className="site-title" css={Styles.title}>PlaceKeeper</h1>
 
-          <div className="header-image-container" css={imgContStyle}><img className="header-image" css={imgSize} src={ `${header}` } alt="PlaceKeeper"/></div>
+          <div className="header-image-container" css={Styles.imgContainer}><img className="header-image" css={Styles.imgSize} src={ `${header}` } alt="PlaceKeeper"/></div>
 
         </header>
   
         <main>
 
-          <div className="content-container" css={contentContStyle}>
+          <div className="content-container" css={Styles.contentContainer}>
 
-            <section className="map-and-buttons-container" css={mapAndButtonsContStyle}>
+            <section className="map-and-buttons-container" css={Styles.mapAndButtonsContainer}>
 
               <Map
                 updatePlaces = {this.updatePlaces}
@@ -185,7 +120,7 @@ class App extends React.Component<{}, State> {
 
             </section>
 
-            <section className="saved-places-container" css={savedPlacesContStyle}>
+            <section className="saved-places-container" css={Styles.savedPlacesContainer}>
 
               <PlacesSearch />
 
