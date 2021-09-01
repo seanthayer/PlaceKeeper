@@ -11,6 +11,7 @@ import React   from 'react';
 import { css } from '@emotion/react';
 
 import { TrashButton, ConfirmText } from './Misc';
+import app from 'global';
 
 /* ------------------------------------------
  *
@@ -19,7 +20,9 @@ import { TrashButton, ConfirmText } from './Misc';
  * ------------------------------------------
  */
 
-class PlacesList extends React.Component {
+type ListProps = app.component.placesList.Props;
+
+class PlacesList extends React.Component<ListProps> {
 
   /*  Description:
    *    Renders the saved places list using SavedPlace sub-components. Can handle removal of a pin from within the list via the
@@ -33,7 +36,7 @@ class PlacesList extends React.Component {
    *        ]
    */
   
-  constructor(props) {
+  constructor(props: ListProps) {
 
     super(props);
     this.removePlace = this.removePlace.bind(this);
@@ -95,7 +98,7 @@ class PlacesList extends React.Component {
 
             {this.props.places.map(place =>
               <SavedPlace
-                key         = {place.latLng}
+                key         = {(place.latLng as any)}
                 name        = {place.name}
                 description = {place.description}
                 latLng      = {place.latLng}
@@ -111,7 +114,7 @@ class PlacesList extends React.Component {
 
   }
 
-  removePlace(placeLatLng) {
+  removePlace(latLng: google.maps.LatLng) {
 
     /*  Description:
      *    Removes a pin from the map using the given latLng.
@@ -121,7 +124,7 @@ class PlacesList extends React.Component {
 
     let pList         = Array.from(this.props.places);
     let pListLatLngs  = pList.map(place => place.latLng);
-    let i             = pListLatLngs.indexOf(placeLatLng);
+    let i             = pListLatLngs.indexOf(latLng);
 
     let pin = pList[i];
 
@@ -131,7 +134,10 @@ class PlacesList extends React.Component {
 
 }
 
-class SavedPlace extends React.Component {
+type placeProps = app.component.placesList.place.Props;
+type placeState = app.component.placesList.place.State;
+
+class SavedPlace extends React.Component<placeProps, placeState> {
 
   /*  Description:
    *    Renders a saved place list item, representing the information of a pin on the current map. Can handle panning
@@ -144,20 +150,17 @@ class SavedPlace extends React.Component {
    *    - latLng      => The entry's latitude and longitude on the map embed.
    */
 
-  constructor(props) {
+  constructor(props: placeProps) {
 
     super(props);
 
-    this.state = { contents: null };
+    this.state = { contents: <TrashButton handleTrash={this.handleTrash}/> };
 
     // Member functions
     this.panTo        = this.panTo.bind(this);
     this.handleTrash  = this.handleTrash.bind(this);
     this.confirmTrash = this.confirmTrash.bind(this);
     this.resetTrash   = this.resetTrash.bind(this);
-
-    // After the handleTrash member function is bound, render the TrashButton with the functionality.
-    this.state.contents = <TrashButton handleTrash={this.handleTrash}/>
 
   }
 
@@ -215,7 +218,7 @@ class SavedPlace extends React.Component {
 
     return(
       <li>
-        <div className="saved-place-entry" css={entryStyle} name={this.props.name} data-description={description} data-latlng={this.props.latLng}>
+        <div className="saved-place-entry" css={entryStyle} data-name={this.props.name} data-description={description} data-latlng={this.props.latLng}>
 
           <h5 className="saved-place-entry-title" css={titleStyle}>{this.props.name}</h5>
           <button onClick={this.panTo} type="button" name="saved-place-entry-latLng" className="saved-place-entry-latLng" css={latLngStyle}>({this.props.latLng.lat()}, {this.props.latLng.lng()})</button>

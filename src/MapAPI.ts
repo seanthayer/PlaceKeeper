@@ -98,7 +98,7 @@ const MapAPI: app.map.API = {
  * ------------------------------------------
  */
 
-class Pin implements app.pin.Object {
+class Pin {
 
   /*  Description:
    *    The standard Pin class. Generated and used to represent every pin on the map embed. Each pin has member functions that
@@ -309,7 +309,7 @@ class MapController {
   // - - - -
 
   constructor(mapEmbed: google.maps.Map, updateReact: (places: Array<Pin>) => void) {
-
+    
     const mapEvent = window.google.maps.event;
 
     this.mapEmbed   = mapEmbed;

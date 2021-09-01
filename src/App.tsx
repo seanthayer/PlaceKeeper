@@ -7,7 +7,7 @@
  * ------------------------------------------
  */
 
-import React, { ReactElement } from 'react';
+import React from 'react';
 
 import Map          from 'components/Map';
 import ModalButtons from 'components/ModalButtons';

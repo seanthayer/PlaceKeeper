@@ -1,6 +1,11 @@
-declare module "*.png";
+import type { Pin } from 'MapAPI';
+
+export = app;
+export as namespace app;
 
 declare namespace app {
+
+  module "*.png";
 
    namespace component {
 
@@ -8,8 +13,8 @@ declare namespace app {
 
       interface State {
 
-        modal  : ReactElement | null;
-        places : Array<Pin>;
+        modal: ReactElement | null;
+        places: Array<Pin>;
       
       }
 
@@ -18,12 +23,12 @@ declare namespace app {
     namespace importModal {
 
       interface Props {
+      
+        maps: Array<app.map.Metadata>;
 
         closeModal(): void;
         importMap(title: string): void;
         removeMap(title: string): void;
-      
-        maps: Array<app.map.Metadata>;
       
       }
 
@@ -37,9 +42,9 @@ declare namespace app {
 
         interface Props {
 
-          showEntryInfo(title: string): void;
-
           title: string;
+
+          showEntryInfo(title: string): void;
 
         }
       
@@ -49,17 +54,34 @@ declare namespace app {
 
     namespace saveModal {
 
+      interface Props {
+      
+        places : Array<Pin>;
 
+        closeModal(): void;
+        GETMaps(): Promise<Array<app.map.Metadata>>;
+        saveMap(title: string, places: Array<Pin>): void;
+      
+      }
+
+      interface State {
+
+        mapName: string | null;
+        submodal: ReactElement | null;
+      
+      }
+
+      namespace row {
+
+        interface Props extends app.pin.Data {}
+
+      }
 
     }
 
     namespace miniModal {
 
       interface Props {
-
-        actionPrimary(): void;
-        actionSecondary(): void;
-        actionTertiary: (() => void) | undefined;
 
         content: {
 
@@ -70,6 +92,10 @@ declare namespace app {
 
         }
 
+        actionPrimary(): void;
+        actionSecondary(): void;
+        actionTertiary: (() => void) | undefined;
+
       }
 
     }
@@ -78,8 +104,8 @@ declare namespace app {
 
       interface SaveProps {
 
-        showSaveModal(placesList: Array<Pin>): void;
         places: Array<Pin>;
+        showSaveModal(placesList: Array<Pin>): void;
 
       }
 
@@ -90,6 +116,38 @@ declare namespace app {
       }
 
       interface Props extends SaveProps, ImportProps {}
+
+    }
+
+    namespace placesList {
+
+      interface Props {
+
+        places: Array<Pin>;
+
+      }
+
+      namespace place {
+
+        interface Props extends app.pin.Data {
+
+          removePlace(latLng: google.maps.LatLng): void;
+
+        }
+
+        interface State {
+
+          contents: ReactElement | null;
+
+        }
+
+      }
+
+    }
+
+    namespace placesSearch {
+
+      // Component not implemented.
 
     }
 
@@ -143,8 +201,8 @@ declare namespace app {
 
     interface POST {
 
-      title : string;
-      pins  : Array<app.pin.POST>;
+      title: string;
+      pins: Array<app.pin.POST>;
 
     }
 
@@ -180,17 +238,17 @@ declare namespace app {
   
     interface InfoBox {
   
-      window   : google.maps.InfoWindow;
-      DOMNode  : HTMLDivElement;
+      window  : google.maps.InfoWindow;
+      DOMNode : HTMLDivElement;
     
     }
     
     interface Primitive {
     
-      name          : string;
-      description   : string | null;
-      lat           : string | number;
-      lng           : string | number;
+      name        : string;
+      description : string | null;
+      lat         : string | number;
+      lng         : string | number;
     
     }
     
@@ -208,9 +266,9 @@ declare namespace app {
     
     interface Prototype {
     
-      marker: google.maps.Marker;
-      infoBox: pin.InfoBox | null;
-      latLng: google.maps.LatLng;
+      marker  : google.maps.Marker;
+      infoBox : app.pin.InfoBox | null;
+      latLng  : google.maps.LatLng;
     
     }
     

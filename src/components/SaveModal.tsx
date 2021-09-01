@@ -13,6 +13,9 @@ import { css } from '@emotion/react';
 import { modalBaseStyles } from '../GlobalStyles';
 import MiniModal from './MiniModal';
 
+import type { Pin } from 'MapAPI';
+import type { ChangeEvent } from 'react';
+
 /* ------------------------------------------
  *
  *               SAVE MODAL
@@ -20,7 +23,10 @@ import MiniModal from './MiniModal';
  * ------------------------------------------
  */
 
-class SaveModal extends React.Component {
+type ModalProps = app.component.saveModal.Props;
+type ModalState = app.component.saveModal.State;
+
+class SaveModal extends React.Component<ModalProps, ModalState> {
 
   /*  Description:
    *    Renders the save modal using information from the places list to populate TableRow sub-components. Can handle consolidating input
@@ -37,7 +43,7 @@ class SaveModal extends React.Component {
    *        ]
    */
 
-  constructor(props) {
+  constructor(props: ModalProps) {
 
     super(props);
 
@@ -147,7 +153,7 @@ class SaveModal extends React.Component {
             <h1 className="modal-input-text" css={inputPromptStyle}>Map Name:</h1>
 
             <div className="modal-input-element">
-              <input onChange={this.handleInput} type="text" className="modal-input" css={inputEleStyle} maxLength="25" placeholder="Max 25 characters" />
+              <input onChange={this.handleInput} type="text" className="modal-input" css={inputEleStyle} maxLength={25} placeholder="Max 25 characters" />
             </div>
 
           </div>
@@ -169,7 +175,7 @@ class SaveModal extends React.Component {
 
                 {this.props.places.map(place => 
                   <TableRow
-                    key         = {place.latLng}
+                    key         = {(place.latLng as any)}
                     name        = {place.name}
                     description = {place.description}
                     latLng      = {place.latLng}
@@ -210,7 +216,7 @@ class SaveModal extends React.Component {
 
   }
 
-  handleInput(event) {
+  handleInput(event: ChangeEvent<HTMLInputElement>) {
 
     /*  Description:
      *    Records the map name inputted by the user.
@@ -230,11 +236,12 @@ class SaveModal extends React.Component {
      *    Consolidate map and pin information to save on the server.
      */
 
-    let formattedTitle  = this.state.mapName.trim().replace(/\s+/g, ' ');
+    let formattedTitle  = this.state.mapName!.trim().replace(/\s+/g, ' ');
 
-    let modalContent  = { message: null, confirmText: null, closeText: null };
-    let numOfPins     = this.props.places.length;
-    let mapTitles     = [];
+    let modalContent;
+
+    let numOfPins = this.props.places.length;
+    let mapTitles = [];
 
     if (numOfPins) {
 
@@ -256,10 +263,11 @@ class SaveModal extends React.Component {
           this.setState({
 
             submodal: 
-              <MiniModal 
-                modalContent = {modalContent}
-                confirm      = { () => {this.writeMap(formattedTitle, this.props.places)} }
-                close        = {this.closeSubModal}
+              <MiniModal
+              content         = {modalContent}
+              actionPrimary   = { () => {this.writeMap(formattedTitle, this.props.places)} }
+              actionSecondary = {this.closeSubModal}
+              actionTertiary  = {undefined}
               /> 
             
           });
@@ -284,7 +292,7 @@ class SaveModal extends React.Component {
 
   }
 
-  writeMap(title, places) {
+  writeMap(title:string , places: Array<Pin>) {
 
     /*  Description:
      *    Calls to save the map with title and places, then calls to close the modal.
@@ -297,7 +305,9 @@ class SaveModal extends React.Component {
 
 }
 
-class TableRow extends React.Component {
+type RowProps = app.component.saveModal.row.Props;
+
+class TableRow extends React.Component<RowProps> {
 
   /*  Description:
    *    Renders a table row with the specified name, description, and latitude & longitude.
