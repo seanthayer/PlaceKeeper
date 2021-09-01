@@ -307,8 +307,6 @@ class App extends React.Component<{}, State> {
 
     if (results === 204) {
 
-      // **FIX: Causes visual glitching
-      this.closeModal();
       this.showImportModal();
 
     }

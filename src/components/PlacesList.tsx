@@ -154,13 +154,13 @@ class SavedPlace extends React.Component<placeProps, placeState> {
 
     super(props);
 
-    this.state = { contents: <TrashButton handleTrash={this.handleTrash}/> };
-
     // Member functions
     this.panTo        = this.panTo.bind(this);
     this.handleTrash  = this.handleTrash.bind(this);
     this.confirmTrash = this.confirmTrash.bind(this);
     this.resetTrash   = this.resetTrash.bind(this);
+
+    this.state = { contents: <TrashButton handleTrash={this.handleTrash}/> };
 
   }
 

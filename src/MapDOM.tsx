@@ -21,7 +21,9 @@ export const mapDOMNode = (document.getElementById('map') as HTMLDivElement);
 
 export function getElementByLatLng(latLng: google.maps.LatLng): HTMLDivElement {
 
-  return (mapDOMNode.querySelector(`div [data-latlng="${latLng}"]`) as HTMLDivElement);
+  let node = document.getElementById('map') as HTMLDivElement;
+
+  return (node.querySelector(`div [data-latlng="${latLng}"]`) as HTMLDivElement);
 
 }
 
@@ -107,10 +109,12 @@ export const HTML: app.dom.HTMLGen = {
  * ------------------------------------------
  */
 
-export default {
+let module = {
 
   mapDOMNode,
   getElementByLatLng,
   HTML
 
-};
+}
+
+export default module;

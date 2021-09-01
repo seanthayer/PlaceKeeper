@@ -26,7 +26,7 @@ const MapAPI: app.map.API = {
       
     } catch (err) {
       
-      console.error(new Error(err));
+      console.error('[ERROR]: ' + err);
       
       return null;
       
@@ -49,7 +49,7 @@ const MapAPI: app.map.API = {
       
     } catch (err) {
 
-      console.error(new Error(err));
+      console.error('[ERROR]: ' + err);
       
       return null;
       
@@ -81,7 +81,7 @@ const MapAPI: app.map.API = {
       
     } catch (err) {
 
-      console.error(new Error(err));
+      console.error('[ERROR]: ' + err);
   
       return null;
       
@@ -163,7 +163,6 @@ class Pin {
      */
 
     const mapEvent      = window.google.maps.event;
-    const mapController = window.mapController;
     const mapEmbed      = this.controller.mapEmbed;
 
     let context: app.pin.Data = {
@@ -203,7 +202,7 @@ class Pin {
 
     const mapEvent = window.google.maps.event;
 
-    let trashButton = <HTMLButtonElement> infoBox.DOMNode.querySelector(`.trash-button-container > button.trash-button`);
+    let trashButton = infoBox.DOMNode.querySelector(`.trash-button-container > button.trash-button`) as HTMLButtonElement;
 
     mapEvent.addDomListenerOnce(trashButton, 'click', () => {
 
@@ -229,8 +228,8 @@ class Pin {
     const mapEvent      = window.google.maps.event;
     const mapController = window.mapController;
 
-    let buttonContainer = <HTMLDivElement>    infoBox.DOMNode.querySelector(`.trash-button-container`);
-    let trashButton     = <HTMLButtonElement> infoBox.DOMNode.querySelector(`.trash-button-container > button.trash-button`);
+    let buttonContainer = infoBox.DOMNode.querySelector(`.trash-button-container`) as HTMLDivElement;
+    let trashButton     = infoBox.DOMNode.querySelector(`.trash-button-container > button.trash-button`) as HTMLButtonElement;
 
     let confirmText: HTMLElement;
     let checkButton: HTMLElement;
@@ -241,9 +240,9 @@ class Pin {
     buttonContainer.insertAdjacentHTML('afterbegin', MapDOM.HTML.ConfirmText());
 
     // Query select for listener interactions.
-    confirmText = <HTMLElement> buttonContainer.querySelector('.are-you-sure');
-    checkButton = <HTMLElement> buttonContainer.querySelector('.fas.fa-check-circle');
-    xButton     = <HTMLElement> buttonContainer.querySelector('.fas.fa-times-circle');
+    confirmText = buttonContainer.querySelector('.are-you-sure') as HTMLElement;
+    checkButton = buttonContainer.querySelector('.fas.fa-check-circle') as HTMLElement;
+    xButton     = buttonContainer.querySelector('.fas.fa-times-circle') as HTMLElement;
 
     // Confirm deletion.
     mapEvent.addDomListenerOnce(checkButton,'click', () => {
@@ -402,10 +401,10 @@ class MapController {
 
     const mapEvent = window.google.maps.event;
 
-    let nameField    = <HTMLInputElement>    infoBox.DOMNode.querySelector('input.pin-infoform-name');
-    let descField    = <HTMLTextAreaElement> infoBox.DOMNode.querySelector('textarea.pin-infoform-description');
-    let saveButton   = <HTMLButtonElement>   infoBox.DOMNode.querySelector('button[name="save"]');
-    let cancelButton = <HTMLButtonElement>   infoBox.DOMNode.querySelector('button[name="cancel"]');
+    let nameField    = infoBox.DOMNode.querySelector('input.pin-infoform-name') as HTMLInputElement;
+    let descField    = infoBox.DOMNode.querySelector('textarea.pin-infoform-description') as HTMLTextAreaElement;
+    let saveButton   = infoBox.DOMNode.querySelector('button[name="save"]') as HTMLButtonElement;
+    let cancelButton = infoBox.DOMNode.querySelector('button[name="cancel"]') as HTMLButtonElement;
 
     let formattedPinName: string | null;
 
@@ -453,7 +452,7 @@ class MapController {
     });
 
     // Exit event
-    mapEvent.addListener(infoBox, 'closeclick', () => {
+    mapEvent.addDomListenerOnce(infoBox.window, 'closeclick', () => {
 
       pin.marker.setMap(null);
       infoBox.window.close();

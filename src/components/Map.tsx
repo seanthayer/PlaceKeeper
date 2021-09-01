@@ -95,7 +95,7 @@ class Map extends React.Component<MapProps> {
         
       } catch (err) {
        
-        console.error(new Error(err));
+        console.error('[ERROR]: ' + err);
 
       }
 
