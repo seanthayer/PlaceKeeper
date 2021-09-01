@@ -9,19 +9,22 @@
 
 import React from 'react';
 
-import Map          from './components/Map';
-import ModalButtons from './components/ModalButtons';
-import PlacesList   from './components/PlacesList';
-import PlacesSearch from './components/PlacesSearch';
-import SaveModal    from './components/SaveModal';
-import ImportModal  from './components/ImportModal';
+import Map          from 'components/Map';
+import ModalButtons from 'components/ModalButtons';
+import PlacesList   from 'components/PlacesList';
+import PlacesSearch from 'components/PlacesSearch';
+import SaveModal    from 'components/SaveModal';
+import ImportModal  from 'components/ImportModal';
 
-import { globalStyles } from './GlobalStyles';
+import { globalStyles } from 'global.styles';
 
-import { Global, css } from '@emotion/react';
+import { Global }  from '@emotion/react';
+import * as Styles from 'App.styles';
 
-import background from './img/background_header-bg.png';
-import header     from './img/thumbnail_placekeeper-header-icon.png';
+import background from 'img/background_header-bg.png';
+import header     from 'img/thumbnail_placekeeper-header-icon.png';
+
+import type { Pin } from 'MapAPI';
 
 /* ------------------------------------------
  *
@@ -53,20 +56,21 @@ import header     from './img/thumbnail_placekeeper-header-icon.png';
  * ------------------------------------------
  */
 
-class App extends React.Component {
+type State = app.component.rootApp.State;
+
+class App extends React.Component<{}, State> {
 
   /*  Description:
    *    The main App component. Renders all sub-components directly related to App functionality. Handles logical interactions
    *    for updating the places list, sending HTTP requests to the server, and showing / closing modals.
    */
 
-  constructor(props) {
+  constructor(props: State) {
 
     super(props);
 
     this.state = { modal: null, places: [] };
 
-    // Member functions
     this.updatePlaces     = this.updatePlaces.bind(this);
     this.importMap        = this.importMap.bind(this);
     this.saveMap          = this.saveMap.bind(this);
@@ -83,71 +87,6 @@ class App extends React.Component {
 
   render() {
 
-    /* -----------------------
-     *    COMPONENT STYLES
-     * -----------------------
-     */
-
-    const titleStyle = css`
-
-      display: inline-block;
-      font-family: 'Roboto Slab';
-      font-size: 56px;
-      margin: 47px 20px 49px 25px;
-      border: 1px solid black;
-      border-radius: 10px;
-      padding: 0 10px 0 10px;
-      background: white;
-    
-    `;
-
-    const imgSize = css`
-    
-      height: 160px;
-      width: 180px;
-    
-    `;
-
-    const imgContStyle = css`
-
-      ${imgSize};
-      display: flex;
-      margin: 5px 25px 5px 25px;
-      border: 1px solid black;
-      border-radius: 10px;
-      background: white;
-    
-    `;
-
-    const contentContStyle = css`
-    
-      display: flex;
-      justify-content: space-between;
-    
-    `;
-
-    const mapAndButtonsContStyle = css`
-    
-      display: flex;
-      flex-direction: column;
-      flex: 1 1;
-      min-width: 484px;
-      margin-right: 10px;
-    
-    `;
-
-    const savedPlacesContStyle = css`
-    
-      flex: 0 0;
-      margin-left: 10px;
-    
-    `;
-
-    /* -----------------------
-     *       HTML CONTENT
-     * -----------------------
-     */
-
     let modal = this.state.modal;
 
     return (
@@ -157,17 +96,17 @@ class App extends React.Component {
 
         <header className="PK-header" style={{ backgroundImage: `url(${background})` }}>
 
-          <h1 className="site-title" css={titleStyle}>PlaceKeeper</h1>
+          <h1 className="site-title" css={Styles.title}>PlaceKeeper</h1>
 
-          <div className="header-image-container" css={imgContStyle}><img className="header-image" css={imgSize} src={ `${header}` } alt="PlaceKeeper"/></div>
+          <div className="header-image-container" css={Styles.imgContainer}><img className="header-image" css={Styles.imgSize} src={ `${header}` } alt="PlaceKeeper"/></div>
 
         </header>
   
         <main>
 
-          <div className="content-container" css={contentContStyle}>
+          <div className="content-container" css={Styles.contentContainer}>
 
-            <section className="map-and-buttons-container" css={mapAndButtonsContStyle}>
+            <section className="map-and-buttons-container" css={Styles.mapAndButtonsContainer}>
 
               <Map
                 updatePlaces = {this.updatePlaces}
@@ -181,7 +120,7 @@ class App extends React.Component {
 
             </section>
 
-            <section className="saved-places-container" css={savedPlacesContStyle}>
+            <section className="saved-places-container" css={Styles.savedPlacesContainer}>
 
               <PlacesSearch />
 
@@ -206,40 +145,45 @@ class App extends React.Component {
 
   }
 
-  updatePlaces(newPlaces) {
+  updatePlaces(places: Array<Pin>) {
 
     /*  Description:
-     *    When the Map component mounts, this function is bound to a constructed MapInterface class. This allows the class to
+     *    When the Map component mounts, this function is bound to a constructed MapController class. This allows the class to
      *    update the App places list from outside the React hierarchy.
      */
 
     this.setState({
 
-      places: newPlaces
+      places: places
 
     });
 
   }
 
-  async importMap(title) {
+  async importMap(title: string) {
 
     /*  Description:
      *    Clears the current map and renders a new one with the given title.
      */
 
-    const mapInterface = window.mapInterface;
+    const mapController = window.mapController;
 
-    let mapPins = await this.GETMap(title).catch((err) => {
+    let map = 
+      await this.GETMap(title).catch((err) => {
 
-      alert('Error getting map data.');
-      return null;
+        alert('Error getting map data.');
+        return null;
 
-    });
+      });
+
+    // - - - -
+
+    let mapPins = (map ? map.pins : null);
 
     if (mapPins) {
 
-      mapInterface.clearMap();
-      mapInterface.loadMap(mapPins);
+      mapController.clearMap();
+      mapController.loadMap(mapPins);
   
       this.closeModal();
 
@@ -247,13 +191,13 @@ class App extends React.Component {
 
   }
 
-  async saveMap(title, places) {
+  async saveMap(title: string, places: Array<Pin>) {
 
     /*  Description:
      *    Saves a map with the given title and places list.
      */
 
-    let map = { title: title, pins: [] };
+    let map: app.map.POST = { title: title, pins: [] };
     let results;
 
     places.forEach((place, i) => {
@@ -262,76 +206,52 @@ class App extends React.Component {
 
         map         : title, 
         name        : place.name, 
-        description : null, 
+        description : (place.description ? place.description : null), 
         lat         : place.latLng.lat(), 
         lng         : place.latLng.lng() 
 
       };
 
-      if (place.description)
-        map.pins[i].description = place.description;
-
     });
 
-    results = await this.POSTMap(map).catch((err) => {
+    results = 
+      await this.POSTMap(map).catch((err) => {
 
-      alert('Error saving map data.');
-      return null;
+        alert('Error saving map data.');
+        return null;
 
-    });
+      });
 
-    // 'results' will contain the pin insertIDs from the DB
-    if (results) {
-
-      this.closeModal();
-
-    }
+    results && this.closeModal();
 
   }
 
-  async removeMap(title) {
+  async removeMap(title: string) {
 
     /*  Description:
      *    Removes a map with the given title.
      */
 
-    let results = await this.DELETEMap(title).catch((err) => {
+    let results = 
+      await this.DELETEMap(title).catch((err) => {
 
-      alert('Error deleting map data.');
-      return null;
+        alert('Error deleting map data.');
+        return null;
 
-    });
+      });
 
     if (results === 204) {
 
-      // **FIX: Causes visual glitching
-      this.closeModal();
       this.showImportModal();
 
     }
 
   }
 
-  POSTMap(map) {
+  POSTMap(map: app.map.POST): Promise<number> {
 
     /*  Description:
      *    Sends an HTTP POST request to the server with a map object. Returns a Promised response status, or error.
-     * 
-     *  Expects:
-     *    - map =>
-     *        { 
-     *          title:  'MAP_TITLE',
-     *          pins:   [
-     *                    {
-     *                      map         : 'MAP_TITLE',
-     *                      name        : 'PIN_NAME',
-     *                      description : 'PIN_DESC',
-     *                      lat         : 'PIN_LAT',
-     *                      lng         : 'PIN_LNG'
-     *                    },
-     *                    . . .
-     *                  ]
-     *        }
      */
 
     let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
@@ -367,16 +287,10 @@ class App extends React.Component {
 
   }
 
-  GETMaps() {
+  GETMaps(): Promise<Array<app.map.Metadata>> {
 
     /*  Description:
      *    Sends an HTTP GET request to the server. Returns a Promised array of objects with the server's current map titles, or error.
-     *  
-     *  Returns:
-     *    [
-     *      { title: 'MAP_TITLE' },
-     *      . . .
-     *    ]
      */
 
     let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
@@ -416,21 +330,10 @@ class App extends React.Component {
 
   }
 
-  GETMap(title) {
+  GETMap(title: string): Promise<app.map.GET> {
 
     /*  Description:
      *    Sends an HTTP GET request to the server with a map title. Returns a Promised array of objects with the queried map pins, or error.
-     *
-     *  Returns:
-     *    [
-     *      {
-     *        name        : 'PIN_NAME',
-     *        description : 'PIN_DESC',
-     *        lat         : 'PIN_LAT',
-     *        lng         : 'PIN_LNG'
-     *      },
-     *      . . .
-     *    ]
      */
     
     let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
@@ -470,7 +373,7 @@ class App extends React.Component {
 
   }
 
-  DELETEMap(title) {
+  DELETEMap(title: string): Promise<number> {
 
     /*  Description:
      *    Sends an HTTP DELETE request to the server with a map title. Returns a Promised response status, or error.
@@ -514,12 +417,14 @@ class App extends React.Component {
      *    Renders the import modal.
      */
 
-    let maps = await this.GETMaps().catch((err) => { 
+    let maps =
+      await this.GETMaps().catch((err) => { 
 
-      return [];
+        return null;
 
-    });
+      });
 
+    if (maps)
     this.setState({
 
       modal:
@@ -534,7 +439,7 @@ class App extends React.Component {
 
   }
 
-  showSaveModal(placesList) {
+  showSaveModal(placesList: Array<Pin>) {
 
     /*  Description:
      *    Renders the save modal with the given places list. This prevents reading a stale state value from the App component.

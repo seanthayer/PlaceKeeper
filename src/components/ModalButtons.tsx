@@ -7,8 +7,9 @@
  * ------------------------------------------
  */
 
-import React   from 'react';
-import { css } from '@emotion/react';
+import React from 'react';
+
+import * as Styles from 'components/ModalButtons.styles';
 
 /* ------------------------------------------
  *
@@ -17,33 +18,18 @@ import { css } from '@emotion/react';
  * ------------------------------------------
  */
 
-class ModalButtons extends React.Component {
+type ButtonsProps = app.component.modalButtons.Props;
+
+class ModalButtons extends React.Component<ButtonsProps> {
 
   /*  Description:
    *    Renders import and save buttons.
-   *  
-   *  Expects props:
-   *    - showImportModal => Function. Render the import modal.
-   *    - showSaveModal   => Function. Render the save modal.
-   *    - places          => 
-   *        [
-   *          { Pin },
-   *          . . . 
-   *        ]
    */
 
   render() {
 
-    const buttonsStyle = css`
-    
-      display: flex;
-      justify-content: space-between;
-      margin: 35px;
-
-    `;
-
     return (
-      <div className="import-and-save-buttons-container" css={buttonsStyle}>
+      <div className="import-and-save-buttons-container" css={Styles.buttons}>
 
         <ImportButton
           showImportModal = {this.props.showImportModal}
@@ -61,21 +47,15 @@ class ModalButtons extends React.Component {
 
 }
 
-class SaveButton extends React.Component {
+type SaveProps = app.component.modalButtons.SaveProps;
+
+class SaveButton extends React.Component<SaveProps> {
 
   /*  Description:
    *    Renders the save modal on click.
-   *  
-   *  Expects props:
-   *    - showSaveModal => Function. Render the save modal.
-   *    - places        => 
-   *        [
-   *          { Pin },
-   *          . . . 
-   *        ]
    */
 
-  constructor(props) {
+  constructor(props: SaveProps) {
 
     super(props);
     this.handleClick = this.handleClick.bind(this);
@@ -102,16 +82,15 @@ class SaveButton extends React.Component {
 
 }
 
-class ImportButton extends React.Component {
+type ImportProps = app.component.modalButtons.ImportProps;
+
+class ImportButton extends React.Component<ImportProps> {
 
   /*  Description:
    *    Renders the import modal on click.
-   *  
-   *  Expects props:
-   *    - showImportModal => Function. Render the import modal.
    */
 
-  constructor(props) {
+  constructor(props: ImportProps) {
 
     super(props);
     this.handleClick = this.handleClick.bind(this);

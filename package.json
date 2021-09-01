@@ -4,8 +4,8 @@
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.4.1",
-    "@googlemaps/js-api-loader": "^1.11.4",
-    "@testing-library/jest-dom": "^5.12.0",
+    "@googlemaps/js-api-loader": "^1.12.2",
+    "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "dotenv": "^10.0.0",
@@ -14,6 +14,7 @@
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
     "sequelize": "^6.6.5",
+    "typescript": "^4.4.2",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
@@ -40,5 +41,13 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.1",
+    "@types/google.maps": "^3.45.6",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^16.7.4",
+    "@types/react": "^17.0.19",
+    "@types/react-dom": "^17.0.9"
   }
 }
