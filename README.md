@@ -3,11 +3,19 @@
 PlaceKeeper is a prototype web application which utilizes the Google Maps JavaScript API, and allows the user to store points of interest. 
 
 PlaceKeeper is a full stack application and currently featured with,
-* Node.js (using Express)
-* A MySQL database (emulated with Docker)
-* React (using Create React App)
-* Emotion (for component specific CSS)
-* Sequelize (handling database interactions)
+
+---
+
+- ✅ **TypeScript**
+- ✅ **Node.js**
+  - ☑️ *Express*
+  - ☑️ *Sequelize*
+- ✅ **MySQL**
+   - ☑️ *Docker*
+- ✅ **React**
+   - ☑️ *Create React App*
+
+---
 
 PlaceKeeper's primary goal is to serve as a hands-on learning opportunity. As a secondary outcome, PlaceKeeper exhibits a full stack implementation and acts as a reference point for future projects.
 
@@ -23,6 +31,7 @@ PlaceKeeper's primary goal is to serve as a hands-on learning opportunity. As a 
    * [x] Submodal for confirmations and basic menus
    * [x] Import & Save modal ask for confirmations using submodal
    * [x] Apply CSS on a component level using Emotion
+   * [x] Port to TypeScript
 
    ### Back-end
    <ins>Completed</ins>↴
@@ -42,7 +51,6 @@ PlaceKeeper's primary goal is to serve as a hands-on learning opportunity. As a 
    * Front-end↴
       * Stylize using Material UI
       * Expand UX & UI
-      * Make components more generic/reusable
 
    * Back-end↴
       * Authentication and user accounts
@@ -72,7 +80,7 @@ PlaceKeeper's primary goal is to serve as a hands-on learning opportunity. As a 
 
 2. Clone the repository.
 
-2. Run `npm install --production` in the repo's directory.
+2. Run `npm install` in the repo's directory.
 
    * If you have a GoogleMaps API Key, create a `.env.local` file in the root directory. In it, create a var `REACT_APP_GMAPS_APIKEY` set equal to your API Key. The API Loader package will handle linking.
 

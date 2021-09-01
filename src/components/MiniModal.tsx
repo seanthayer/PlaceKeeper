@@ -9,8 +9,8 @@
 
 import React from 'react';
 
-import { modalBase } from 'styles/global.styles';
-import * as Styles   from 'styles/components/MiniModal.styles';
+import { modalBase } from 'global.styles';
+import * as Styles   from 'components/MiniModal.styles';
 
 /* ------------------------------------------
  *
@@ -25,15 +25,6 @@ class MiniModal extends React.Component<ModalProps> {
 
   /*  Description:
    *    Renders a mini modal for small confirmation menus, etc. 
-   * 
-   *  Expects props:
-   *    - modalContent =>
-   *        {
-   *          message      : 'BODY_TEXT',
-   *          confirmText  : 'CONFIRM_BUTTON_TEXT',
-   *          closeText    : 'CLOSE_BUTTON_TEXT',
-   *          tertiaryText : 'TERTIARY_BUTTON_TEXT' (Optional)
-   *        }
    */
   
   render() {

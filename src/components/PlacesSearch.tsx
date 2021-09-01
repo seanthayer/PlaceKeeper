@@ -9,7 +9,7 @@
 
 import React from 'react';
 
-import * as Styles from 'styles/components/PlacesSearch.styles';
+import * as Styles from 'components/PlacesSearch.styles';
 
 /* ------------------------------------------
  *

@@ -9,7 +9,7 @@
 
 import * as React from 'react';
 
-import * as Styles from 'styles/components/Map.styles';
+import * as Styles from 'components/Map.styles';
 
 import MapController from 'MapAPI';
 import { loader }    from 'index';
@@ -43,13 +43,9 @@ type MapProps = {
 class Map extends React.Component<MapProps> {
 
   /*  Description:
-   *    The Map component, signifying the Google Maps embed. Renders a <div> element for the API to link. Upon mount, initiates
-   *    API connection, map functionality classes, and global variables.
-   * 
-   *  Expects props:
-   *    - updatePlaces => Function. Set a new state for App component, updating places list.
+   *    Renders a <div> element for the API to link. Upon mount, initiates API connection, map controller, and window variables.
    *
-   *  Global vars generated and assigned here:
+   *  Window vars generated here:
    *    - window.google
    *    - window.mapController
    */
@@ -64,7 +60,7 @@ class Map extends React.Component<MapProps> {
 
   componentDidMount() {
 
-    // Initiate API connection, construct map interface, and assign global vars.
+    // Initiate API connection, then construct map controller
 
     loader.load().then(() => {
 

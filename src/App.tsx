@@ -16,10 +16,10 @@ import PlacesSearch from 'components/PlacesSearch';
 import SaveModal    from 'components/SaveModal';
 import ImportModal  from 'components/ImportModal';
 
-import { globalStyles } from 'styles/global.styles';
+import { globalStyles } from 'global.styles';
 
 import { Global }  from '@emotion/react';
-import * as Styles from 'styles/App.styles';
+import * as Styles from 'App.styles';
 
 import background from 'img/background_header-bg.png';
 import header     from 'img/thumbnail_placekeeper-header-icon.png';
@@ -252,22 +252,6 @@ class App extends React.Component<{}, State> {
 
     /*  Description:
      *    Sends an HTTP POST request to the server with a map object. Returns a Promised response status, or error.
-     * 
-     *  Expects:
-     *    - map =>
-     *        { 
-     *          title:  'MAP_TITLE',
-     *          pins:   [
-     *                    {
-     *                      map         : 'MAP_TITLE',
-     *                      name        : 'PIN_NAME',
-     *                      description : 'PIN_DESC',
-     *                      lat         : 'PIN_LAT',
-     *                      lng         : 'PIN_LNG'
-     *                    },
-     *                    . . .
-     *                  ]
-     *        }
      */
 
     let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
@@ -307,12 +291,6 @@ class App extends React.Component<{}, State> {
 
     /*  Description:
      *    Sends an HTTP GET request to the server. Returns a Promised array of objects with the server's current map titles, or error.
-     *  
-     *  Returns:
-     *    [
-     *      { title: 'MAP_TITLE' },
-     *      . . .
-     *    ]
      */
 
     let requestHEADER = new Headers({ 'Content-Type': 'application/json'});
@@ -356,17 +334,6 @@ class App extends React.Component<{}, State> {
 
     /*  Description:
      *    Sends an HTTP GET request to the server with a map title. Returns a Promised array of objects with the queried map pins, or error.
-     *
-     *  Returns:
-     *    [
-     *      {
-     *        name        : 'PIN_NAME',
-     *        description : 'PIN_DESC',
-     *        lat         : 'PIN_LAT',
-     *        lng         : 'PIN_LNG'
-     *      },
-     *      . . .
-     *    ]
      */
     
     let requestHEADER = new Headers({ 'Content-Type': 'application/json'});

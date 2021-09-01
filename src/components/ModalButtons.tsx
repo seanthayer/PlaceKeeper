@@ -9,7 +9,7 @@
 
 import React from 'react';
 
-import * as Styles from 'styles/components/ModalButtons.styles';
+import * as Styles from 'components/ModalButtons.styles';
 
 /* ------------------------------------------
  *
@@ -24,15 +24,6 @@ class ModalButtons extends React.Component<ButtonsProps> {
 
   /*  Description:
    *    Renders import and save buttons.
-   *  
-   *  Expects props:
-   *    - showImportModal => Function. Render the import modal.
-   *    - showSaveModal   => Function. Render the save modal.
-   *    - places          => 
-   *        [
-   *          { Pin },
-   *          . . . 
-   *        ]
    */
 
   render() {
@@ -62,14 +53,6 @@ class SaveButton extends React.Component<SaveProps> {
 
   /*  Description:
    *    Renders the save modal on click.
-   *  
-   *  Expects props:
-   *    - showSaveModal => Function. Render the save modal.
-   *    - places        => 
-   *        [
-   *          { Pin },
-   *          . . . 
-   *        ]
    */
 
   constructor(props: SaveProps) {
@@ -105,9 +88,6 @@ class ImportButton extends React.Component<ImportProps> {
 
   /*  Description:
    *    Renders the import modal on click.
-   *  
-   *  Expects props:
-   *    - showImportModal => Function. Render the import modal.
    */
 
   constructor(props: ImportProps) {

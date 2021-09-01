@@ -19,11 +19,7 @@ type ConfirmProps = app.component.misc.confirmText.Props;
 class ConfirmText extends React.Component<ConfirmProps> {
 
   /*  Description:
-   *    Renders a user confirmation prompt. Calls a confirmation or reset function, depending on click.
-   *
-   *  Expects props:
-   *    - confirm => Function. Handle the functionality for confirm button click.
-   *    - reset   => Function. Handle the functionality for reset button click.
+   *    Renders a user confirmation prompt. Calls a confirmation or reset function.
    */
 
   render() {

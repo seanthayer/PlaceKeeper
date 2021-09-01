@@ -194,7 +194,7 @@ declare namespace app {
 
   // - - - -
 
-  namespace dom {
+  namespace handler {
 
     interface HTMLGen {
 
@@ -204,6 +204,16 @@ declare namespace app {
     
       TrashButton(): string;
       ConfirmText(): string;
+    
+    }
+
+    interface API {
+
+      generateLatLng(coords: number | google.maps.LatLngLiteral): google.maps.LatLng | null;
+    
+      generateMarker(map: google.maps.Map, pos?: google.maps.LatLng): google.maps.Marker | null;
+      
+      generateInfoBox(opt?: { pos?: google.maps.LatLng, html?: string }): google.maps.InfoWindow | null;
     
     }
 
@@ -232,16 +242,6 @@ declare namespace app {
       title: string;
       createdAt: string;
 
-    }
-
-    interface API {
-
-      generateLatLng(coords: number | google.maps.LatLngLiteral): google.maps.LatLng | null;
-    
-      generateMarker(map: google.maps.Map, pos?: google.maps.LatLng): google.maps.Marker | null;
-      
-      generateInfoBox(opt?: { pos?: google.maps.LatLng, html?: string }): google.maps.InfoWindow | null;
-    
     }
 
   }

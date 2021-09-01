@@ -9,8 +9,8 @@
 
 import React from 'react';
 
-import { modalBase } from 'styles/global.styles';
-import * as Styles   from 'styles/components/ImportModal.styles';
+import { modalBase } from 'global.styles';
+import * as Styles   from 'components/ImportModal.styles';
 
 import MiniModal from 'components/MiniModal';
 
@@ -28,16 +28,6 @@ class ImportModal extends React.Component<ModalProps, ModalState> {
 
   /*  Description:
    *    Renders the import modal, generating entries from the server map list. Can call to delete or load a map from the server.
-   * 
-   *  Expects props:
-   *    - closeModal  => Function. Close the modal.
-   *    - importMap   => Function. Import a map, given a title.
-   *    - removeMap   => Function. Remove a map, given a title.
-   *    - maps        => 
-   *        [
-   *          { title: 'MAP_TITLE' },
-   *          . . .
-   *        ]
    */
   
   constructor(props: ModalProps) {
@@ -46,7 +36,6 @@ class ImportModal extends React.Component<ModalProps, ModalState> {
 
     this.state = { submodal: null };
 
-    // Member functions
     this.closeSubModal = this.closeSubModal.bind(this);
     this.confirmDelete = this.confirmDelete.bind(this);
     this.showEntryInfo = this.showEntryInfo.bind(this);
@@ -168,10 +157,6 @@ class ImportEntry extends React.Component<EntryProps> {
 
   /*  Description:
    *    Renders an import entry. Calls to show entry info on click.
-   * 
-   *  Expects props:
-   *    - showEntryInfo => Function. Show the information for the current entry, given a title.
-   *    - title         => The current entry's title.
    */
 
   render() {

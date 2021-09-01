@@ -19,10 +19,7 @@ type TrashProps = app.component.misc.trashButton.Props;
 class TrashButton extends React.Component<TrashProps> {
 
   /*  Description:
-   *    Renders a trash button. Calls a handleTrash function on click.
-   *
-   *  Expects props:
-   *    - handleTrash => Function. Handle the functionality for trash button click.
+   *    Renders a trash button. Calls a handleTrash() on click.
    */
 
   render() {

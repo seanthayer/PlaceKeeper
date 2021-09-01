@@ -29,7 +29,7 @@ export function getElementByLatLng(latLng: google.maps.LatLng): HTMLDivElement {
 
 // - - - -
 
-export const HTML: app.dom.HTMLGen = {
+export const HTML: app.handler.HTMLGen = {
 
   NewPinForm(context) {
 

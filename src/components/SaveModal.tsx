@@ -9,8 +9,8 @@
 
 import React from 'react';
 
-import { modalBase } from 'styles/global.styles';
-import * as Styles   from 'styles/components/SaveModal.styles';
+import { modalBase } from 'global.styles';
+import * as Styles   from 'components/SaveModal.styles';
 
 import MiniModal from './MiniModal';
 
@@ -32,16 +32,6 @@ class SaveModal extends React.Component<ModalProps, ModalState> {
   /*  Description:
    *    Renders the save modal using information from the places list to populate TableRow sub-components. Can handle consolidating input
    *    of a new map and can call to save the new map to the server.
-   * 
-   *  Expects props:
-   *    - closeModal  => Function. Close the modal.
-   *    - GETMaps     => Function. GET titles of the maps on the server.
-   *    - saveMap     => Function. Save the current map.
-   *    - places      => 
-   *        [
-   *          { Pin },
-   *          . . . 
-   *        ]
    */
 
   constructor(props: ModalProps) {
@@ -50,7 +40,6 @@ class SaveModal extends React.Component<ModalProps, ModalState> {
 
     this.state = { mapName: null, submodal: null };
 
-    // Member functions
     this.closeSubModal  = this.closeSubModal.bind(this);
     this.handleInput    = this.handleInput.bind(this);
     this.handleSave     = this.handleSave.bind(this);
@@ -235,11 +224,6 @@ class TableRow extends React.Component<RowProps> {
 
   /*  Description:
    *    Renders a table row with the specified name, description, and latitude & longitude.
-   *
-   *  Expects props:
-   *    - name        => The row's name.
-   *    - description => The row's description. Currently not displayed and only kept as data. (Optional)
-   *    - latLng      => The row's latitude and longitude.
    */
 
   render() {

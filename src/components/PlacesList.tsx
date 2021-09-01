@@ -9,7 +9,7 @@
 
 import React from 'react';
 
-import * as Styles from 'styles/components/PlacesList.styles';
+import * as Styles from 'components/PlacesList.styles';
 
 import TrashButton from 'components/misc/TrashButton';
 import ConfirmText from 'components/misc/ConfirmText';
@@ -26,15 +26,7 @@ type ListProps = app.component.placesList.Props;
 class PlacesList extends React.Component<ListProps> {
 
   /*  Description:
-   *    Renders the saved places list using SavedPlace sub-components. Can handle removal of a pin from within the list via the
-   *    removePlace member function.
-   * 
-   *  Expects props:
-   *    - places => 
-   *        [
-   *          { Pin },
-   *          . . . 
-   *        ]
+   *    Renders the saved places list using SavedPlace sub-components. Can handle removal of a pin from within the list.
    */
   
   constructor(props: ListProps) {
@@ -100,12 +92,6 @@ class SavedPlace extends React.Component<placeProps, placeState> {
   /*  Description:
    *    Renders a saved place list item, representing the information of a pin on the current map. Can handle panning
    *    to a pin and can call to remove a pin.
-   *
-   *  Expects props:
-   *    - removePlace => Function. Remove a pin from the map using the given latLng.
-   *    - name        => The entry's name.
-   *    - description => The entry's description. Currently not displayed and only kept as data. (Optional)
-   *    - latLng      => The entry's latitude and longitude on the map embed.
    */
 
   constructor(props: placeProps) {
@@ -174,19 +160,11 @@ class SavedPlace extends React.Component<placeProps, placeState> {
 
   confirmTrash() {
 
-    /*  Description:
-     *    Calls removePlace with the current entry's latLng.
-     */
-
     this.props.removePlace(this.props.latLng);
 
   }
 
   resetTrash() {
-
-    /*  Description:
-     *    Resets the entry's contents.
-     */
 
     this.setState({
 
