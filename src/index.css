@@ -33,23 +33,6 @@
   text-align: center;
 }
 
-.trash-button {
-  padding: 0;
-}
-
-.trash-button-container {
-  height: 19px;
-  margin-top: 10px;
-  color: crimson;
-  font-size: 12px;
-  text-align: right;
-}
-
-.far.fa-trash-alt {
-  margin: 0;
-  color: crimson;
-}
-
 /* .saved-places-filter-info {
   display: inline-block;
   position: absolute;
@@ -65,21 +48,4 @@
 .filter-pin {
   display: inline-block;
   padding: 5px 0px 0px 5px;
-}
-
-.fas.fa-check-circle {
-  margin-left: 5px;
-  color: green;
-}
-
-.fas.fa-check-circle:hover {
-  color: lightgreen;
-}
-
-.fas.fa-times-circle {
-  margin-left: 5px;
-}
-
-.fas.fa-times-circle:hover {
-  color: salmon;
 }

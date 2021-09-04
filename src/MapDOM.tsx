@@ -6,7 +6,12 @@
  */
 
 import * as React from 'react';
+import ReactDOM, { unmountComponentAtNode } from 'react-dom';
 import * as ReactDOMServer from 'react-dom/server';
+
+import TrashButton from 'components/misc/TrashButton';
+
+import PinInfo from 'components/map/PinInfo';
 
 /* ------------------------------------------
  *
@@ -21,6 +26,9 @@ export const mapDOMNode = (document.getElementById('map') as HTMLDivElement);
 
 export function getElementByLatLng(latLng: google.maps.LatLng): HTMLDivElement {
 
+  // Careful using this function. The query selector can return null, so be sure
+  // the element will exist in the DOM.
+
   let node = document.getElementById('map') as HTMLDivElement;
 
   return (node.querySelector(`div [data-latlng="${latLng}"]`) as HTMLDivElement);
@@ -31,12 +39,10 @@ export function getElementByLatLng(latLng: google.maps.LatLng): HTMLDivElement {
 
 export const HTML: app.handler.HTMLGen = {
 
-  NewPinForm(context) {
+  NewPinForm() {
 
-    let latLng = context.latLng;
-
-    return ReactDOMServer.renderToString(
-      <div className="pin-infoform-container" data-latlng={latLng}>
+    return(
+      <div className="pin-infoform-container">
   
         <h2 className="pin-infoform-title">Create New Pin</h2>
   
@@ -62,43 +68,31 @@ export const HTML: app.handler.HTMLGen = {
 
   },
 
-  PinInfo(context) {
+  // PinInfo(context) {
 
-    let latLng      =  context.latLng;
-    let name        =  context.name;
-    let description = (context.description ? <div className="pin-infobox-description"><p>{context.description}</p></div> : null);
+  //   const mapController = window.mapController;
 
-    return ReactDOMServer.renderToString(
-      <div className="pin-infobox-container" data-latlng={latLng}>
+  //   let name        =  context.pin.name;
+  //   let description = (context.pin.description ? <div className="pin-infobox-description"><p>{context.pin.description}</p></div> : null);
 
-        <h2 className="pin-infobox-title">{name}</h2>
+  //   return(
+  //     <div className="pin-infobox-container">
 
-        {description}
+  //       <h2 className="pin-infobox-title">{name}</h2>
 
-        <div className="trash-button-container">
-          <button type="button" name="trash-button" className="trash-button"><i className="far fa-trash-alt"></i></button>
-        </div>
+  //       {description}
 
-      </div>
-    );
+  //       <TrashButton handleTrash={() => {
 
-  },
+  //         mapController.removePin( context.pin );
+  //         context.cleanUp && context.cleanUp();
+          
+  //       }}/>
 
-  TrashButton() {
+  //     </div>
+  //   );
 
-    return ReactDOMServer.renderToString(
-      <button type="button" name="trash-button" className="trash-button"><i className="far fa-trash-alt"></i></button>
-    );
-
-  },
-
-  ConfirmText() {
-
-    return ReactDOMServer.renderToString(
-      <div className="are-you-sure">Are you sure?<i className="fas fa-check-circle"></i><i className="fas fa-times-circle"></i></div>
-    );
-
-  }
+  // }
 
 }
 

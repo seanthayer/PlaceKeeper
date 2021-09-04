@@ -5,8 +5,62 @@
  * ------------------------------------------
  */
 
+import React from 'react';
+import ReactDOM, { unmountComponentAtNode } from 'react-dom';
+
+import PinInfo from 'components/map/PinInfo';
 import app from 'global';
-import * as MapDOM from 'MapDOM';
+
+function instanceReactElement<T>(element: React.ReactElement, cleanUp: () => void, node: HTMLElement, props?: T) {
+
+  console.log('instancing');
+
+  let component;
+
+  if (props) {
+
+    component = ReactDOM.render(
+    
+      React.cloneElement(element, props), node
+      
+    );
+    
+  } else {
+
+    component = ReactDOM.render(element, node);
+
+  }
+
+  const observer = new MutationObserver(() => {
+
+    console.log('observer cleaning up');
+    
+    cleanUp();
+
+  });
+
+  observer.observe(node, { childList: true });
+  
+  return component;
+
+}
+
+function addPropsAndInstance<T>(element: React.ReactElement, props: T, node: HTMLElement) {
+
+  // The 'Elemental' interface for an embedded component should be casted like
+  // 'addPropsAndInstance<embedded.[component].Elemental>()' for type checking properties that
+  // are not intrinsic to embedded components.
+
+  console.log('rendering element');
+  
+
+  return ReactDOM.render(
+    
+    React.cloneElement(element, props), node
+    
+  );
+
+}
 
 /* ------------------------------------------
  *
@@ -60,25 +114,82 @@ const MapAPI: app.handler.API = {
 
   generateInfoBox(opt) {
 
+    // IMPORTANT: If parameter 'opt.html' is of type 'React.ComponentClass', the component in question
+    //            MUST make use of the 'cleanUp()' method prop if any of its internal logic causes the info window
+    //            to close.
+    // Why?:      React cannot know if the component should unmount from within the embed's DOM tree,
+    //            so it must be unmounted manually whenever it's known that the containing info window will close.
+    //
+    // RETURNS:   Also keep in mind that when generating an info window using a ComponentClass, this function only
+    //            returns a 'React.ReactElement', so the element will still need to be rendered into the DOM.
+    //            Additional props can be added with the top level 'addPropsAndInstance<embedded.[component].Elemental>()' func,
+    //            or with 'ReactDOM.render()' using the returned div as the container.
+
     const google = window.google;
+    const mapEvent = google.maps.event;
+
+    const cleanUp = (node: HTMLDivElement) => {
+
+      unmountComponentAtNode( node );
+
+    };
 
     try {
 
       let offset  = new google.maps.Size(0, -35, 'pixel', 'pixel');
       let infoBox = new google.maps.InfoWindow();
 
+      let div: HTMLDivElement;
+      let ReactComponentClass: React.ComponentClass<any>;
+      let ReactElement: React.ReactElement | undefined = undefined;
+
       infoBox.setOptions({ pixelOffset: offset });
 
       if (opt) {
 
-        infoBox.setContent(opt.html);
-        infoBox.setPosition(opt.pos);
+        if (typeof opt.html === 'string') {
+          
+          infoBox.setPosition(opt.pos);
+
+          div = document.createElement('div');
+
+          // Stamp with a unique (lat, lng) identifier, in case it's ever necessary to querySelect it.
+          div.dataset.latlng = infoBox.getPosition()?.toString();
+
+          div.insertAdjacentHTML('afterbegin', opt.html);
+
+          infoBox.setContent(div);
+          
+        } else { //  if (typeof opt.html === 'object')
+
+          ReactComponentClass = opt.html;
+          
+          infoBox.setPosition(opt.pos);
+
+          div = document.createElement('div');
+
+          // Unique identifier
+          div.dataset.latlng = infoBox.getPosition()?.toString();
+
+          infoBox.setContent(div);
+
+          ReactElement = React.createElement(ReactComponentClass, { cleanUp: () => cleanUp(div) });
+
+        }
+
+        mapEvent.addListenerOnce(infoBox, 'closeclick', () => {
+
+          opt.closeClick && opt.closeClick();
+
+          ReactComponentClass && cleanUp(div);
+        
+        });
+
+        return { window: infoBox, DOMNode: div, element: ReactElement || undefined, cleanUp: ReactElement && (() => cleanUp(div)) };
         
       }
 
-      // infoBox.open(map);
-
-      return infoBox;
+      return { window: infoBox };
       
     } catch (err) {
 
@@ -129,8 +240,6 @@ class Pin implements app.pin.Object {
 
     this._generateListener = this._generateListener.bind(this);
     this.showInfo          = this.showInfo.bind(this);
-    this._handleInfoBox    = this._handleInfoBox.bind(this);
-    this._confirmDelete    = this._confirmDelete.bind(this);
     this.hide              = this.hide.bind(this);
 
     this._generateListener();
@@ -148,111 +257,45 @@ class Pin implements app.pin.Object {
 
   showInfo() {
 
-    /*  Description:
-     *    Calls MapDOM to generate the current pin's infobox. Then handles logical interactions with member function _handleInfoBox().
-     */
-
-    const mapEvent      = window.google.maps.event;
-    const mapEmbed      = this.controller.mapEmbed;
-
-    let context: app.pin.Data = {
-
-      name        : this.name,
-      latLng      : this.latLng,
-      description : this.description
-
-    }
-
-    let infoWindow = MapAPI.generateInfoBox({ pos: this.latLng, html: MapDOM.HTML.PinInfo(context) });
-
-    if (infoWindow) {
-
-      infoWindow.open(mapEmbed);
-
-      mapEmbed.panTo(this.latLng);
-
-      mapEvent.addListenerOnce(infoWindow, 'domready', () => {
-
-        this.infoBox = {
-
-          window  : infoWindow!,
-          DOMNode : MapDOM.getElementByLatLng( (infoWindow!.getPosition() as google.maps.LatLng) )
-
-        };
-
-        this._handleInfoBox(this.infoBox);
-  
-      });
-      
-    }
-
-  }
-
-  private _handleInfoBox(infoBox: app.pin.InfoBox) {
-
     const mapEvent = window.google.maps.event;
+    const mapEmbed = this.controller.mapEmbed;
 
-    let trashButton = infoBox.DOMNode.querySelector(`.trash-button-container > button.trash-button`) as HTMLButtonElement;
-
-    mapEvent.addDomListenerOnce(trashButton, 'click', () => {
-
-      this._confirmDelete(infoBox);
-
-    });
-
-    // - - - -
-    
-    mapEvent.addListenerOnce(infoBox, 'closeclick', () => {
-
-      infoBox.window.close();
+    let resetBox = () => {
 
       this.infoBox = null;
       this._generateListener();
 
-    });
+    };
 
-  }
+    let infoBox = MapAPI.generateInfoBox({ pos: this.latLng, html: PinInfo, closeClick: resetBox });
+    
+    if (infoBox) {
 
-  private _confirmDelete(infoBox: app.pin.InfoBox) {
+      type element = app.component.embedded.pinInfo.Elemental;
 
-    const mapEvent      = window.google.maps.event;
-    const mapController = window.mapController;
+      let component = instanceReactElement<element>(infoBox.element!, infoBox.cleanUp!, infoBox.DOMNode!, { pin: this });
 
-    let buttonContainer = infoBox.DOMNode.querySelector(`.trash-button-container`) as HTMLDivElement;
-    let trashButton     = infoBox.DOMNode.querySelector(`.trash-button-container > button.trash-button`) as HTMLButtonElement;
+      console.log(component);
+      
 
-    let confirmText: HTMLElement;
-    let checkButton: HTMLElement;
-    let xButton: HTMLElement;
+      // addPropsAndInstance<element>(infoBox.element!, { pin: this }, infoBox.DOMNode!);
 
-    // Hide the trash button and prompt the user for confirmation.
-    buttonContainer.removeChild(trashButton);
-    buttonContainer.insertAdjacentHTML('afterbegin', MapDOM.HTML.ConfirmText());
+      infoBox.window.open(mapEmbed);
 
-    // Query select for listener interactions.
-    confirmText = buttonContainer.querySelector('.are-you-sure') as HTMLElement;
-    checkButton = buttonContainer.querySelector('.fas.fa-check-circle') as HTMLElement;
-    xButton     = buttonContainer.querySelector('.fas.fa-times-circle') as HTMLElement;
+      mapEmbed.panTo(this.latLng);
 
-    // Confirm deletion.
-    mapEvent.addDomListenerOnce(checkButton,'click', () => {
+      mapEvent.addListenerOnce(infoBox.window, 'domready', () => {
 
-      mapController.removePin(this);
+        this.infoBox = {
 
-    });
+          window  : infoBox!.window,
+          DOMNode : infoBox!.DOMNode!
 
-    // Cancel deletion.
-    mapEvent.addDomListenerOnce(xButton, 'click', () => {
-
-      buttonContainer.removeChild(confirmText);
-      buttonContainer.insertAdjacentHTML('afterbegin', MapDOM.HTML.TrashButton());
-
-      // Reset the infobox by clearing listeners and calling the handler again.
-      mapEvent.clearInstanceListeners(infoBox);
-
-      this._handleInfoBox(infoBox);
-
-    });
+        };
+  
+      });
+      
+    }
 
   }
 
@@ -261,7 +304,8 @@ class Pin implements app.pin.Object {
     this.marker.setMap(null);
 
     this.clickListener && this.clickListener.remove();
-    this.infoBox       && this.infoBox.window.close();
+
+    this.infoBox && this.infoBox.window.close();
 
     this.clickListener = null;
     this.infoBox       = null;
@@ -336,23 +380,23 @@ class MapController {
     const mapEvent = google.maps.event;
 
     let marker = MapAPI.generateMarker(this.mapEmbed, latLng);
-    let infoForm = MapAPI.generateInfoBox({ pos: latLng, html: MapDOM.HTML.NewPinForm({ latLng }) });
+    let infoForm = MapAPI.generateInfoBox({ pos: latLng, html: 'test' });
 
     if (marker && infoForm) {
 
-      this.newPinForm = infoForm;
+      this.newPinForm = infoForm.window;
 
-      infoForm.open(this.mapEmbed);
+      infoForm.window.open(this.mapEmbed);
 
-      mapEvent.addListenerOnce(infoForm, 'domready', () => {
+      mapEvent.addListenerOnce(infoForm.window, 'domready', () => {
 
         let pin: app.pin.Prototype = {
   
           marker  : marker!,
           infoBox : {
 
-            window  : infoForm!,
-            DOMNode : MapDOM.getElementByLatLng( (infoForm!.getPosition() as google.maps.LatLng) )
+            window  : infoForm!.window,
+            DOMNode : infoForm!.DOMNode!
 
           },
           latLng  : latLng

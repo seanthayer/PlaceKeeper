@@ -6,6 +6,7 @@
  */
 
 import type { Pin } from 'MapAPI';
+import React from 'react';
 
 /* ------------------------------------------
  *
@@ -17,6 +18,19 @@ import type { Pin } from 'MapAPI';
 export = app;
 export as namespace app;
 
+declare global {
+
+  interface Window {
+
+    mapDOMNode    : HTMLDivElement;
+    mapController : MapController;
+
+    DEV: any;
+
+  }
+
+}
+
 declare namespace app {
 
   declare module "*.png";
@@ -27,7 +41,7 @@ declare namespace app {
 
       interface State {
 
-        modal: ReactElement | null;
+        modal: React.ReactElement | null;
         places: Array<Pin>;
       
       }
@@ -35,22 +49,6 @@ declare namespace app {
     }
 
     namespace importModal {
-
-      interface Props {
-      
-        maps: Array<app.map.Metadata>;
-
-        closeModal(): void;
-        importMap(title: string): void;
-        removeMap(title: string): void;
-      
-      }
-
-      interface State {
-
-        submodal: ReactElement | null;
-      
-      }
 
       namespace entry {
 
@@ -64,9 +62,31 @@ declare namespace app {
       
       }
 
+      interface Props {
+      
+        maps: Array<app.map.Metadata>;
+
+        closeModal(): void;
+        importMap(title: string): void;
+        removeMap(title: string): void;
+      
+      }
+
+      interface State {
+
+        submodal: React.ReactElement | null;
+      
+      }
+
     }
 
     namespace saveModal {
+
+      namespace row {
+
+        interface Props extends app.pin.Data {}
+
+      }
 
       interface Props {
       
@@ -81,14 +101,8 @@ declare namespace app {
       interface State {
 
         mapName: string | null;
-        submodal: ReactElement | null;
+        submodal: React.ReactElement | null;
       
-      }
-
-      namespace row {
-
-        interface Props extends app.pin.Data {}
-
       }
 
     }
@@ -135,12 +149,6 @@ declare namespace app {
 
     namespace placesList {
 
-      interface Props {
-
-        places: Array<Pin>;
-
-      }
-
       namespace place {
 
         interface Props extends app.pin.Data {
@@ -149,11 +157,11 @@ declare namespace app {
 
         }
 
-        interface State {
+      }
 
-          contents: ReactElement | null;
+      interface Props {
 
-        }
+        places: Array<Pin>;
 
       }
 
@@ -169,22 +177,60 @@ declare namespace app {
 
       namespace trashButton {
 
+        namespace actionButton {
+
+          interface Props {
+
+            handle(): void;
+
+          }
+
+        }
+
+        namespace confirmText {
+
+          interface Props {
+  
+            confirm(): void;
+            reset(): void;
+  
+          }
+  
+        }
+
         interface Props {
 
           handleTrash(): void;
 
         }
 
-      }
-
-      namespace confirmText {
-
-        interface Props {
-
-          confirm(): void;
-          reset(): void;
+        interface State {
+          
+          content: React.ReactElement | null;
 
         }
+
+      }
+
+    }
+
+    namespace embedded {
+
+      interface Intrinsic {
+
+        cleanUp(): void;
+
+      }
+
+      namespace pinInfo {
+
+        interface Elemental {
+
+          pin: Pin;
+
+        }
+
+        interface Props extends Intrinsic, Elemental {}
 
       }
 
@@ -198,12 +244,7 @@ declare namespace app {
 
     interface HTMLGen {
 
-      NewPinForm(context: { latLng: google.maps.LatLng | google.maps.LatLngLiteral }): string;
-    
-      PinInfo(context: { latLng: google.maps.LatLng | google.maps.LatLngLiteral, name: string, description?: string }): string;
-    
-      TrashButton(): string;
-      ConfirmText(): string;
+      NewPinForm(context: { cleanUp?(): void }): React.ReactElement;
     
     }
 
@@ -213,7 +254,9 @@ declare namespace app {
     
       generateMarker(map: google.maps.Map, pos?: google.maps.LatLng): google.maps.Marker | null;
       
-      generateInfoBox(opt?: { pos?: google.maps.LatLng, html?: string }): google.maps.InfoWindow | null;
+      generateInfoBox<T>(
+        opt?: { pos: google.maps.LatLng, html: string | React.ComponentClass<app.component.embedded.Intrinsic & T>, closeClick?(): void }
+      ): { window: google.maps.InfoWindow, DOMNode?: HTMLDivElement, element?: React.ReactElement<T>, cleanUp?(): void } | null;
     
     }
 
@@ -252,8 +295,8 @@ declare namespace app {
   
     interface InfoBox {
   
-      window  : google.maps.InfoWindow;
-      DOMNode : HTMLDivElement;
+      window   : google.maps.InfoWindow;
+      DOMNode  : HTMLDivElement;
     
     }
     

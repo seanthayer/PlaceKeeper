@@ -16,6 +16,8 @@ import { loader }    from 'index';
 
 import type { Pin } from 'MapAPI';
 
+import __DEV__ from '__DEV__';
+
 /* ------------------------------------------
  *
  *                    MAP
@@ -23,16 +25,11 @@ import type { Pin } from 'MapAPI';
  * ------------------------------------------
  */
 
-declare global {
+// - - - - - - - - //
 
-  interface Window {
+const DEVMODE = true;
 
-    mapDOMNode    : HTMLDivElement;
-    mapController : MapController;
-
-  }
-
-}
+// - - - - - - - - //
 
 type MapProps = {
 
@@ -76,10 +73,20 @@ class Map extends React.Component<MapProps> {
           clickableIcons : false
       
         });
+
+        if (DEVMODE) {
+
+          const DEV = new __DEV__(mapEmbed);
+
+          window.DEV = DEV;
+          
+        } else {
+
+          const mapController = new MapController(mapEmbed, this.props.updatePlaces);
   
-        const mapController = new MapController(mapEmbed, this.props.updatePlaces);
-  
-        window.mapController = mapController;
+          window.mapController = mapController;
+
+        }
         
       } catch (err) {
        
