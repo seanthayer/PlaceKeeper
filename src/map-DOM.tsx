@@ -31,7 +31,7 @@ export function getElementByLatLng(latLng: google.maps.LatLng): HTMLDivElement {
 
   let node = document.getElementById('map') as HTMLDivElement;
 
-  return (node.querySelector(`div [data-latlng="${latLng}"]`) as HTMLDivElement);
+  return (node.querySelector(`div[data-latlng="${latLng}"]`) as HTMLDivElement);
 
 }
 

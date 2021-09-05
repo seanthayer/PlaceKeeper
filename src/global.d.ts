@@ -5,7 +5,7 @@
  * ------------------------------------------
  */
 
-import type { Pin } from 'MapAPI';
+import type { Pin } from 'map-API';
 import React from 'react';
 
 /* ------------------------------------------

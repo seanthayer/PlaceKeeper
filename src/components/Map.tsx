@@ -11,12 +11,12 @@ import * as React from 'react';
 
 import * as Styles from 'components/Map.styles';
 
-import MapController from 'MapAPI';
+import MapController from 'map-API';
 import { loader }    from 'index';
 
-import type { Pin } from 'MapAPI';
+import type { Pin } from 'map-API';
 
-import __DEV__ from '__DEV__';
+import __DEV__INTERFACE from '__DEV/__DEV__INTERFACE';
 
 /* ------------------------------------------
  *
@@ -76,7 +76,7 @@ class Map extends React.Component<MapProps> {
 
         if (DEVMODE) {
 
-          const DEV = new __DEV__(mapEmbed);
+          const DEV = new __DEV__INTERFACE(mapEmbed);
 
           window.DEV = DEV;
           
