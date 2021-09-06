@@ -20,7 +20,7 @@ import PinInfo from 'components/map/PinInfo';
  * ------------------------------------------
  */
 
-export const mapDOMNode = (document.getElementById('map') as HTMLDivElement);
+// export const mapDOMNode = (document.getElementById('map') as HTMLDivElement);
 
 // - - - -
 
@@ -104,8 +104,7 @@ export const HTML: app.handler.HTMLGen = {
  */
 
 let module = {
-
-  mapDOMNode,
+  
   getElementByLatLng,
   HTML
 

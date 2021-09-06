@@ -22,10 +22,9 @@ declare global {
 
   interface Window {
 
-    mapDOMNode    : HTMLDivElement;
     mapController : MapController;
 
-    DEV: any;
+    dev: any;
 
   }
 

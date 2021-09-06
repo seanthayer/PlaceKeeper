@@ -17,6 +17,8 @@ import { loader }    from 'index';
 import type { Pin } from 'map-API';
 
 import __DEV__INTERFACE from '__DEV/__DEV__INTERFACE';
+import * as ReactMap from 'reactmap-lib/reactmap';
+
 
 /* ------------------------------------------
  *
@@ -74,11 +76,13 @@ class Map extends React.Component<MapProps> {
       
         });
 
+        ReactMap.bindToMap(mapEmbed);
+
         if (DEVMODE) {
 
-          const DEV = new __DEV__INTERFACE(mapEmbed);
+          const dev = new __DEV__INTERFACE(mapEmbed);
 
-          window.DEV = DEV;
+          window.dev = dev;
           
         } else {
 
