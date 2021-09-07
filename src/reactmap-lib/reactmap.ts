@@ -96,6 +96,18 @@ function __applyOffset(component: RenderedComponent, x: number, y: number) {
   let offsetX = x * -1;
   let offsetY = y * -1;
 
+  let styleLeft = component.offsetDiv.style.left;
+  let styleTop = component.offsetDiv.style.top;
+
+  let prevLeftStr = styleLeft.match(/-?[0-9]+/g)![0];
+  let prevTopStr = styleTop.match(/-?[0-9]+/g)![0];
+
+  let prevLeft = parseInt(prevLeftStr);
+  let prevTop = parseInt(prevTopStr);
+
+  offsetX += prevLeft;
+  offsetY += prevTop;
+
   console.log('--------------------------------------------------');
   console.log('[DEV][reactmap] Offsetting component => ', component);
   console.log(`[DEV][reactmap] Offsetting by => (${offsetX}, ${offsetY})px`);
@@ -103,6 +115,9 @@ function __applyOffset(component: RenderedComponent, x: number, y: number) {
 
   component.offsetDiv.style.left = `${offsetX}px`;
   component.offsetDiv.style.top = `${offsetY}px`;
+  
+  // TODO: Figure out whether there's any difference between calculating the offset by the distance
+  //       covered in the drag event, or by calculating the change in a component's origin point to center.
 
 }
 
@@ -148,20 +163,26 @@ function __generateDragListener(map: google.maps.Map): google.maps.MapsEventList
 
     google.maps.event.addListenerOnce(map, 'dragend', () => {
 
-      dragEndPoint = __calculatePixelCoord(map.getCenter()!, map.getZoom()!);
-
-      diffX = dragEndPoint.x - dragStartPoint.x;
-      diffY = dragEndPoint.y - dragStartPoint.y;
-
       console.log('[DEV][reactmap] dragend event,');
-      console.log(`[DEV][reactmap]   --> end: (${dragEndPoint.x}, ${dragEndPoint.y})`);
-      console.log('--------------------------------------------------');
-      console.log(`[DEV][reactmap]   --> diff: (${diffX}, ${diffY})`);
 
-      console.log('--------------------------------------------------');
-      console.log();
+      google.maps.event.addListenerOnce(map, 'idle', () => {
 
-      __offsetRenderedComponents(diffX, diffY);
+        dragEndPoint = __calculatePixelCoord(map.getCenter()!, map.getZoom()!);
+
+        diffX = dragEndPoint.x - dragStartPoint.x;
+        diffY = dragEndPoint.y - dragStartPoint.y;
+
+        console.log('[DEV][reactmap] idle event,');
+        console.log(`[DEV][reactmap]   --> end: (${dragEndPoint.x}, ${dragEndPoint.y})`);
+        console.log('--------------------------------------------------');
+        console.log(`[DEV][reactmap]   --> diff: (${diffX}, ${diffY})`);
+  
+        console.log('--------------------------------------------------');
+        console.log();
+
+        __offsetRenderedComponents(diffX, diffY);
+
+      });
 
     });
 
@@ -295,7 +316,7 @@ function renderComponent(cClass: React.ComponentClass, latLng: google.maps.LatLn
   console.log('[DEV][reactmap] Div ref, ');
   console.log(refDiv);
 
-  render = new RenderedComponent(refComp, refDiv, origin);
+  render = new RenderedComponent(refComp, refDiv, origin, offset);
 
   REACTMAP_ADD_RENDER(render);
   console.log('[DEV][reactmap] Rendered components => ', REACTMAP_RENDEREDCOMPONENTS);
