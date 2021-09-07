@@ -21,8 +21,6 @@ const DIV2: CSSProperties = {
   cursor: 'default',
   position: 'absolute',
   width: '9999px',
-  top: '0px',
-  left: '0px',
   height: 0
 
 };
@@ -71,15 +69,30 @@ const DIV5: CSSProperties = {
 
 };
 
-type WrapperProps = { ref: React.RefObject<React.Component> };
+type WrapperProps = {
+
+  ref: React.RefObject<React.Component>;
+  offset: {
+
+    x: number;
+    y: number;
+
+  }
+
+};
 
 class ComponentWrapper extends React.Component<WrapperProps> {
 
   render() {
 
+    let initialOffset = DIV2;
+
+    initialOffset.left = this.props.offset.x;
+    initialOffset.top = this.props.offset.y;
+
     return(      
       <div style={DIV1}>
-        <div className="offset" style={DIV2}>
+        <div className="offset" style={initialOffset}>
           <div className="" style={DIV3}>
             <div role="dialog" tabIndex={-1} className="" style={DIV4}>
               <div className="component-container" style={DIV5}>

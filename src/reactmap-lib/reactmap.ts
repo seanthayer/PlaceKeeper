@@ -88,7 +88,7 @@ function __calculatePixelCoord(latLng: google.maps.LatLng, zoom: number): google
 
 }
 
-function __offsetRenderedComponents(x: number, y: number) {
+function __applyOffset(component: RenderedComponent, x: number, y: number) {
 
   // Rendered components need to be offset by the opposite difference of two (x, y) points to maintain their (lat, lng) position.
   // So the sign of the inputs are switched in this function.
@@ -97,8 +97,16 @@ function __offsetRenderedComponents(x: number, y: number) {
   let offsetY = y * -1;
 
   console.log('--------------------------------------------------');
-  console.log(`[DEV][reactmap] Offsetting rendered components by (${offsetX}, ${offsetY}) pixels`);
+  console.log('[DEV][reactmap] Offsetting component => ', component);
+  console.log(`[DEV][reactmap] Offsetting by => (${offsetX}, ${offsetY})px`);
   console.log('--------------------------------------------------');
+
+  component.offsetDiv.style.left = `${offsetX}px`;
+  component.offsetDiv.style.top = `${offsetY}px`;
+
+}
+
+function __offsetRenderedComponents(x: number, y: number) {
 
   REACTMAP_RENDEREDCOMPONENTS.forEach((e) => {
 
@@ -108,8 +116,7 @@ function __offsetRenderedComponents(x: number, y: number) {
     console.log(`[DEV][reactmap] -- left: ${e.offsetDiv.style.left}`);
     console.log(`[DEV][reactmap] -- top: ${e.offsetDiv.style.top}`);
 
-    e.offsetDiv.style.left = `${offsetX}px`;
-    e.offsetDiv.style.top = `${offsetY}px`;
+    __applyOffset(e, x, y);
 
     console.log('[DEV][reactmap][AFTER] Offset div styles,');
     console.log(`[DEV][reactmap] -- left: ${e.offsetDiv.style.left}`);
@@ -250,7 +257,15 @@ function bindToMap(map: google.maps.Map) {
 
 }
 
-function renderComponent(cClass: React.ComponentClass): void {
+function renderComponent(cClass: React.ComponentClass, latLng: google.maps.LatLng): void {
+
+  let origin = __calculatePixelCoord(latLng, GMAPS_MAPEMBED?.getZoom()!);
+  let center = __calculatePixelCoord(GMAPS_MAPEMBED?.getCenter()!, GMAPS_MAPEMBED?.getZoom()!);
+
+  let diffX = origin.x - center.x;
+  let diffY = origin.y - center.y;
+
+  let offset = { x: diffX, y: diffY };
 
   let node    = GMAPS_INFOBOX_DIV;
   let refComp = React.createRef<React.Component>();
@@ -258,7 +273,7 @@ function renderComponent(cClass: React.ComponentClass): void {
 
   let el = React.createElement(cClass);
 
-  let componentWrapper = React.createElement(ComponentWrapper, { ref: refComp }, el);
+  let componentWrapper = React.createElement(ComponentWrapper, { ref: refComp, offset: offset}, el);
   let refWrapper       = React.createElement(RefWrapper, { ref: refDiv }, componentWrapper);
 
   let render: RenderedComponent;
@@ -280,12 +295,12 @@ function renderComponent(cClass: React.ComponentClass): void {
   console.log('[DEV][reactmap] Div ref, ');
   console.log(refDiv);
 
-  render = new RenderedComponent(refComp, refDiv);
+  render = new RenderedComponent(refComp, refDiv, origin);
 
   REACTMAP_ADD_RENDER(render);
   console.log('[DEV][reactmap] Rendered components => ', REACTMAP_RENDEREDCOMPONENTS);
 
-  render.logRefs();
+  render.logMetadata();
 
 }
 

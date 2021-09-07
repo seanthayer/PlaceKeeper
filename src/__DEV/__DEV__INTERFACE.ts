@@ -293,7 +293,7 @@ class __DEV__INTERFACE {
 
     this.#devAction = (event) => {
 
-      renderComponent(PrimitiveElement);
+      renderComponent(PrimitiveElement, event.latLng);
 
     }
 
