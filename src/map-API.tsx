@@ -73,8 +73,6 @@ const MapAPI: app.handler.API = {
 
   generateLatLng(coords) {
 
-    const google = window.google;
-
     try {
 
       return new google.maps.LatLng(coords);
@@ -90,8 +88,6 @@ const MapAPI: app.handler.API = {
   },
 
   generateMarker(map, pos) {
-
-    const google = window.google;
 
     try {
 
@@ -125,7 +121,6 @@ const MapAPI: app.handler.API = {
     //            Additional props can be added with the top level 'addPropsAndInstance<embedded.[component].Elemental>()' func,
     //            or with 'ReactDOM.render()' using the returned div as the container.
 
-    const google = window.google;
     const mapEvent = google.maps.event;
 
     const cleanUp = (node: HTMLDivElement) => {
@@ -376,7 +371,6 @@ class MapController {
      *    Calls MapDOM to generate a new pin form. Prepares a pin prototype to be passed to method _handleNewPinForm().
      */
 
-    const google   = window.google;
     const mapEvent = google.maps.event;
 
     let marker = MapAPI.generateMarker(this.mapEmbed, latLng);

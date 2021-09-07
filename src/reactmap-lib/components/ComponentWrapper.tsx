@@ -71,16 +71,18 @@ const DIV5: CSSProperties = {
 
 };
 
-class ComponentWrapper extends React.Component {
+type WrapperProps = { ref: React.RefObject<React.Component> };
+
+class ComponentWrapper extends React.Component<WrapperProps> {
 
   render() {
 
-    return(
+    return(      
       <div style={DIV1}>
-        <div className="" style={DIV2}>
+        <div className="offset" style={DIV2}>
           <div className="" style={DIV3}>
             <div role="dialog" tabIndex={-1} className="" style={DIV4}>
-              <div className="" style={DIV5}>
+              <div className="component-container" style={DIV5}>
 
                 {this.props.children}
 

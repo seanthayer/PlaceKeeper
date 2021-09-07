@@ -28,7 +28,7 @@ function project(latLng: google.maps.LatLng) {
 
   siny = Math.min(Math.max(siny, -0.9999), 0.9999);
 
-  return new window.google.maps.Point(
+  return new google.maps.Point(
     TILE_SIZE * (0.5 + latLng.lng() / 360),
     TILE_SIZE * (0.5 - Math.log((1 + siny) / (1 - siny)) / (4 * Math.PI))
   );
@@ -67,6 +67,7 @@ class __DEV__INTERFACE {
     this.#x = 0;
     this.#y = 0;
 
+    /*
     mapEvent.addListener(mapEmbed, 'center_changed', (event) => {
 
       // let infoWindow;
@@ -117,6 +118,7 @@ class __DEV__INTERFACE {
       this.#origin = pixelCoord;
 
     });
+    */
 
     mapEvent.addListener(mapEmbed, 'click', (event) => {
 
@@ -125,12 +127,12 @@ class __DEV__INTERFACE {
         console.log();
         console.log('-----------------------------------------------');
 
-        console.log('Click event,');
+        console.log('[DEV][interface] Click event,');
         console.log(event);
 
         console.log('-----------------------------------------------');
 
-        console.log('Executing dev action,');
+        console.log('[DEV][interface] Executing dev action,');
         console.log(this.#devAction);
 
         console.log('-----------------------------------------------');
@@ -142,7 +144,7 @@ class __DEV__INTERFACE {
 
       } else {
 
-        console.log('No dev action specified');
+        console.log('[DEV][interface] No dev action specified');
 
       }
 
@@ -217,16 +219,33 @@ class __DEV__INTERFACE {
     
     this.#devAction = (event) => {
 
-      console.log(msg);
+      console.log('[DEV][interface] ', msg);
       console.log('and here\'s the latlng => ', event.latLng.lat(), ', ', event.latLng.lng());
       
     }
 
   }
 
-  __DEV__ONCLICK__GenerateInfoBox(html) {
+  __DEV__GenerateOneHundredInfoBoxes() {
 
-    const google = window.google;
+    let i = 100;
+    let flag = 1;
+
+    this.__DEV__ONCLICK__GenerateInfoBox('<h1>Hello</h1>');
+
+    while (i > 0) {
+
+      (Math.random() > 0.5 ? flag = 1 : flag = -1);
+
+      this.#devAction({ latLng: { lat: (Math.random() * 90) * flag, lng: (Math.random() * 180) * flag }})
+
+      i--;
+
+    }
+
+  }
+
+  __DEV__ONCLICK__GenerateInfoBox(html) {
 
     this.#devAction = (event) => {
 
