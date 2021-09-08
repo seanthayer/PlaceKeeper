@@ -12,6 +12,7 @@ import RefWrapper from './components/RefWrapper';
 import ComponentWrapper from './components/ComponentWrapper';
 
 import { RenderedComponent } from './reactmap-objects';
+import reactmap from 'reactmap-lib';
 
 /* ------------------------------------------
  *
@@ -19,8 +20,6 @@ import { RenderedComponent } from './reactmap-objects';
  * 
  * ------------------------------------------
  */
-
-
 
 // const GMAPS_GET_TRANSFORMING_DIV = (): HTMLDivElement => GMAPS_GET_INFOBOX_DIV().parentNode as HTMLDivElement;
 
@@ -37,8 +36,8 @@ var GMAPS_INFOBOX_DIV: Element      | null = null;
 
 var REACTMAP_POSLISTENERS: Array<google.maps.MapsEventListener> | null = null;
 
-var REACTMAP_ORIGINPOINT: google.maps.Point   | null = null;
-var REACTMAP_ORIGINLATLNG: google.maps.LatLng | null = null;
+var REACTMAP_ORIGINPOINT: reactmap.Point   | null = null;
+var REACTMAP_ORIGINLATLNG: reactmap.LatLng | null = null;
 
 var REACTMAP_RENDEREDCOMPONENTS: Array<RenderedComponent> = [];
 const REACTMAP_ADD_RENDER = (component: RenderedComponent) => {
@@ -56,35 +55,35 @@ const REACTMAP_REMOVE_RENDER = (component: RenderedComponent) => {
 
 };
 
-function __projectToMercator(latLng: google.maps.LatLng): google.maps.Point {
+function __projectToMercator(latLng: reactmap.LatLng): reactmap.Point {
 
   // Projection function courtesy of Google's documentation
 
-  let siny = Math.sin((latLng.lat() * Math.PI) / 180);
+  let siny = Math.sin((latLng.lat * Math.PI) / 180);
 
   siny = Math.min(Math.max(siny, -0.9999), 0.9999);
 
-  return new google.maps.Point(
+  return {
 
-    TILE_SIZE * (0.5 + latLng.lng() / 360),
-    TILE_SIZE * (0.5 - Math.log((1 + siny) / (1 - siny)) / (4 * Math.PI))
+    x: TILE_SIZE * (0.5 + latLng.lng / 360),
+    y: TILE_SIZE * (0.5 - Math.log((1 + siny) / (1 - siny)) / (4 * Math.PI))
 
-  );
+  };
 
 }
 
-function __calculatePixelCoord(latLng: google.maps.LatLng, zoom: number): google.maps.Point {
+function __calculatePixelCoord(latLng: reactmap.LatLng, zoom: number): reactmap.Point {
 
   let scale = SCALE(zoom);
 
   let worldCoord = __projectToMercator(latLng);
 
-  return new google.maps.Point(
+  return {
 
-    Math.floor(worldCoord.x * scale),
-    Math.floor(worldCoord.y * scale)
+    x: Math.floor(worldCoord.x * scale),
+    y: Math.floor(worldCoord.y * scale)
 
-  );
+  };
 
 }
 
@@ -110,7 +109,7 @@ function __applyOffset(component: RenderedComponent, x: number, y: number) {
 
   console.log('--------------------------------------------------');
   console.log('[DEV][reactmap] Offsetting component => ', component);
-  console.log(`[DEV][reactmap] Offsetting by => (${offsetX}, ${offsetY})px`);
+  console.log(`[DEV][reactmap] New offset => (${offsetX}, ${offsetY})px`);
   console.log('--------------------------------------------------');
 
   component.offsetDiv.style.left = `${offsetX}px`;
@@ -143,52 +142,75 @@ function __offsetRenderedComponents(x: number, y: number) {
 
 function __generateDragListener(map: google.maps.Map): google.maps.MapsEventListener {
 
-  let listener: google.maps.MapsEventListener;
-  let dragStartPoint: google.maps.Point;
-  let dragEndPoint: google.maps.Point;
+  let startListener: google.maps.MapsEventListener | null = null;
+  let endListener: google.maps.MapsEventListener   | null = null;
+  let dragStartPoint: reactmap.Point;
+  let dragEndPoint: reactmap.Point;
+
+  let latLng: reactmap.LatLng;
 
   let diffX: number;
   let diffY: number;
 
-  listener = google.maps.event.addListener(map, 'dragstart', () => {
-    
-    dragStartPoint = __calculatePixelCoord(map.getCenter()!, map.getZoom()!);
+  startListener = google.maps.event.addListener(map, 'dragstart', () => {
 
-    console.log();
-    console.log('--------------------------------------------------');
+    if (!endListener) {
 
-    console.log('[DEV][reactmap] dragstart event,');
-    console.log(`[DEV][reactmap]   --> start: (${dragStartPoint.x}, ${dragStartPoint.y})`);
-    console.log('--------------------------------------------------');
+      latLng = {
 
-    google.maps.event.addListenerOnce(map, 'dragend', () => {
+        lat: map.getCenter()!.lat(),
+        lng: map.getCenter()!.lng()
+
+      }
+
+      dragStartPoint = __calculatePixelCoord(latLng, map.getZoom()!);
+
+      // console.log();
+      // console.log('--------------------------------------------------');
+  
+      // console.log('[DEV][reactmap] dragstart event,');
+      // console.log(`[DEV][reactmap]   --> start: (${dragStartPoint.x}, ${dragStartPoint.y})`);
+      // console.log('--------------------------------------------------');
+  
+      endListener = google.maps.event.addListenerOnce(map, 'idle', () => {
+
+        latLng = {
+
+          lat: map.getCenter()!.lat(),
+          lng: map.getCenter()!.lng()
+  
+        }
+  
+        dragEndPoint = __calculatePixelCoord(latLng, map.getZoom()!);
+  
+        diffX = dragEndPoint.x - dragStartPoint.x;
+        diffY = dragEndPoint.y - dragStartPoint.y;
+  
+        // console.log('[DEV][reactmap] idle event,');
+        // console.log(`[DEV][reactmap]   --> end: (${dragEndPoint.x}, ${dragEndPoint.y})`);
+        // console.log('--------------------------------------------------');
+        // console.log(`[DEV][reactmap]   --> diff: (${diffX}, ${diffY})`);
+  
+        // console.log('--------------------------------------------------');
+        // console.log();
+  
+        __offsetRenderedComponents(diffX, diffY);
+
+        endListener = null;
+  
+      });
+
+    }
+
+    /*google.maps.event.addListenerOnce(map, 'dragend', () => {
 
       console.log('[DEV][reactmap] dragend event,');
 
-      google.maps.event.addListenerOnce(map, 'idle', () => {
-
-        dragEndPoint = __calculatePixelCoord(map.getCenter()!, map.getZoom()!);
-
-        diffX = dragEndPoint.x - dragStartPoint.x;
-        diffY = dragEndPoint.y - dragStartPoint.y;
-
-        console.log('[DEV][reactmap] idle event,');
-        console.log(`[DEV][reactmap]   --> end: (${dragEndPoint.x}, ${dragEndPoint.y})`);
-        console.log('--------------------------------------------------');
-        console.log(`[DEV][reactmap]   --> diff: (${diffX}, ${diffY})`);
-  
-        console.log('--------------------------------------------------');
-        console.log();
-
-        __offsetRenderedComponents(diffX, diffY);
-
-      });
-
-    });
+    });*/
 
   });
 
-  return listener;
+  return startListener;
 
 }
 
@@ -249,17 +271,26 @@ function bindToMap(map: google.maps.Map) {
 
   var waitForMap: NodeJS.Timer;
 
+  let latLng: reactmap.LatLng;
+
   waitForMap = setInterval(() => {
 
     if (map.getRenderingType() !== 'UNINITIALIZED') {
+
+      latLng = {
+
+        lat: map.getCenter()!.lat(),
+        lng: map.getCenter()!.lng()
+
+      }
 
       GMAPS_MAPEMBED = map;
       GMAPS_MAPDOMNODE = GMAPS_MAPEMBED.getDiv();
       GMAPS_INFOBOX_DIV = GMAPS_MAPDOMNODE.querySelector(QUERY_INFOBOX_DIV);
 
       REACTMAP_POSLISTENERS = __generatePositionListeners(map);
-      REACTMAP_ORIGINPOINT = __calculatePixelCoord(map.getCenter()!, map.getZoom()!);
-      REACTMAP_ORIGINLATLNG = map.getCenter()!;
+      REACTMAP_ORIGINPOINT = __calculatePixelCoord(latLng, map.getZoom()!);
+      REACTMAP_ORIGINLATLNG = latLng;
 
       clearInterval(waitForMap);
 
@@ -280,15 +311,29 @@ function bindToMap(map: google.maps.Map) {
 
 function renderComponent(cClass: React.ComponentClass, latLng: google.maps.LatLng): void {
 
-  let origin = __calculatePixelCoord(latLng, GMAPS_MAPEMBED?.getZoom()!);
-  let center = __calculatePixelCoord(GMAPS_MAPEMBED?.getCenter()!, GMAPS_MAPEMBED?.getZoom()!);
+  let latLng_: reactmap.LatLng = {
+
+    lat: latLng.lat(),
+    lng: latLng.lng()
+
+  }
+
+  let center_: reactmap.LatLng = {
+
+    lat: GMAPS_MAPEMBED!.getCenter()!.lat(),
+    lng: GMAPS_MAPEMBED!.getCenter()!.lng()
+
+  }
+
+  let origin = __calculatePixelCoord(latLng_, GMAPS_MAPEMBED?.getZoom()!);
+  let center = __calculatePixelCoord(center_, GMAPS_MAPEMBED?.getZoom()!);
 
   let diffX = origin.x - center.x;
   let diffY = origin.y - center.y;
 
   let offset = { x: diffX, y: diffY };
 
-  let node    = GMAPS_INFOBOX_DIV;
+  let node    = GMAPS_INFOBOX_DIV!.appendChild(document.createElement('div'));
   let refComp = React.createRef<React.Component>();
   let refDiv  = React.createRef<HTMLDivElement>();
 

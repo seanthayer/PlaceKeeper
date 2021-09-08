@@ -4,7 +4,7 @@ import React from "react";
 
 const RefWrapper = React.forwardRef<HTMLDivElement>((props, ref) => (
 
-  <div ref={ref}>
+  <div ref={ref} className="ref-wrapper">
 
     {props.children}
 

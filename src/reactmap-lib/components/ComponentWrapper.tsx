@@ -2,10 +2,6 @@ import React, { CSSProperties } from "react";
 
 const DIV1: CSSProperties = {
 
-  fontWeight: 400,
-  fontSize: '11px',
-  fontFamily: 'Roboto, Arial, sans-serif',
-  cursor: 'default',
   position: 'absolute',
   top: '0px',
   left: '0px',
@@ -15,39 +11,16 @@ const DIV1: CSSProperties = {
 
 const DIV2: CSSProperties = {
 
-  fontWeight: 400,
-  fontSize: '11px',
-  fontFamily: 'Roboto, Arial, sans-serif',
-  cursor: 'default',
   position: 'absolute',
-  width: '9999px',
-  height: 0
+  top: 0,
+  left: 0
 
 };
 
-const DIV3: CSSProperties = {
-
-  fontWeight: 400,
-  fontSize: '11px',
-  fontFamily: 'Roboto, Arial, sans-serif',
-  cursor: 'default',
-  position: 'absolute',
-  width: '100%',
-  right: '0px',
-  bottom: '0px'
-
-};
+const DIV3: CSSProperties = {};
 
 const DIV4: CSSProperties = {
 
-  fontWeight: 300,
-  fontSize: '13px',
-  fontFamily: 'Roboto, Arial, sans-serif',
-  cursor: 'default',
-  position: 'absolute',
-  overflow: 'hidden',
-  top: 0,
-  left: 0,
   transform: 'translate3d(-50%,-100%,0)',
   backgroundColor: 'white',
   borderRadius: '8px',
@@ -83,16 +56,28 @@ type WrapperProps = {
 
 class ComponentWrapper extends React.Component<WrapperProps> {
 
+  initialOffset: CSSProperties;
+
+  constructor(props: WrapperProps) {
+
+    super(props);
+
+    this.initialOffset = Object.create(DIV2);    
+
+  }
+
   render() {
 
-    let initialOffset = DIV2;
+    console.log('[DEV][reactmap][ComponentWrapper] Initial offset => ', this.initialOffset.left, this.initialOffset.top);
+    console.log('[DEV][reactmap][ComponentWrapper] Props offset => ', this.props.offset);
 
-    initialOffset.left = this.props.offset.x;
-    initialOffset.top = this.props.offset.y;
+    this.initialOffset.position = 'absolute';
+    this.initialOffset.left = this.props.offset.x;
+    this.initialOffset.top = this.props.offset.y;
 
     return(      
-      <div style={DIV1}>
-        <div className="offset" style={initialOffset}>
+      <div className="base" style={DIV1}>
+        <div className="offset" style={this.initialOffset}>
           <div className="" style={DIV3}>
             <div role="dialog" tabIndex={-1} className="" style={DIV4}>
               <div className="component-container" style={DIV5}>

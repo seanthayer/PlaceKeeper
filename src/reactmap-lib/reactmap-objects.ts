@@ -1,4 +1,5 @@
 import React from 'react';
+import reactmap from 'reactmap-lib';
 
 /* ------------------------------------------
  *
@@ -15,14 +16,14 @@ export class RenderedComponent {
   offsetDiv: HTMLDivElement;
   childComponentDiv: HTMLDivElement;
 
-  origin: google.maps.Point;
-  centerToOrigin: { x: number, y: number };
+  origin: reactmap.Point;
+  offset: reactmap.Point;
 
   constructor(
     componentWrapper: React.RefObject<React.Component>,
     refWrapper: React.RefObject<HTMLDivElement>,
-    origin: google.maps.Point,
-    offset: { x: number, y: number }
+    origin: reactmap.Point,
+    offset: reactmap.Point
     ) {
 
     this.componentWrapper = componentWrapper;
@@ -32,7 +33,7 @@ export class RenderedComponent {
     this.childComponentDiv = refWrapper.current!.querySelector('div.component-container') as HTMLDivElement;
 
     this.origin = origin;
-    this.centerToOrigin = offset;
+    this.offset = offset;
 
   }
 
@@ -41,7 +42,7 @@ export class RenderedComponent {
     console.log('[DEV][reactmap-objects] I am component => ', this.componentWrapper);
     console.log('[DEV][reactmap-objects] And my ref is => ', this.refWrapper);
     console.log('[DEV][reactmap-objects] My origin point is => ', this.origin);
-    console.log('[DEV][reactmap-objects] From center to origin is => ', this.centerToOrigin);
+    console.log('[DEV][reactmap-objects] My offset is => ', this.offset);
 
   }
 
