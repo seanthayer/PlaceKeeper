@@ -24,7 +24,7 @@ import * as Styles from 'App.styles';
 import background from 'img/background_header-bg.png';
 import header     from 'img/thumbnail_placekeeper-header-icon.png';
 
-import type { Pin } from 'map-API';
+import type { Pin } from 'map/API';
 
 /* ------------------------------------------
  *

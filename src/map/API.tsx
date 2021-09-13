@@ -9,7 +9,7 @@ import React from 'react';
 import ReactDOM, { unmountComponentAtNode } from 'react-dom';
 
 import PinInfo from 'components/map/PinInfo';
-import app from 'global';
+
 
 function instanceReactElement<T>(element: React.ReactElement, cleanUp: () => void, node: HTMLElement, props?: T) {
 
@@ -233,17 +233,17 @@ class Pin implements app.pin.Object {
 
     this.infoBox       = null;
 
-    this._generateListener = this._generateListener.bind(this);
+    this.__generateListener = this.__generateListener.bind(this);
     this.showInfo          = this.showInfo.bind(this);
     this.hide              = this.hide.bind(this);
 
-    this._generateListener();
+    this.__generateListener();
 
   }
 
   // - - - -
 
-  private _generateListener() {
+  private __generateListener() {
 
     const mapEvent     = window.google.maps.event;
     this.clickListener = mapEvent.addListenerOnce(this.marker, 'click', this.showInfo);
@@ -258,7 +258,7 @@ class Pin implements app.pin.Object {
     let resetBox = () => {
 
       this.infoBox = null;
-      this._generateListener();
+      this.__generateListener();
 
     };
 
@@ -368,7 +368,7 @@ class MapController {
   showNewPinForm(latLng: google.maps.LatLng) {
 
     /*  Description:
-     *    Calls MapDOM to generate a new pin form. Prepares a pin prototype to be passed to method _handleNewPinForm().
+     *    Calls MapDOM to generate a new pin form. Prepares a pin prototype to be passed to method __handleNewPinForm().
      */
 
     const mapEvent = google.maps.event;
@@ -397,7 +397,7 @@ class MapController {
   
         };
   
-        this._handleNewPinForm(pin, (pin.infoBox as app.pin.InfoBox));
+        this.__handleNewPinForm(pin, (pin.infoBox as app.pin.InfoBox));
   
       });
       
@@ -405,7 +405,7 @@ class MapController {
 
   }
 
-  private _handleNewPinForm(pin: app.pin.Prototype, infoBox: app.pin.InfoBox) {
+  private __handleNewPinForm(pin: app.pin.Prototype, infoBox: app.pin.InfoBox) {
 
     /*  Description:
      *    Handles logical interactions for a new pin form. Consolidates input and instances a new pin.
@@ -504,11 +504,11 @@ class MapController {
 
     if ('createdAt' in pins[0]) {
 
-      pinObjs = this._parsePinPrimitives( (pins as Array<app.pin.GET>) );
+      pinObjs = this.__parsePinPrimitives( (pins as Array<app.pin.GET>) );
       
     }
 
-    this.pinList = this._instancePinObjects(pinObjs || pins);
+    this.pinList = this.__instancePinObjects(pinObjs || pins);
     
     this.updateReact(this.pinList);
 
@@ -529,7 +529,7 @@ class MapController {
 
   }
 
-  private _parsePinPrimitives(pins: Array<app.pin.Primitive> | Array<app.pin.GET>): Array<app.pin.Object> {
+  private __parsePinPrimitives(pins: Array<app.pin.Primitive> | Array<app.pin.GET>): Array<app.pin.Object> {
 
     /*  Description:
      *    Parses pin primitives or pins received from the server into pin objects.
@@ -569,7 +569,7 @@ class MapController {
 
   }
 
-  private _instancePinObjects(pins: Array<app.pin.Object>): Array<Pin> {
+  private __instancePinObjects(pins: Array<app.pin.Object>): Array<Pin> {
 
     /*  Description:
      *    Instances an array of pin objects.

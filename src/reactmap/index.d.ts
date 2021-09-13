@@ -15,10 +15,10 @@ import React from "react";
  */
 
 
-export = reactmap;
-export as namespace reactmap;
+export = ReactMap;
+export as namespace ReactMap;
 
-declare namespace reactmap {
+declare namespace ReactMap {
 
   type Point = {
 
@@ -33,19 +33,5 @@ declare namespace reactmap {
     lng: number;
 
   }
-
-  // type Transform = {
-
-  //   top: number | string;
-  //   left: number | string;
-
-  // }
-
-  // interface MapComponent {
-
-  //   componentWrapper: React.RefObject<React.Component>;
-  //   refWrapper:       React.RefObject<HTMLDivElement>;
-
-  // }
 
 }

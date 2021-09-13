@@ -1,9 +1,23 @@
+/* ------------------------------------------
+ *
+ *                  IMPORT
+ * 
+ * ------------------------------------------
+ */
+
 import React, { CSSProperties } from 'react';
 
 import RenderedComponent from './RenderedComponent';
 import type { RenderProps } from './RenderedComponent';
-import reactmap from 'reactmap-lib';
 
+import reactmap from 'reactmap';
+
+/* ------------------------------------------
+ *
+ *               RENDER LAYER
+ * 
+ * ------------------------------------------
+ */
 
 type RenderElement = React.ReactElement<RenderProps>;
 
@@ -87,9 +101,9 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
 
   componentDidMount() {
 
-    console.log('[DEV][reactmap][RenderLayer] Logging metadata: ');
-    console.log('[DEV][reactmap][RenderLayer] -- parentDiv => ', this.parentDiv);
-    console.log('[DEV][reactmap][RenderLayer] -- hostDiv => ', this.hostDiv);
+    console.log('[DEV][ReactMap][RenderLayer] Logging metadata: ');
+    console.log('[DEV][ReactMap][RenderLayer] -- parentDiv => ', this.parentDiv);
+    console.log('[DEV][ReactMap][RenderLayer] -- hostDiv => ', this.hostDiv);
 
   }
 
@@ -145,21 +159,21 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
 
       let ref = React.createRef<RenderedComponent>();
 
-      console.log('[DEV][reactmap][RenderLayer] COMPONENT_KEY => ', COMPONENT_KEY);   
+      console.log('[DEV][ReactMap][RenderLayer] COMPONENT_KEY => ', COMPONENT_KEY);   
 
       let newRenderElements = Array.from(prevState.renderElements);
       let element = React.createElement(cClass);
-      let render = React.createElement(RenderedComponent, { key: COMPONENT_KEY, ref: ref, initialOffset: offset, __DEBUG__Origin: offset }, element);
+      let render = React.createElement(RenderedComponent, { key: COMPONENT_KEY, ref: ref, initialOffset: offset }, element);
 
-      console.log('[DEV][reactmap][RenderLayer] Previous state => ', prevState);
-      console.log('[DEV][reactmap][RenderLayer] Adding render => ', render);
+      console.log('[DEV][ReactMap][RenderLayer] Previous state => ', prevState);
+      console.log('[DEV][ReactMap][RenderLayer] Adding render => ', render);
 
       newRenderElements.push(render);
       this.renderRefs.push(ref);
 
       return { renderElements: newRenderElements };
 
-    }, () => console.log('[DEV][reactmap][RenderLayer] Render instances => ', this.renderRefs));
+    }, () => console.log('[DEV][ReactMap][RenderLayer] Render instances => ', this.renderRefs));
 
   }
 
@@ -179,22 +193,10 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
 
     this.hostObserver = new MutationObserver(() => {
 
-      let prevTransformX: number | string;
-      let prevTransformY: number | string;
-
       let transformX: number | string;
       let transformY: number | string;
 
-      // [ prevTransformX, prevTransformY ] = this.__parseStyleTransform(this.layerRef.current!.style.transform);
-
-      // [ prevTransformX, prevTransformY ] = this.layerRef.current!.style.transform.match(matchXorY)!;
-
       [ transformX, transformY ] = this.__parseStyleTransform(this.hostStyle.transform);
-
-      // - - - -
-
-      // [ prevTransformX, prevTransformY ] = [ parseInt(prevTransformX), parseInt(prevTransformY) ];
-      // [ transformX, transformY ]         = [ parseInt(transformX), parseInt(transformY) ];
 
       //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       // | EDGE CASE:   The case in which a user drags away from an origin point and directly back is very unlikely, and |
@@ -208,21 +210,17 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
       //               \/
       if ( (transformX + transformY) !== 0) {
 
-        // console.log('[DEV][reactmap][RenderLayer] transformX, transformY => ', transformX, transformY);
-
-
-
-        console.warn('[DEV][reactmap][RenderLayer] Observing,');
+        console.warn('[DEV][ReactMap][RenderLayer] Observing,');
 
         this.layerRef.current!.style.transform = `translate(${transformX}px, ${transformY}px)`;
 
         this.finalTransform = { x: transformX, y: transformY };
 
-        console.log('[DEV][reactmap][RenderLayer] this.finalTransform => ', this.finalTransform);
+        console.log('[DEV][ReactMap][RenderLayer] this.finalTransform => ', this.finalTransform);
 
       } else {
 
-        // console.warn('[DEV][reactmap][RenderLayer] Discarding zero transform. . .');
+        // console.warn('[DEV][ReactMap][RenderLayer] Discarding zero transform. . .');
 
       }
 
@@ -232,11 +230,11 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
 
   }
 
-  stopMimic() {
+  stopMimicking() {
 
-    console.warn('[DEV][reactmap][RenderLayer] Finishing observation,');
+    console.warn('[DEV][ReactMap][RenderLayer] Finishing observation,');
 
-    console.log('[DEV][reactmap][RenderLayer] this.finalTransform => ', this.finalTransform);
+    console.log('[DEV][ReactMap][RenderLayer] this.finalTransform => ', this.finalTransform);
 
     this.offsetRenderedComponents((this.finalTransform.x * -1), (this.finalTransform.y * -1));
 
@@ -251,12 +249,6 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
 
     this.hostObserver && this.hostObserver.disconnect();
     this.hostObserver = null;
-
-  }
-
-  genericMethod() {
-
-    console.log('[DEV][reactmap][RenderLayer] Hey there');
 
   }
 

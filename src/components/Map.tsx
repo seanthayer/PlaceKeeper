@@ -11,13 +11,13 @@ import * as React from 'react';
 
 import * as Styles from 'components/Map.styles';
 
-import MapController from 'map-API';
+import MapController from 'map/API';
 import { loader }    from 'index';
 
-import type { Pin } from 'map-API';
+import type { Pin } from 'map/API';
 
 import __DEV__INTERFACE from '__DEV/__DEV__INTERFACE';
-import * as ReactMap from 'reactmap-lib/reactmap';
+import * as ReactMap from 'reactmap/API';
 
 
 /* ------------------------------------------
