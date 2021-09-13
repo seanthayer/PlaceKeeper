@@ -3,6 +3,9 @@
 import PrimitiveElement from "__DEV/components/PrimitiveElement";
 import { renderComponent } from "reactmap-lib/reactmap";
 
+// this.N.style[d] = this.O.style[d] = "translate(" + this.j.Pa + "px," + this.j.Qa + "px)",
+// this.N.style.willChange = this.O.style.willChange = "transform";
+
 function parsePixelCoord(latLng, zoom) {
 
   let scale = 1 << zoom;
@@ -226,6 +229,20 @@ class __DEV__INTERFACE {
 
   }
 
+  __DEV__RunCurrentDevActionNTimes(n: number) {
+
+    let i = n;
+
+    while (i > 0) {
+
+      this.#devAction();
+
+      i--;
+
+    }
+
+  }
+
   __DEV__GenerateOneHundredInfoBoxes() {
 
     let i = 100;
@@ -289,7 +306,7 @@ class __DEV__INTERFACE {
 
   }
 
-  __DEV__ONCLICK__CallLibrary() {
+  __DEV__ONCLICK__ReactMapRenderComponent() {
 
     this.#devAction = (event) => {
 

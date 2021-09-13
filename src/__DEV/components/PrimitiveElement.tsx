@@ -5,7 +5,7 @@ class PrimitiveElement extends React.Component {
   render() {
 
     return(
-      <h1>Hello</h1>
+      <h1 onClick={() => console.log('hey')}>Hello</h1>
     );
 
   }

@@ -9,14 +9,6 @@ const DIV1: CSSProperties = {
 
 };
 
-const DIV2: CSSProperties = {
-
-  position: 'absolute',
-  top: 0,
-  left: 0
-
-};
-
 const DIV3: CSSProperties = {};
 
 const DIV4: CSSProperties = {
@@ -62,7 +54,13 @@ class ComponentWrapper extends React.Component<WrapperProps> {
 
     super(props);
 
-    this.initialOffset = Object.create(DIV2);    
+    this.initialOffset = {
+
+      position: 'absolute',
+      top: 0,
+      left: 0
+
+    };
 
   }
 

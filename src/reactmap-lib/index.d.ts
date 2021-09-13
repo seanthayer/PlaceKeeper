@@ -34,6 +34,13 @@ declare namespace reactmap {
 
   }
 
+  // type Transform = {
+
+  //   top: number | string;
+  //   left: number | string;
+
+  // }
+
   // interface MapComponent {
 
   //   componentWrapper: React.RefObject<React.Component>;

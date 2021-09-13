@@ -8,8 +8,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import RefWrapper from './components/RefWrapper';
-import ComponentWrapper from './components/ComponentWrapper';
+import RenderLayer from './components/RenderLayer';
 
 import { RenderedComponent } from './reactmap-objects';
 import reactmap from 'reactmap-lib';
@@ -21,9 +20,8 @@ import reactmap from 'reactmap-lib';
  * ------------------------------------------
  */
 
-// const GMAPS_GET_TRANSFORMING_DIV = (): HTMLDivElement => GMAPS_GET_INFOBOX_DIV().parentNode as HTMLDivElement;
-
-const QUERY_INFOBOX_DIV = 'div[style*="z-index: 107"]';
+const QUERY_RENDER_DIV = 'div[style*="z-index: 3"]';
+const QUERY_TRANSFORMING_DIV = 'div[style*="z-index: 4"][style*="top: 50%"]';
 
 const TILE_SIZE = 256;
 const X_AXIS_WRAP = 4096; // '4096px'
@@ -32,28 +30,16 @@ const SCALE = (zoom: number) => 1 << zoom;
 
 var GMAPS_MAPEMBED: google.maps.Map | null = null;
 var GMAPS_MAPDOMNODE: Element       | null = null;
-var GMAPS_INFOBOX_DIV: Element      | null = null;
+var GMAPS_RENDER_DIV: Element       | null = null;
+var GMAPS_TRANSFORMING_DIV: Element | null = null;
 
 var REACTMAP_POSLISTENERS: Array<google.maps.MapsEventListener> | null = null;
 
 var REACTMAP_ORIGINPOINT: reactmap.Point   | null = null;
 var REACTMAP_ORIGINLATLNG: reactmap.LatLng | null = null;
 
-var REACTMAP_RENDEREDCOMPONENTS: Array<RenderedComponent> = [];
-const REACTMAP_ADD_RENDER = (component: RenderedComponent) => {
+var REACTMAP_RENDERLAYER: RenderLayer | null = null;
 
-  REACTMAP_RENDEREDCOMPONENTS.push(component);
-
-};
-const REACTMAP_REMOVE_RENDER = (component: RenderedComponent) => {
-
-  let i = REACTMAP_RENDEREDCOMPONENTS.indexOf(component);
-
-  let el = REACTMAP_RENDEREDCOMPONENTS.splice(i, 1);
-
-  // PSEUDO: unmount(el) to free memory
-
-};
 
 function __projectToMercator(latLng: reactmap.LatLng): reactmap.Point {
 
@@ -122,6 +108,9 @@ function __applyOffset(component: RenderedComponent, x: number, y: number) {
 
 function __offsetRenderedComponents(x: number, y: number) {
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - Possibly useful
+
+  /*
   REACTMAP_RENDEREDCOMPONENTS.forEach((e) => {
 
     console.log('[DEV][reactmap] Element => ', e);
@@ -137,6 +126,33 @@ function __offsetRenderedComponents(x: number, y: number) {
     console.log(`[DEV][reactmap] -- top: ${e.offsetDiv.style.top}`);
 
   });
+  */
+
+}
+
+function __optimizeRenderedComponents(opt?: { remove: boolean }) {
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - Possibly useful
+
+  /*
+  if (opt && opt.remove) {
+
+    REACTMAP_RENDEREDCOMPONENTS.forEach((e) => {
+
+      e.offsetDiv.style.willChange = 'auto';
+  
+    });
+    
+  } else {
+
+    REACTMAP_RENDEREDCOMPONENTS.forEach((e) => {
+
+      e.offsetDiv.style.willChange = 'top, left';
+  
+    });
+
+  }
+  */
 
 }
 
@@ -162,6 +178,10 @@ function __generateDragListener(map: google.maps.Map): google.maps.MapsEventList
         lng: map.getCenter()!.lng()
 
       }
+
+      REACTMAP_RENDERLAYER!.mimicHost();
+
+      // __optimizeRenderedComponents();
 
       dragStartPoint = __calculatePixelCoord(latLng, map.getZoom()!);
 
@@ -193,8 +213,13 @@ function __generateDragListener(map: google.maps.Map): google.maps.MapsEventList
   
         // console.log('--------------------------------------------------');
         // console.log();
+
+        // REACTMAP_RENDERLAYER!.finishObserving();
   
-        __offsetRenderedComponents(diffX, diffY);
+        REACTMAP_RENDERLAYER!.stopMimic();
+        // REACTMAP_RENDERLAYER!.offsetRenderedComponents(diffX, diffY);
+
+        // __optimizeRenderedComponents({ remove: true });
 
         endListener = null;
   
@@ -257,11 +282,27 @@ function __generatePositionListeners(map: google.maps.Map): Array<google.maps.Ma
 
 }
 
+function __embedRenderLayer(parentDiv: Element, hostDiv: Element): RenderLayer {
+
+  let temp = parentDiv.appendChild(document.createElement('div'));
+  let el = React.createElement(RenderLayer, { parentDiv: parentDiv as HTMLDivElement, hostDiv: hostDiv as HTMLDivElement });
+  let node: HTMLDivElement;
+
+  let component = ReactDOM.render(el, temp);
+
+  node = temp.querySelector('div:first-child')!;
+
+  parentDiv.replaceChild(node!, temp);
+
+  return component;
+
+}
+
 function unBind() {
 
   GMAPS_MAPEMBED = null;
   GMAPS_MAPDOMNODE = null;
-  GMAPS_INFOBOX_DIV = null;
+  GMAPS_RENDER_DIV = null;
 
   console.log('[DEV] Unbound map');
 
@@ -272,6 +313,7 @@ function bindToMap(map: google.maps.Map) {
   var waitForMap: NodeJS.Timer;
 
   let latLng: reactmap.LatLng;
+  let maxTries = 100;
 
   waitForMap = setInterval(() => {
 
@@ -286,7 +328,10 @@ function bindToMap(map: google.maps.Map) {
 
       GMAPS_MAPEMBED = map;
       GMAPS_MAPDOMNODE = GMAPS_MAPEMBED.getDiv();
-      GMAPS_INFOBOX_DIV = GMAPS_MAPDOMNODE.querySelector(QUERY_INFOBOX_DIV);
+      GMAPS_RENDER_DIV = GMAPS_MAPDOMNODE.querySelector(QUERY_RENDER_DIV);
+      GMAPS_TRANSFORMING_DIV = GMAPS_RENDER_DIV!.querySelector(QUERY_TRANSFORMING_DIV);
+
+      REACTMAP_RENDERLAYER = __embedRenderLayer(GMAPS_RENDER_DIV!, GMAPS_TRANSFORMING_DIV!);
 
       REACTMAP_POSLISTENERS = __generatePositionListeners(map);
       REACTMAP_ORIGINPOINT = __calculatePixelCoord(latLng, map.getZoom()!);
@@ -294,14 +339,26 @@ function bindToMap(map: google.maps.Map) {
 
       clearInterval(waitForMap);
 
-      console.log('[DEV][reactmap] Bound to map,');
-      console.log('[DEV][reactmap] -- GMAPS_MAPEMBED => ', GMAPS_MAPEMBED);
-      console.log('[DEV][reactmap] -- GMAPS_MAPDOMNODE =>', GMAPS_MAPDOMNODE);
-      console.log('[DEV][reactmap] -- GMAPS_INFOBOX_DIV =>', GMAPS_INFOBOX_DIV);
-      console.log('[DEV][reactmap] ----------------------');
-      console.log('[DEV][reactmap] -- REACTMAP_POSLISTENER =>', REACTMAP_POSLISTENERS);
-      console.log('[DEV][reactmap] -- REACTMAP_ORIGINPOINT =>', REACTMAP_ORIGINPOINT);
-      console.log('[DEV][reactmap] -- REACTMAP_ORIGINLATLNG =>', REACTMAP_ORIGINLATLNG);
+      // console.log('[DEV][reactmap] Bound to map,');
+      // console.log('[DEV][reactmap] -- GMAPS_MAPEMBED => ', GMAPS_MAPEMBED);
+      // console.log('[DEV][reactmap] -- GMAPS_MAPDOMNODE =>', GMAPS_MAPDOMNODE);
+      // console.log('[DEV][reactmap] -- GMAPS_RENDER_DIV =>', GMAPS_RENDER_DIV);
+      // console.log('[DEV][reactmap] -- GMAPS_TRANSFORMING_DIV =>', GMAPS_TRANSFORMING_DIV);
+      // console.log('[DEV][reactmap] ----------------------');
+      console.log('[DEV][reactmap] -- REACTMAP_RENDERLAYER =>', REACTMAP_RENDERLAYER);
+      // console.log('[DEV][reactmap] -- REACTMAP_POSLISTENER =>', REACTMAP_POSLISTENERS);
+      // console.log('[DEV][reactmap] -- REACTMAP_ORIGINPOINT =>', REACTMAP_ORIGINPOINT);
+      // console.log('[DEV][reactmap] -- REACTMAP_ORIGINLATLNG =>', REACTMAP_ORIGINLATLNG);      
+
+    } else if (maxTries <= 0) {
+
+      console.error('[ReactMap] Map failed to initialize.');
+      
+      clearInterval(waitForMap);
+
+    } else {
+
+      maxTries--;
 
     }
 
@@ -311,62 +368,26 @@ function bindToMap(map: google.maps.Map) {
 
 function renderComponent(cClass: React.ComponentClass, latLng: google.maps.LatLng): void {
 
-  let latLng_: reactmap.LatLng = {
+  let clickCoord = __calculatePixelCoord({
 
     lat: latLng.lat(),
     lng: latLng.lng()
 
-  }
+  }, GMAPS_MAPEMBED!.getZoom()!);
 
-  let center_: reactmap.LatLng = {
+  let mapCenter = __calculatePixelCoord({
 
     lat: GMAPS_MAPEMBED!.getCenter()!.lat(),
     lng: GMAPS_MAPEMBED!.getCenter()!.lng()
 
-  }
+  }, GMAPS_MAPEMBED!.getZoom()!);
 
-  let origin = __calculatePixelCoord(latLng_, GMAPS_MAPEMBED?.getZoom()!);
-  let center = __calculatePixelCoord(center_, GMAPS_MAPEMBED?.getZoom()!);
-
-  let diffX = origin.x - center.x;
-  let diffY = origin.y - center.y;
+  let diffX = clickCoord.x - mapCenter.x;
+  let diffY = clickCoord.y - mapCenter.y;
 
   let offset = { x: diffX, y: diffY };
 
-  let node    = GMAPS_INFOBOX_DIV!.appendChild(document.createElement('div'));
-  let refComp = React.createRef<React.Component>();
-  let refDiv  = React.createRef<HTMLDivElement>();
-
-  let el = React.createElement(cClass);
-
-  let componentWrapper = React.createElement(ComponentWrapper, { ref: refComp, offset: offset}, el);
-  let refWrapper       = React.createElement(RefWrapper, { ref: refDiv }, componentWrapper);
-
-  let render: RenderedComponent;
-
-  console.log('[DEV][reactmap] node => ', node);
-
-  console.log('[DEV][reactmap] Element => ', el);
-  console.log('[DEV][reactmap] Ref Wrapper => ', refWrapper);
-  console.log('[DEV][reactmap] Component Wrapper => ', componentWrapper);
-
-  ReactDOM.render(refWrapper, node);
-
-  // REACTMAP_ADD_RENDER(render);
-  // console.log('[DEV][reactmap] Rendered components => ', REACTMAP_RENDEREDCOMPONENTS);
-
-  console.log('[DEV][reactmap] Component ref, ');
-  console.log(refComp);
-
-  console.log('[DEV][reactmap] Div ref, ');
-  console.log(refDiv);
-
-  render = new RenderedComponent(refComp, refDiv, origin, offset);
-
-  REACTMAP_ADD_RENDER(render);
-  console.log('[DEV][reactmap] Rendered components => ', REACTMAP_RENDEREDCOMPONENTS);
-
-  render.logMetadata();
+  REACTMAP_RENDERLAYER!.addRender(cClass, offset);
 
 }
 
