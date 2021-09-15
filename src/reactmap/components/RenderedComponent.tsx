@@ -6,7 +6,7 @@
  */
 
 import React, { CSSProperties } from 'react';
-import reactmap from 'reactmap';
+import ReactMap from 'reactmap';
 
 import * as Styles from './RenderedComponent.styles';
 
@@ -20,7 +20,8 @@ import * as Styles from './RenderedComponent.styles';
 type RenderProps = {
 
   ref: React.RefObject<React.Component>;
-  initialOffset: reactmap.Point;
+  initialOffset: ReactMap.Point;
+  worldOrigin: ReactMap.Point;
 
 };
 
@@ -30,6 +31,8 @@ class RenderedComponent extends React.Component<RenderProps> {
   childComponentDiv: React.RefObject<HTMLDivElement>;
 
   offsetStyle: CSSProperties;
+
+  worldOrigin: ReactMap.Point;
 
   constructor(props: RenderProps) {
 
@@ -45,6 +48,8 @@ class RenderedComponent extends React.Component<RenderProps> {
       left: this.props.initialOffset.x
 
     }
+
+    this.worldOrigin = this.props.worldOrigin;
 
     // - - - -
 
@@ -74,6 +79,7 @@ class RenderedComponent extends React.Component<RenderProps> {
 
     console.log('[DEV][ReactMap][RenderedComponent] I am component => ', this);
     console.log('[DEV][ReactMap][RenderedComponent] My offset style is => ', this.offsetStyle);
+    console.log('[DEV][ReactMap][RenderedComponent] My world coordinate origin is => ', this.worldOrigin);
 
   }
 
@@ -86,6 +92,43 @@ class RenderedComponent extends React.Component<RenderProps> {
     this.offsetDiv.current!.style.top = `${newY}px`;
 
   }
+
+  setOffset(x: number, y: number) {
+
+    this.offsetDiv.current!.style.left = `${x}px`;
+    this.offsetDiv.current!.style.top = `${y}px`;
+
+  }
+
+
+  /* - - - - BAD SOLUTION - - - -
+  
+  doZoom(direction: 'in' | 'out') {
+
+    let x = parseInt(this.offsetDiv.current!.style.left as string);
+    let y = parseInt(this.offsetDiv.current!.style.top as string);
+
+    let newX: number;
+    let newY: number;
+
+    if (direction === 'in') {
+
+      newX = x * 2;
+      newY = y * 2;
+      
+    } else {
+
+      newX = x / 2;
+      newY = y / 2;
+
+    }
+
+    this.offsetDiv.current!.style.left = `${newX}px`;
+    this.offsetDiv.current!.style.top = `${newY}px`;
+
+  }
+  */
+
 
 }
 

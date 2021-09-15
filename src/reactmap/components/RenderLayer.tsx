@@ -7,10 +7,12 @@
 
 import React, { CSSProperties } from 'react';
 
+import { exportConstants } from 'reactmap/API';
+
 import RenderedComponent from './RenderedComponent';
 import type { RenderProps } from './RenderedComponent';
 
-import reactmap from 'reactmap';
+import ReactMap from 'reactmap';
 
 /* ------------------------------------------
  *
@@ -25,6 +27,8 @@ type LayerProps = {
 
   parentDiv: HTMLDivElement;
   hostDiv: HTMLDivElement;
+
+  mapZoom: number;
 
 };
 
@@ -47,7 +51,9 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
 
   renderRefs: React.RefObject<RenderedComponent>[];
 
-  finalTransform: reactmap.Point;
+  finalTransform: ReactMap.Point;
+
+  currZoom: number;
 
   constructor(props: LayerProps) {
 
@@ -82,6 +88,8 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
     this.renderRefs = [];
 
     this.finalTransform = { x: 0, y: 0 };
+
+    this.currZoom = this.props.mapZoom;
 
   }
 
@@ -147,7 +155,7 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
 
   }
 
-  addRender(cClass: React.ComponentClass, offset: reactmap.Point) {
+  addRender(cClass: React.ComponentClass, offset: ReactMap.Point, origin: ReactMap.Point) {
 
     this.setState((prevState) => {
 
@@ -159,11 +167,11 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
 
       let ref = React.createRef<RenderedComponent>();
 
-      console.log('[DEV][ReactMap][RenderLayer] COMPONENT_KEY => ', COMPONENT_KEY);   
+      console.log('[DEV][ReactMap][RenderLayer] COMPONENT_KEY => ', COMPONENT_KEY);
 
       let newRenderElements = Array.from(prevState.renderElements);
       let element = React.createElement(cClass);
-      let render = React.createElement(RenderedComponent, { key: COMPONENT_KEY, ref: ref, initialOffset: offset }, element);
+      let render = React.createElement(RenderedComponent, { key: COMPONENT_KEY, ref: ref, initialOffset: offset, worldOrigin: origin }, element);
 
       console.log('[DEV][ReactMap][RenderLayer] Previous state => ', prevState);
       console.log('[DEV][ReactMap][RenderLayer] Adding render => ', render);
@@ -184,6 +192,67 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
       r.current!.adjustOffset(x, y);
   
     });
+
+  }
+
+  doZoomTransform(mapPixelCenter: ReactMap.Point, newZoom: number, calcPixelCoord: (worldCoord: ReactMap.Point, zoom: number) => ReactMap.Point) {
+
+    let scaledRenderOrigin: ReactMap.Point;
+
+    let diffX: number;
+    let diffY: number;
+
+    console.log('[DEV][ReactMap][RenderLayer] Doing zoom transform,');
+    console.log('[DEV][ReactMap][RenderLayer] -- Map center => ', mapPixelCenter);
+
+    this.renderRefs.forEach((r, i) => {
+
+      scaledRenderOrigin = calcPixelCoord(r.current!.worldOrigin, newZoom);
+
+      diffX = scaledRenderOrigin.x - mapPixelCenter.x;
+      diffY = scaledRenderOrigin.y - mapPixelCenter.y;
+
+      console.log(`[DEV][ReactMap][RenderLayer] -- Render #${i},`);
+      console.log('[DEV][ReactMap][RenderLayer] ---- World origin => ', r.current!.worldOrigin);
+      console.log('[DEV][ReactMap][RenderLayer] ---- Pixel origin => ', scaledRenderOrigin);
+      console.log(`[DEV][ReactMap][RenderLayer] ---- Distance from map center => (${diffX}, ${diffY})`);
+
+      console.log('[DEV][ReactMap][RenderLayer] ---- Setting offset. . .');
+
+      r.current!.setOffset(diffX, diffY);
+
+    });
+
+    this.currZoom = newZoom;
+
+    // - - - -
+
+    /* - - - - BAD SOLUTION - - - -
+    
+    let direction: 'in' | 'out';
+
+    let minZoom = exportConstants.MIN_ZOOM;
+    let maxZoom = exportConstants.MAX_ZOOM;
+
+    if (  ((minZoom < this.currZoom) && (this.currZoom < maxZoom)) ||
+          ((minZoom < newZoom) && (newZoom < maxZoom))) {
+
+      direction = (this.currZoom < newZoom ? 'in' : 'out');
+
+      this.renderRefs.forEach((r) => {
+  
+        r.current!.doZoom(direction);
+  
+      });
+  
+      this.currZoom = newZoom;
+      
+    } else {
+
+      console.warn('[DEV][ReactMap][RenderLayer] Discarding duplicate zoom at level => ', newZoom);
+
+    }
+    */
 
   }
 
@@ -210,13 +279,11 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
       //               \/
       if ( (transformX + transformY) !== 0) {
 
-        console.warn('[DEV][ReactMap][RenderLayer] Observing,');
-
         this.layerRef.current!.style.transform = `translate(${transformX}px, ${transformY}px)`;
 
         this.finalTransform = { x: transformX, y: transformY };
 
-        console.log('[DEV][ReactMap][RenderLayer] this.finalTransform => ', this.finalTransform);
+        // console.log('[DEV][ReactMap][RenderLayer] this.finalTransform => ', this.finalTransform);
 
       } else {
 
@@ -231,10 +298,6 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
   }
 
   stopMimicking() {
-
-    console.warn('[DEV][ReactMap][RenderLayer] Finishing observation,');
-
-    console.log('[DEV][ReactMap][RenderLayer] this.finalTransform => ', this.finalTransform);
 
     this.offsetRenderedComponents((this.finalTransform.x * -1), (this.finalTransform.y * -1));
 

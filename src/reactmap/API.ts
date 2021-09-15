@@ -7,6 +7,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import ReactMap from 'reactmap';
 
 import RenderLayer from './components/RenderLayer';
 
@@ -20,10 +21,21 @@ import RenderLayer from './components/RenderLayer';
 const QUERY_RENDER_DIV = 'div[style*="z-index: 3"]';
 const QUERY_TRANSFORMING_DIV = 'div[style*="z-index: 4"][style*="top: 50%"]';
 
+const MAX_ZOOM = 22;
+const MIN_ZOOM = 0;
 const TILE_SIZE = 256;
 const X_AXIS_WRAP = 4096; // '4096px'
 
 const SCALE = (zoom: number) => 1 << zoom;
+
+var exportConstants = {
+
+  MAX_ZOOM,
+  MIN_ZOOM,
+  TILE_SIZE,
+  X_AXIS_WRAP
+
+};
 
 var GMAPS_MAPEMBED: google.maps.Map | null = null;
 var GMAPS_MAPDOMNODE: Element       | null = null;
@@ -61,11 +73,20 @@ function __projectToMercator(latLng: ReactMap.LatLng): ReactMap.Point {
 
 }
 
-function __calculatePixelCoord(latLng: ReactMap.LatLng, zoom: number): ReactMap.Point {
+function __calculatePixelCoord(latLngOrWorldCoord: ReactMap.LatLng | ReactMap.Point, zoom: number): ReactMap.Point {
 
   let scale = SCALE(zoom);
+  let worldCoord: ReactMap.Point;
 
-  let worldCoord = __projectToMercator(latLng);
+  if ('lat' in latLngOrWorldCoord) {
+
+    worldCoord = __projectToMercator(latLngOrWorldCoord);
+    
+  } else {
+
+    worldCoord = latLngOrWorldCoord;
+
+  }
 
   return {
 
@@ -103,22 +124,55 @@ function __generateDragListener(map: google.maps.Map): google.maps.MapsEventList
 
 }
 
+ function __generateZoomListener(map: google.maps.Map): google.maps.MapsEventListener {
+
+  let mapPixelCenter: ReactMap.Point;
+  let currZoom: number;
+
+  let startListener: google.maps.MapsEventListener | null = null;
+
+  startListener = google.maps.event.addListener(map, 'zoom_changed', () => {
+
+    console.log('[DEV][ReactMap] Zoom change event => ', startListener);
+    console.log('[DEV][ReactMap] -- Zoom level => ', map.getZoom());
+
+    currZoom = map.getZoom()!;
+    mapPixelCenter = __calculatePixelCoord({ lat: map.getCenter()!.lat(), lng: map.getCenter()!.lng() }, currZoom );
+
+    REACTMAP_RENDERLAYER!.doZoomTransform(mapPixelCenter, currZoom, __calculatePixelCoord);
+
+  });
+
+  return startListener;
+
+ }
+
 function __generatePositionListeners(map: google.maps.Map): Array<google.maps.MapsEventListener> {
 
   let listener_drag: google.maps.MapsEventListener;
+  let listener_zoom: google.maps.MapsEventListener;
   let listener_pan: google.maps.MapsEventListener;
   
   listener_drag = __generateDragListener(map);
+  listener_zoom = __generateZoomListener(map);
   // listener_pan = . . . generate . . .;
+  // listener_wrap = . . . generate . . .;
 
   return [listener_drag]; // [listener_pan]
 
 }
 
-function __embedRenderLayer(parentDiv: Element, hostDiv: Element): RenderLayer {
+function __embedRenderLayer(map: google.maps.Map, parentDiv: Element, hostDiv: Element): RenderLayer {
 
   let temp = parentDiv.appendChild(document.createElement('div'));
-  let el = React.createElement(RenderLayer, { parentDiv: parentDiv as HTMLDivElement, hostDiv: hostDiv as HTMLDivElement });
+  let el = React.createElement(RenderLayer, {
+
+    parentDiv: parentDiv as HTMLDivElement,
+    hostDiv: hostDiv as HTMLDivElement,
+    mapZoom: map.getZoom()!
+
+  });
+
   let node: HTMLDivElement;
 
   let component = ReactDOM.render(el, temp);
@@ -179,7 +233,7 @@ function bindToMap(map: google.maps.Map) {
       GMAPS_RENDER_DIV = GMAPS_MAPDOMNODE.querySelector(QUERY_RENDER_DIV);
       GMAPS_TRANSFORMING_DIV = GMAPS_RENDER_DIV!.querySelector(QUERY_TRANSFORMING_DIV);
 
-      REACTMAP_RENDERLAYER = __embedRenderLayer(GMAPS_RENDER_DIV!, GMAPS_TRANSFORMING_DIV!);
+      REACTMAP_RENDERLAYER = __embedRenderLayer(GMAPS_MAPEMBED, GMAPS_RENDER_DIV!, GMAPS_TRANSFORMING_DIV!);
 
       REACTMAP_POSLISTENERS = __generatePositionListeners(map);
       REACTMAP_ORIGINPOINT = __calculatePixelCoord(latLng, map.getZoom()!);
@@ -207,7 +261,16 @@ function bindToMap(map: google.maps.Map) {
 
 function renderComponent(cClass: React.ComponentClass, latLng: google.maps.LatLng): void {
 
-  let clickCoord = __calculatePixelCoord({
+  console.log('[DEV][ReactMap] Rendering component at latLng =>', { lat: latLng.lat(), lng: latLng.lng() });
+  
+  let worldOrigin = __projectToMercator({
+
+    lat: latLng.lat(),
+    lng: latLng.lng()
+
+  });
+
+  let pixelOrigin = __calculatePixelCoord({
 
     lat: latLng.lat(),
     lng: latLng.lng()
@@ -221,12 +284,12 @@ function renderComponent(cClass: React.ComponentClass, latLng: google.maps.LatLn
 
   }, GMAPS_MAPEMBED!.getZoom()!);
 
-  let diffX = clickCoord.x - mapCenter.x;
-  let diffY = clickCoord.y - mapCenter.y;
+  let diffX = pixelOrigin.x - mapCenter.x;
+  let diffY = pixelOrigin.y - mapCenter.y;
 
   let offset = { x: diffX, y: diffY };
 
-  REACTMAP_RENDERLAYER!.addRender(cClass, offset);
+  REACTMAP_RENDERLAYER!.addRender(cClass, offset, worldOrigin);
 
 }
 
@@ -241,6 +304,7 @@ export {
   
   unBind,
   bindToMap,
-  renderComponent
+  renderComponent,
+  exportConstants
 
 };

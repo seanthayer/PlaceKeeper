@@ -140,12 +140,12 @@ class __DEV__INTERFACE {
 
       try {
 
-        let offset  = new google.maps.Size(0, -35, 'pixel', 'pixel');
+        // let offset  = new google.maps.Size(0, -35, 'pixel', 'pixel');
         let infoBox = new google.maps.InfoWindow();
   
         let div;
   
-        infoBox.setOptions({ pixelOffset: offset });
+        // infoBox.setOptions({ pixelOffset: offset });
           
         infoBox.setPosition(event.latLng);
   
