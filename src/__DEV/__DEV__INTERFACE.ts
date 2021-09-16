@@ -30,6 +30,9 @@ class __DEV__INTERFACE {
   #lat;
   #lng;
 
+  #oldTop = 0;
+  #oldLeft = 0;
+
   constructor(mapEmbed) {
 
     const mapEvent = window.google.maps.event;
@@ -159,6 +162,8 @@ class __DEV__INTERFACE {
 
         infoBox.open(this.#mapEmbed);
 
+        infoBox.addListener('domready', () => this.__DEV__ObserveInfoBoxOffset(div.dataset.latlng));
+
         this.__DEV__BindToWindow(infoBox);
         this.__DEV__BindToWindow(() => {
 
@@ -175,6 +180,37 @@ class __DEV__INTERFACE {
       }
   
     }
+
+  }
+
+  __DEV__ObserveInfoBoxOffset(infoboxLatLng) {
+
+    let offsetDiv = this.#mapEmbed.getDiv().querySelector(`div[data-latlng="${infoboxLatLng}"]`)
+                    .parentNode.parentNode.parentNode.parentNode;
+
+    let observer = new MutationObserver(() => {
+
+      let newTop = offsetDiv.style.top;
+      let newLeft = offsetDiv.style.left;
+
+      console.log('[DEV][interface] ---------------------------');
+      console.log('[DEV][interface] -- Top => ', newTop);
+      console.log('[DEV][interface] -- Left => ', newLeft);
+      console.log('[DEV][interface] -- Diff,');
+      console.log('[DEV][interface] ---- Top => ', parseInt(newTop) - this.#oldTop);
+      console.log('[DEV][interface] ---- Left => ', parseInt(newLeft) - this.#oldLeft);
+      console.log('[DEV][interface] ---------------------------');
+
+      this.#oldTop = parseInt(newTop);
+      this.#oldLeft = parseInt(newLeft);
+
+    });
+
+    console.log('[DEV][interface] Observing div => ', offsetDiv);
+
+    observer.observe(offsetDiv, { attributes: true });
+
+    this.__DEV__BindToWindow(observer);
 
   }
 

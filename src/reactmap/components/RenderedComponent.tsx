@@ -75,6 +75,14 @@ class RenderedComponent extends React.Component<RenderProps> {
 
   }
 
+  componentDidMount() {
+
+    this.offsetDiv.current!.style.transitionTimingFunction = 'cubic-bezier(0.0, 0.0, 0.75, 1.0)';
+    this.offsetDiv.current!.style.transitionDuration = '0s';
+    this.offsetDiv.current!.style.transitionProperty = 'none';
+
+  }
+
   logMetadata() {
 
     console.log('[DEV][ReactMap][RenderedComponent] I am component => ', this);
@@ -97,6 +105,23 @@ class RenderedComponent extends React.Component<RenderProps> {
 
     this.offsetDiv.current!.style.left = `${x}px`;
     this.offsetDiv.current!.style.top = `${y}px`;
+
+  }
+
+  smoothOffset(x: number, y: number, direction: 'in' | 'out') {
+
+    this.offsetDiv.current!.style.transitionTimingFunction = (direction === 'in' ? 'cubic-bezier(0.0, 0.0, 0.75, 1.0)' : 'cubic-bezier(0.3, 0.4, 0.4, 0.75)');
+    this.offsetDiv.current!.style.transitionProperty = 'top, left';
+    this.offsetDiv.current!.style.transitionDuration = '0.3s';
+
+    this.offsetDiv.current!.style.left = `${x}px`;
+    this.offsetDiv.current!.style.top = `${y}px`;
+
+    this.offsetDiv.current!.addEventListener('transitionend', () => {
+
+      this.offsetDiv.current!.style.transitionProperty = 'none';
+
+    });
 
   }
 

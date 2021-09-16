@@ -202,8 +202,10 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
     let diffX: number;
     let diffY: number;
 
-    console.log('[DEV][ReactMap][RenderLayer] Doing zoom transform,');
-    console.log('[DEV][ReactMap][RenderLayer] -- Map center => ', mapPixelCenter);
+    let direction: 'in' | 'out' = (this.currZoom < newZoom ? 'in' : 'out');
+
+    // console.log('[DEV][ReactMap][RenderLayer] Doing zoom transform,');
+    // console.log('[DEV][ReactMap][RenderLayer] -- Map center => ', mapPixelCenter);
 
     this.renderRefs.forEach((r, i) => {
 
@@ -212,14 +214,14 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
       diffX = scaledRenderOrigin.x - mapPixelCenter.x;
       diffY = scaledRenderOrigin.y - mapPixelCenter.y;
 
-      console.log(`[DEV][ReactMap][RenderLayer] -- Render #${i},`);
-      console.log('[DEV][ReactMap][RenderLayer] ---- World origin => ', r.current!.worldOrigin);
-      console.log('[DEV][ReactMap][RenderLayer] ---- Pixel origin => ', scaledRenderOrigin);
-      console.log(`[DEV][ReactMap][RenderLayer] ---- Distance from map center => (${diffX}, ${diffY})`);
+      // console.log(`[DEV][ReactMap][RenderLayer] -- Render #${i},`);
+      // console.log('[DEV][ReactMap][RenderLayer] ---- World origin => ', r.current!.worldOrigin);
+      // console.log('[DEV][ReactMap][RenderLayer] ---- Pixel origin => ', scaledRenderOrigin);
+      // console.log(`[DEV][ReactMap][RenderLayer] ---- Distance from map center => (${diffX}, ${diffY})`);
 
-      console.log('[DEV][ReactMap][RenderLayer] ---- Setting offset. . .');
+      // console.log('[DEV][ReactMap][RenderLayer] ---- Smoothing offset. . .');
 
-      r.current!.setOffset(diffX, diffY);
+      r.current!.smoothOffset(diffX, diffY, direction);
 
     });
 

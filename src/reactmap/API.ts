@@ -131,15 +131,28 @@ function __generateDragListener(map: google.maps.Map): google.maps.MapsEventList
 
   let startListener: google.maps.MapsEventListener | null = null;
 
+  // let startTime: number;
+  // let execTime: number;
+
   startListener = google.maps.event.addListener(map, 'zoom_changed', () => {
 
-    console.log('[DEV][ReactMap] Zoom change event => ', startListener);
-    console.log('[DEV][ReactMap] -- Zoom level => ', map.getZoom());
+    // startTime = Date.now();
+
+    // console.log('[DEV][ReactMap] Zoom change event,');
+    // console.log('[DEV][ReactMap] -- Zoom level => ', map.getZoom());
 
     currZoom = map.getZoom()!;
     mapPixelCenter = __calculatePixelCoord({ lat: map.getCenter()!.lat(), lng: map.getCenter()!.lng() }, currZoom );
 
     REACTMAP_RENDERLAYER!.doZoomTransform(mapPixelCenter, currZoom, __calculatePixelCoord);
+
+    // google.maps.event.addListenerOnce(map, 'idle', () => {
+
+    //   execTime = Date.now() - startTime;
+
+    //   console.log(`[DEV][ReactMap] Took ${execTime}ms to zoom`);
+
+    // });
 
   });
 
