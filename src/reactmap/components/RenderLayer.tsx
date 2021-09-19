@@ -7,8 +7,6 @@
 
 import React, { CSSProperties } from 'react';
 
-import { exportConstants } from 'reactmap/API';
-
 import RenderedComponent from './RenderedComponent';
 import type { RenderProps } from './RenderedComponent';
 
@@ -190,38 +188,43 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
     this.renderRefs.forEach((r) => {
   
       r.current!.adjustOffset(x, y);
+      console.log(`[DEV][ReactMap][RenderLayer] offset left: ${x}, top: ${y}`);
   
     });
 
   }
 
-  doZoomTransform(mapPixelCenter: ReactMap.Point, newZoom: number, calcPixelCoord: (worldCoord: ReactMap.Point, zoom: number) => ReactMap.Point) {
+  doZoomTransform(
+    mapPixelCenter: ReactMap.Point,
+    newZoom: number,
+    calcPixelCoord: (worldCoord: ReactMap.Point, zoom: number) => ReactMap.Point,
+  ) {
 
     let scaledRenderOrigin: ReactMap.Point;
 
-    let diffX: number;
-    let diffY: number;
+    let distX: number;
+    let distY: number;
 
     let direction: 'in' | 'out' = (this.currZoom < newZoom ? 'in' : 'out');
 
-    // console.log('[DEV][ReactMap][RenderLayer] Doing zoom transform,');
+    console.log('[DEV][ReactMap][RenderLayer] Doing zoom transform,');
     // console.log('[DEV][ReactMap][RenderLayer] -- Map center => ', mapPixelCenter);
 
     this.renderRefs.forEach((r, i) => {
 
       scaledRenderOrigin = calcPixelCoord(r.current!.worldOrigin, newZoom);
 
-      diffX = scaledRenderOrigin.x - mapPixelCenter.x;
-      diffY = scaledRenderOrigin.y - mapPixelCenter.y;
+      distX = scaledRenderOrigin.x - mapPixelCenter.x;
+      distY = scaledRenderOrigin.y - mapPixelCenter.y;
 
-      // console.log(`[DEV][ReactMap][RenderLayer] -- Render #${i},`);
-      // console.log('[DEV][ReactMap][RenderLayer] ---- World origin => ', r.current!.worldOrigin);
-      // console.log('[DEV][ReactMap][RenderLayer] ---- Pixel origin => ', scaledRenderOrigin);
-      // console.log(`[DEV][ReactMap][RenderLayer] ---- Distance from map center => (${diffX}, ${diffY})`);
+      console.log(`[DEV][ReactMap][RenderLayer] -- Render #${i},`);
+      console.log('[DEV][ReactMap][RenderLayer] ---- World origin => ', r.current!.worldOrigin);
+      console.log('[DEV][ReactMap][RenderLayer] ---- Pixel origin => ', scaledRenderOrigin);
+      console.log(`[DEV][ReactMap][RenderLayer] ---- Distance from map center => (${distX}, ${distY})`);
 
       // console.log('[DEV][ReactMap][RenderLayer] ---- Smoothing offset. . .');
 
-      r.current!.smoothOffset(diffX, diffY, direction);
+      r.current!.smoothOffset(distX, distY, direction);
 
     });
 
@@ -260,6 +263,8 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
 
   mimicHost() {
 
+    console.log('[DEV][ReactMap][RenderLayer] Mimicking');
+
     this.layerRef.current!.style.willChange = 'transform';
 
     this.hostObserver = new MutationObserver(() => {
@@ -272,8 +277,8 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
       //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       // | EDGE CASE:   The case in which a user drags away from an origin point and directly back is very unlikely, and |
       // |              difficult to accomplish even given an active read-out of the current transform values.           |
-      // |                                                                                                               |
-      // | Nonetheless, in this case the 'finalTransform' will have 'x || y == -1 || 1', causing a 1 pixel inaccuracy    |
+      // |              Nonetheless,                                                                                     |
+      // |              In this case the 'finalTransform' will have 'x || y == -1 || 1', causing a 1 pixel inaccuracy    |
       // |              when adjusting offset for all rendered components.                                               |
       //  - - - - - -       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       //             \    /
@@ -295,13 +300,19 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
 
     });
 
-    this.hostObserver.observe(this.hostDiv, { attributes: true });
+    this.hostObserver.observe(this.hostDiv, { attributes: true , attributeFilter: ['style'] });
 
   }
 
   stopMimicking() {
 
+    console.log('[DEV][ReactMap][RenderLayer] Stopping mimic,');
+
+    // this.__DEBUG__PrintRenderOffsets();
+
     this.offsetRenderedComponents((this.finalTransform.x * -1), (this.finalTransform.y * -1));
+    
+    // this.__DEBUG__PrintRenderOffsets();
 
     this.layerRef.current!.style.willChange = 'auto';
     this.layerRef.current!.style.transform = 'translate(0px, 0px)';
@@ -309,6 +320,52 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
     this.__disconnectObserver();
 
   }
+
+  freezeRenderTransitions() {
+
+    this.renderRefs.forEach((r) => {
+
+      r.current!.freezeTransition();
+
+    })
+
+  }
+
+  recalculateRenderPositions(
+    mapPixelCenter: ReactMap.Point,
+    newZoom: number,
+    calcPixelCoord: (worldCoord: ReactMap.Point, zoom: number) => ReactMap.Point
+    ) {
+
+    let scaledRenderOrigin: ReactMap.Point;
+
+    let distX: number;
+    let distY: number;
+
+    this.renderRefs.forEach((r) => {
+
+      scaledRenderOrigin = calcPixelCoord(r.current!.worldOrigin, newZoom);
+
+      distX = scaledRenderOrigin.x - mapPixelCenter.x;
+      distY = scaledRenderOrigin.y - mapPixelCenter.y;
+
+      r.current!.__DEBUG__Offset(distX, distY);
+
+    });
+
+  }
+
+  // __DEBUG__PrintRenderOffsets() {
+
+  //   console.log('[DEV][ReactMap][RenderLayer] Printing offsets,');
+
+  //   this.renderRefs.forEach((r) => {
+
+  //     r.current!.__DEBUG__PrintOffset();
+
+  //   });
+
+  // }
 
   private __disconnectObserver() {
 

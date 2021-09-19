@@ -255,7 +255,7 @@ class Pin implements app.pin.Object {
     const mapEvent = window.google.maps.event;
     const mapEmbed = this.controller.mapEmbed;
 
-    let resetBox = () => {
+    const resetBox = () => {
 
       this.infoBox = null;
       this.__generateListener();

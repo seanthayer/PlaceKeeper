@@ -10,6 +10,8 @@
 import PrimitiveElement from "__DEV/components/PrimitiveElement";
 import { renderComponent } from "reactmap/API";
 
+import { devModule } from "reactmap/API";
+
 /* ------------------------------------------
  *
  *              __DEV__INTERFACE
@@ -83,6 +85,24 @@ class __DEV__INTERFACE {
   __DEV__ExposeMapAPI() {
 
     window.map = this.#mapEmbed;
+
+  }
+
+  __DEV__RecalculateRenderPositions() {
+
+    devModule.__DEV__API_RecalculateRenderPositions();
+
+  }
+
+  __DEV__DoZoom() {
+
+    devModule.__DEV__API_DoZoom();
+
+  }
+
+  __DEV__PrintOffsets() {
+
+    devModule.__DEV__API_PrintOffsets();
 
   }
 
