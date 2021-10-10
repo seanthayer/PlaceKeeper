@@ -7,10 +7,7 @@
  * ------------------------------------------
  */
 
-import PrimitiveElement from "__DEV/components/PrimitiveElement";
-import { renderComponent } from "reactmap/API";
-
-import { devModule } from "reactmap/API";
+import PrimitiveElement from '__DEV__/components/PrimitiveElement';
 
 /* ------------------------------------------
  *
@@ -88,6 +85,13 @@ class __DEV__INTERFACE {
 
   }
 
+  /*
+  __DEV__PrintCurrentPixelCoords() {
+
+    devModule.__DEV__API_PrintCurrentPixelCoords();
+
+  }
+
   __DEV__RecalculateRenderPositions() {
 
     devModule.__DEV__API_RecalculateRenderPositions();
@@ -105,6 +109,7 @@ class __DEV__INTERFACE {
     devModule.__DEV__API_PrintOffsets();
 
   }
+  */
 
   __DEV__BindToWindow(arg) {
 
@@ -234,6 +239,7 @@ class __DEV__INTERFACE {
 
   }
 
+  /*
   __DEV__ONCLICK__ReactMapRenderComponent() {
 
     this.#devAction = (event) => {
@@ -243,6 +249,7 @@ class __DEV__INTERFACE {
     }
 
   }
+  */
 
   __DEV__ONCLICK__PanBy(x, y) {
 

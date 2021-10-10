@@ -16,9 +16,7 @@ import { loader }    from 'index';
 
 import type { Pin } from 'map/API';
 
-import __DEV__INTERFACE from '__DEV/__DEV__INTERFACE';
-import * as ReactMap from 'reactmap/API';
-
+import __DEV__INTERFACE from '__DEV__/__DEV__INTERFACE';
 
 /* ------------------------------------------
  *
@@ -29,7 +27,7 @@ import * as ReactMap from 'reactmap/API';
 
 // - - - - - - - - //
 
-const DEVMODE = true;
+const DEVMODE = false;
 
 // - - - - - - - - //
 
@@ -74,8 +72,6 @@ class Map extends React.Component<MapProps> {
           clickableIcons : false
       
         });
-
-        ReactMap.bindToMap(mapEmbed);
 
         if (DEVMODE) {
 

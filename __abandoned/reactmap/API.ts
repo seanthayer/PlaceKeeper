@@ -7,7 +7,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ReactMap from 'reactmap';
+// import ReactMap from 'reactmap';
 
 import RenderLayer from './components/RenderLayer';
 
@@ -39,6 +39,7 @@ var exportConstants = {
 
 var devModule = {
 
+  __DEV__API_PrintCurrentPixelCoords,
   __DEV__API_RecalculateRenderPositions,
   __DEV__API_DoZoom,
   __DEV__API_PrintOffsets
@@ -67,6 +68,23 @@ var REACTMAP_EVENT_ZOOM_ACTIVE: boolean = false;
  * 
  * ------------------------------------------
  */
+
+function __DEV__API_PrintCurrentPixelCoords() {
+
+  let latLng = {
+
+    lat: GMAPS_MAPEMBED!.getCenter()!.lat(),
+    lng: GMAPS_MAPEMBED!.getCenter()!.lng()
+
+  }
+
+  let zoom = GMAPS_MAPEMBED!.getZoom()!;
+
+  let center = __calculatePixelCoord(latLng, zoom);
+
+  console.log(`[DEV][ReactMap] Current pixel coord @ Zoom ${zoom} => `, center);  
+
+}
 
 function __DEV__API_RecalculateRenderPositions() {
 
@@ -149,63 +167,154 @@ function __calculatePixelCoord(latLngOrWorldCoord: ReactMap.LatLng | ReactMap.Po
 
 }
 
+function __calculateIntermediateCoord(latLng: ReactMap.LatLng, zoom: number, zoomDirection: 'in' | 'out'): ReactMap.Point {
+
+  let originCoord: ReactMap.Point;
+  let forwardCoord: ReactMap.Point;
+
+  let intermediateCoord: ReactMap.Point;
+
+  originCoord = __calculatePixelCoord(latLng, zoom);
+  forwardCoord = __calculatePixelCoord(latLng, (zoomDirection === 'in' ? (zoom + 1) : (zoom - 1)));
+
+  console.log('[DEV][ReactMap]{__calculateIntermediateCoord} originCoord => ', originCoord);
+  console.log('[DEV][ReactMap]{__calculateIntermediateCoord} forwardCoord => ', forwardCoord);
+
+  intermediateCoord = {
+
+    x: (forwardCoord.x + originCoord.x) / 2,
+    y: (forwardCoord.y + originCoord.y) / 2,
+
+  }
+
+  return intermediateCoord;
+
+}
+
 function __generateDragListener(map: google.maps.Map): google.maps.MapsEventListener {
 
-  let mapPixelCenter: ReactMap.Point;
-  let currZoom: number;
+  let _start: ReactMap.Point;
+  let _end: ReactMap.Point;
+  let _forwardZoom: number;
+  let transformDiff: ReactMap.Point;
 
-  let startListener: google.maps.MapsEventListener | null = null;
-  let endListener: google.maps.MapsEventListener   | null = null;
-  let idleListener: google.maps.MapsEventListener  | null = null;
+  let originZoom: number;
+  let originPixelCenter: ReactMap.Point;
+
+  let zoomDirection: 'in' | 'out' | null;
+
+  let startListener: google.maps.MapsEventListener  | null = null;
+  let endListener: google.maps.MapsEventListener    | null = null;
+  let idleListener: google.maps.MapsEventListener   | null = null;
+  let centerListener: google.maps.MapsEventListener | null = null;
 
   startListener = google.maps.event.addListener(map, 'dragstart', () => {
 
+    console.log('[DEV][ReactMap] ---------------------------------------------');
     console.log('[DEV][ReactMap][EVENT] dragstart');
+
+    zoomDirection = REACTMAP_RENDERLAYER!.getZoomDirection();
+
+    console.log('[DEV][ReactMap]{__generateDragListener} zoomDirection => ', zoomDirection);
 
     if (REACTMAP_EVENT_ZOOM_ACTIVE) {
 
-      REACTMAP_RENDERLAYER!.mimicHost();
-      
       REACTMAP_RENDERLAYER!.freezeRenderTransitions();
+      REACTMAP_RENDERLAYER!.startStaticDrag();
+
       REACTMAP_EVENT_RENDERS_PAUSED = true;
 
       endListener = google.maps.event.addListenerOnce(map, 'dragend', () => {
 
         // REACTMAP_RENDERLAYER!.continueRenderTransitions();
   
+        // console.log('[DEV][ReactMap][EVENT] dragend');
+
+        // REACTMAP_RENDERLAYER!.setZoomDirection(map.getZoom()!);
+
+        originPixelCenter = __calculatePixelCoord({ lat: map.getCenter()!.lat(), lng: map.getCenter()!.lng() }, originZoom);
+        _forwardZoom = map.getZoom()!;
+        
+        // console.log('[DEV][ReactMap] originZoom => ', originZoom);
+        // console.log('[DEV][ReactMap] originPixelCenter => ', originPixelCenter);
         console.log('[DEV][ReactMap][EVENT] dragend');
-
-        currZoom = map.getZoom()!;
-        mapPixelCenter = __calculatePixelCoord({ lat: map.getCenter()!.lat(), lng: map.getCenter()!.lng() }, currZoom );
-
-        console.log('[DEV][ReactMap] currZoom => ', currZoom);
-        console.log('[DEV][ReactMap] mapPixelCenter => ', mapPixelCenter);
+        console.log('[DEV][ReactMap] ---------------------------------------------');
   
         REACTMAP_EVENT_RENDERS_PAUSED = false;
-        REACTMAP_RENDERLAYER!.stopMimicking();
+        REACTMAP_RENDERLAYER!.stopStaticDrag();
+        // REACTMAP_RENDERLAYER!.doDynamicDrag(transformDiff);
+        // REACTMAP_RENDERLAYER!.applyStoredOffset();
+
+        _start = __calculateIntermediateCoord({ lat: map.getCenter()!.lat(), lng: map.getCenter()!.lng() }, _forwardZoom, zoomDirection!);
+
+        console.log('[DEV][ReactMap]{__generateDragListener} _start => ', _start);
+
+        centerListener = google.maps.event.addListener(map, 'center_changed', () => {
+
+          _end = __calculateIntermediateCoord({ lat: map.getCenter()!.lat(), lng: map.getCenter()!.lng() }, _forwardZoom, zoomDirection!);
+
+          console.log('[DEV][ReactMap]{__generateDragListener} _end => ', _end);
+
+          transformDiff = {
+
+            x: _start.x - _end.x,
+            y: _start.y - _end.y
+
+          }
+
+          console.log('[DEV][ReactMap]{__generateDragListener} transformDiff => ', transformDiff);
+
+          REACTMAP_RENDERLAYER!.doDynamicDrag(transformDiff);
+
+        });
 
         // For some reason without applying this timeout of 0ms, the resulting transition property within 'doZoomTransform'
         // will be applied to the offset that 'stopMimicking' adjusts on rendered components, causing a visible rubberbanding
         // as the component moved to the adjusted position.
         // Now, this correctly applies an immediate transform on all rendered components, calls for them to recalculate a new path to their 
         // origin points, and more-or-less transitions with the map's zoom animation.
-        setTimeout(() => {
+        // setTimeout(() => {
 
-          REACTMAP_RENDERLAYER!.doZoomTransform(mapPixelCenter, currZoom, __calculatePixelCoord);
+        //   REACTMAP_RENDERLAYER!.doZoomTransform(mapPixelCenter, currZoom, __calculatePixelCoord);
 
-        });
+        // });
   
       });
 
+      if (!idleListener) {
+
+        idleListener = google.maps.event.addListenerOnce(map, 'idle', () => {
+
+          originZoom = map.getZoom()!;
+          originPixelCenter = __calculatePixelCoord({ lat: map.getCenter()!.lat(), lng: map.getCenter()!.lng() }, originZoom );
+  
+          // REACTMAP_RENDERLAYER!.stopStaticDrag();
+
+          centerListener && google.maps.event.removeListener(centerListener);
+
+          REACTMAP_RENDERLAYER!.stopDynamicDrag();
+  
+          setTimeout(() => {
+  
+            REACTMAP_RENDERLAYER!.doZoomTransform(originPixelCenter, originZoom, __calculatePixelCoord);
+  
+            idleListener = null;
+  
+          });
+    
+        });
+
+      }
+
     } else if (!idleListener) {
 
-      REACTMAP_RENDERLAYER!.mimicHost();
+      REACTMAP_RENDERLAYER!.startStaticDrag();
   
       idleListener = google.maps.event.addListenerOnce(map, 'idle', () => {
 
         console.log('[DEV][ReactMap][EVENT] idle');
   
-        REACTMAP_RENDERLAYER!.stopMimicking();
+        REACTMAP_RENDERLAYER!.stopStaticDrag();
 
         idleListener = null;
   
@@ -221,6 +330,10 @@ function __generateDragListener(map: google.maps.Map): google.maps.MapsEventList
 
  function __generateZoomListener(map: google.maps.Map): google.maps.MapsEventListener {
 
+  // ~340 ms on avg. to complete an uninterrupted zoom animation
+
+  let _start: number;
+
   let mapPixelCenter: ReactMap.Point;
   let currZoom: number;
 
@@ -228,26 +341,41 @@ function __generateDragListener(map: google.maps.Map): google.maps.MapsEventList
 
   startListener = google.maps.event.addListener(map, 'zoom_changed', () => {
 
-    if (!REACTMAP_EVENT_RENDERS_PAUSED) {
+    // console.log('[DEV][ReactMap] Zoom change event,');
+    // console.log('[DEV][ReactMap] -- Zoom level => ', map.getZoom());
 
-      console.log('[DEV][ReactMap] Zoom change event,');
-      console.log('[DEV][ReactMap] -- Zoom level => ', map.getZoom());
+    // _start = Date.now();
+
+    REACTMAP_RENDERLAYER!.setZoomDirection(map.getZoom()!);
+
+    // console.log('[DEV][ReactMap] -- Assigned zoom direction => ', REACTMAP_RENDERLAYER!.getZoomDirection());
+
+    if (!REACTMAP_EVENT_RENDERS_PAUSED) {
   
       REACTMAP_EVENT_ZOOM_ACTIVE = true;
   
       currZoom = map.getZoom()!;
       mapPixelCenter = __calculatePixelCoord({ lat: map.getCenter()!.lat(), lng: map.getCenter()!.lng() }, currZoom );
   
-      console.log('[DEV][ReactMap] mapPixelCenter => ', mapPixelCenter);
+      // console.log('[DEV][ReactMap] mapPixelCenter => ', mapPixelCenter);
   
       REACTMAP_RENDERLAYER!.doZoomTransform(mapPixelCenter, currZoom, __calculatePixelCoord);
   
       google.maps.event.addListenerOnce(map, 'idle', () => {
+
+        // console.log(`[DEV][ReactMap] Zoom time: ${Date.now() - _start}`);
   
         REACTMAP_EVENT_ZOOM_ACTIVE = false;
   
       });
       
+    } else {
+
+      // console.log('[DEV][ReactMap] Setting new zoom direction,');
+      // console.log('[DEV][ReactMap] -- Zoom level => ', map.getZoom());
+
+      // REACTMAP_RENDERLAYER!.setZoomDirection(map.getZoom()!);
+
     }
 
   });

@@ -6,7 +6,7 @@
  */
 
 import React, { CSSProperties } from 'react';
-import ReactMap from 'reactmap';
+// import ReactMap from 'reactmap';
 
 import * as Styles from './RenderedComponent.styles';
 
@@ -34,6 +34,13 @@ class RenderedComponent extends React.Component<RenderProps> {
 
   worldOrigin: ReactMap.Point;
 
+  midPointOffset: {
+
+    top: string;
+    left: string;
+
+  };
+
   constructor(props: RenderProps) {
 
     super(props);
@@ -50,6 +57,8 @@ class RenderedComponent extends React.Component<RenderProps> {
     }
 
     this.worldOrigin = this.props.worldOrigin;
+
+    this.midPointOffset = { top: '0px', left: '0px' };
 
     // - - - -
 
@@ -93,20 +102,37 @@ class RenderedComponent extends React.Component<RenderProps> {
 
   adjustOffset(x: number, y: number) {
 
-    console.log(`[DEV][ReactMap][RenderedComponent] Adjusting by ${x}, ${y}`);
-    console.log(`[DEV][ReactMap][RenderedComponent] -- Current style ${this.offsetDiv.current!.style.left}, ${this.offsetDiv.current!.style.top}`);
+    // console.log(`[DEV][ReactMap][RenderedComponent] Adjusting by ${x}, ${y}`);
+    // console.log(`[DEV][ReactMap][RenderedComponent] -- Current style ${this.offsetDiv.current!.style.left}, ${this.offsetDiv.current!.style.top}`);
 
     let newX = parseInt(this.offsetDiv.current!.style.left as string) - x;
     let newY = parseInt(this.offsetDiv.current!.style.top as string) - y;
 
-    console.log(`[DEV][ReactMap][RenderedComponent] newX: ${newX}, newY: ${newY}`);
+    // console.log(`[DEV][ReactMap][RenderedComponent] newX: ${newX}, newY: ${newY}`);
 
     this.offsetDiv.current!.style.left = `${newX}px`;
     this.offsetDiv.current!.style.top = `${newY}px`;
 
-    console.log(`[DEV][ReactMap][RenderedComponent] Adjusted to ${this.offsetDiv.current!.style.left}, ${this.offsetDiv.current!.style.top}`);
+    // console.log(`[DEV][ReactMap][RenderedComponent] Adjusted to ${this.offsetDiv.current!.style.left}, ${this.offsetDiv.current!.style.top}`);
 
   }
+
+  // dynamicOffset(x: number, y: number) {
+
+  //   console.log(`[DEV][ReactMap][RenderedComponent] Dynamic offset by ${x}, ${y}`);
+  //   console.log(`[DEV][ReactMap][RenderedComponent] -- Midpoint style ${this.midPointOffset.left}, ${this.midPointOffset.top}`);
+
+  //   let newX = parseInt(this.midPointOffset.left as string) - x;
+  //   let newY = parseInt(this.midPointOffset.top as string) - y;
+
+  //   console.log(`[DEV][ReactMap][RenderedComponent] newX: ${newX}, newY: ${newY}`);
+
+  //   this.offsetDiv.current!.style.left = `${newX}px`;
+  //   this.offsetDiv.current!.style.top = `${newY}px`;
+
+  //   console.log(`[DEV][ReactMap][RenderedComponent] Adjusted to ${this.offsetDiv.current!.style.left}, ${this.offsetDiv.current!.style.top}`);
+
+  // }
 
   setOffset(x: number, y: number) {
 
@@ -135,30 +161,20 @@ class RenderedComponent extends React.Component<RenderProps> {
 
     }, { once: true });
 
-
-
-    this.offsetDiv.current!.addEventListener('transitioncancel', () => {
-
-      console.warn('[DEV][ReactMap][RenderedComponent] Canceled transition');
-      
-      // this.offsetDiv.current!.style.transitionProperty = 'none';
-
-    }, { once: true });
-
   }
 
   freezeTransition() {
 
     let currStyle = window.getComputedStyle(this.offsetDiv.current!);
-    let currLeft = currStyle.left;
-    let currTop = currStyle.top;
+    this.midPointOffset.left = currStyle.left;
+    this.midPointOffset.top = currStyle.top;
 
-    console.log(`[DEV][ReactMap][RenderedComponent] Curr left: ${currLeft}, Curr top: ${currTop}`);
+    console.log(`[DEV][ReactMap][RenderedComponent] Curr left: ${this.midPointOffset.left}, Curr top: ${this.midPointOffset.top}`);
     console.log(`[DEV][ReactMap][RenderedComponent] Going left: ${this.offsetDiv.current!.style.left}, Going top: ${this.offsetDiv.current!.style.top}`);
 
     this.offsetDiv.current!.style.transitionProperty = 'none';
-    this.offsetDiv.current!.style.left = currLeft;
-    this.offsetDiv.current!.style.top = currTop;
+    this.offsetDiv.current!.style.left = this.midPointOffset.left;
+    this.offsetDiv.current!.style.top = this.midPointOffset.top;
 
   }
 
