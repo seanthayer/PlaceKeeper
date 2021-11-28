@@ -12,7 +12,6 @@ import React from 'react';
 import * as Styles from 'components/PlacesList.styles';
 
 import TrashButton from 'components/misc/TrashButton';
-import ConfirmText from 'components/misc/ConfirmText';
 
 /* ------------------------------------------
  *
@@ -85,9 +84,8 @@ class PlacesList extends React.Component<ListProps> {
 }
 
 type placeProps = app.component.placesList.place.Props;
-type placeState = app.component.placesList.place.State;
 
-class SavedPlace extends React.Component<placeProps, placeState> {
+class SavedPlace extends React.Component<placeProps> {
 
   /*  Description:
    *    Renders a saved place list item, representing the information of a pin on the current map. Can handle panning
@@ -100,10 +98,6 @@ class SavedPlace extends React.Component<placeProps, placeState> {
 
     this.panTo        = this.panTo.bind(this);
     this.handleTrash  = this.handleTrash.bind(this);
-    this.confirmTrash = this.confirmTrash.bind(this);
-    this.resetTrash   = this.resetTrash.bind(this);
-
-    this.state = { contents: <TrashButton handleTrash={this.handleTrash}/> };
 
   }
 
@@ -120,12 +114,8 @@ class SavedPlace extends React.Component<placeProps, placeState> {
 
           <h5 className="saved-place-entry-title" css={Styles.placeTitle}>{this.props.name}</h5>
           <button onClick={this.panTo} type="button" name="saved-place-entry-latLng" className="saved-place-entry-latLng" css={Styles.placeLatLng}>({this.props.latLng.lat()}, {this.props.latLng.lng()})</button>
-
-          <div className="trash-button-container">
             
-            {this.state.contents}
-
-          </div>
+          <TrashButton handleTrash={this.handleTrash}/>
 
         </div>
       </li>
@@ -146,31 +136,7 @@ class SavedPlace extends React.Component<placeProps, placeState> {
   
   handleTrash() {
 
-    /*  Description:
-     *    Prompts confirmation from the user.
-     */
-
-    this.setState({
-
-      contents: <ConfirmText confirm={this.confirmTrash} reset={this.resetTrash}/>
-
-    });
-
-  }
-
-  confirmTrash() {
-
     this.props.removePlace(this.props.latLng);
-
-  }
-
-  resetTrash() {
-
-    this.setState({
-
-      contents: <TrashButton handleTrash={this.handleTrash}/>
-
-    });
 
   }
 

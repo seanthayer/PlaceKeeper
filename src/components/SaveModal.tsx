@@ -14,7 +14,7 @@ import * as Styles   from 'components/SaveModal.styles';
 
 import MiniModal from './MiniModal';
 
-import type { Pin } from 'MapAPI';
+import type { Pin } from 'map/API';
 import type { ChangeEvent } from 'react';
 
 /* ------------------------------------------

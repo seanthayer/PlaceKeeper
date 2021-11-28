@@ -11,10 +11,12 @@ import * as React from 'react';
 
 import * as Styles from 'components/Map.styles';
 
-import MapController from 'MapAPI';
+import MapController from 'map/API';
 import { loader }    from 'index';
 
-import type { Pin } from 'MapAPI';
+import type { Pin } from 'map/API';
+
+import __DEV__INTERFACE from '__DEV__/__DEV__INTERFACE';
 
 /* ------------------------------------------
  *
@@ -23,16 +25,11 @@ import type { Pin } from 'MapAPI';
  * ------------------------------------------
  */
 
-declare global {
+// - - - - - - - - //
 
-  interface Window {
+const DEVMODE = false;
 
-    mapDOMNode    : HTMLDivElement;
-    mapController : MapController;
-
-  }
-
-}
+// - - - - - - - - //
 
 type MapProps = {
 
@@ -64,7 +61,6 @@ class Map extends React.Component<MapProps> {
 
     loader.load().then(() => {
 
-      const google      = window.google;
       const mapDOMNode  = (document.getElementById('map') as HTMLDivElement);
 
       try {
@@ -76,10 +72,20 @@ class Map extends React.Component<MapProps> {
           clickableIcons : false
       
         });
+
+        if (DEVMODE) {
+
+          const dev = new __DEV__INTERFACE(mapEmbed);
+
+          window.dev = dev;
+          
+        } else {
+
+          const mapController = new MapController(mapEmbed, this.props.updatePlaces);
   
-        const mapController = new MapController(mapEmbed, this.props.updatePlaces);
-  
-        window.mapController = mapController;
+          window.mapController = mapController;
+
+        }
         
       } catch (err) {
        

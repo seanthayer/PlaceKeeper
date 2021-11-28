@@ -1,3 +1,5 @@
+/** @jsxImportSource @emotion/react */
+
 /* ------------------------------------------
  *
  *                  IMPORT
@@ -7,6 +9,8 @@
 
 import React from 'react';
 
+import * as Styles from 'components/misc/ConfirmText.styles';
+
 /* ------------------------------------------
  *
  *                CONFIRMTEXT
@@ -14,7 +18,7 @@ import React from 'react';
  * ------------------------------------------
  */
 
-type ConfirmProps = app.component.misc.confirmText.Props;
+type ConfirmProps = app.component.misc.trashButton.confirmText.Props;
 
 class ConfirmText extends React.Component<ConfirmProps> {
 
@@ -25,7 +29,9 @@ class ConfirmText extends React.Component<ConfirmProps> {
   render() {
 
     return (
-      <div className="are-you-sure">Are you sure?<i onClick={this.props.confirm} className="fas fa-check-circle"></i><i onClick={this.props.reset} className="fas fa-times-circle"></i></div>
+
+      <div className="are-you-sure">Are you sure?<i onClick={this.props.confirm} className="fas fa-check-circle" css={Styles.confirm}></i><i onClick={this.props.reset} className="fas fa-times-circle" css={Styles.deny}></i></div>
+      
     );
 
   }
