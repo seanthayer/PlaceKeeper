@@ -117,22 +117,24 @@ class RenderedComponent extends React.Component<RenderProps> {
 
   }
 
-  // dynamicOffset(x: number, y: number) {
+  /*
+  dynamicOffset(x: number, y: number) {
 
-  //   console.log(`[DEV][ReactMap][RenderedComponent] Dynamic offset by ${x}, ${y}`);
-  //   console.log(`[DEV][ReactMap][RenderedComponent] -- Midpoint style ${this.midPointOffset.left}, ${this.midPointOffset.top}`);
+    console.log(`[DEV][ReactMap][RenderedComponent] Dynamic offset by ${x}, ${y}`);
+    console.log(`[DEV][ReactMap][RenderedComponent] -- Midpoint style ${this.midPointOffset.left}, ${this.midPointOffset.top}`);
 
-  //   let newX = parseInt(this.midPointOffset.left as string) - x;
-  //   let newY = parseInt(this.midPointOffset.top as string) - y;
+    let newX = parseInt(this.midPointOffset.left as string) - x;
+    let newY = parseInt(this.midPointOffset.top as string) - y;
 
-  //   console.log(`[DEV][ReactMap][RenderedComponent] newX: ${newX}, newY: ${newY}`);
+    console.log(`[DEV][ReactMap][RenderedComponent] newX: ${newX}, newY: ${newY}`);
 
-  //   this.offsetDiv.current!.style.left = `${newX}px`;
-  //   this.offsetDiv.current!.style.top = `${newY}px`;
+    this.offsetDiv.current!.style.left = `${newX}px`;
+    this.offsetDiv.current!.style.top = `${newY}px`;
 
-  //   console.log(`[DEV][ReactMap][RenderedComponent] Adjusted to ${this.offsetDiv.current!.style.left}, ${this.offsetDiv.current!.style.top}`);
+    console.log(`[DEV][ReactMap][RenderedComponent] Adjusted to ${this.offsetDiv.current!.style.left}, ${this.offsetDiv.current!.style.top}`);
 
-  // }
+  }
+  */
 
   setOffset(x: number, y: number) {
 
@@ -145,8 +147,6 @@ class RenderedComponent extends React.Component<RenderProps> {
 
     this.offsetDiv.current!.style.transitionProperty = 'top, left';
     this.offsetDiv.current!.style.transitionTimingFunction = (direction === 'in' ? 'cubic-bezier(0.0, 0.0, 0.75, 1.0)' : 'cubic-bezier(0.3, 0.4, 0.4, 0.75)');
-
-    // this.offsetDiv.current!.style.transitionDelay = '2s';
 
     console.log(`[DEV][ReactMap][RenderedComponent] x: ${x}, y: ${y}`);
 
@@ -190,41 +190,13 @@ class RenderedComponent extends React.Component<RenderProps> {
 
   }
 
-  // __DEBUG__PrintOffset() {
+  /*
+  __DEBUG__PrintOffset() {
 
-  //   console.log(`[DEV][ReactMap][RenderedComponent] Current offset (${this.offsetDiv.current!.style.left}, ${this.offsetDiv.current!.style.top})`);
-
-  // }
-
-
-  /* - - - - BAD SOLUTION - - - -
-  
-  doZoom(direction: 'in' | 'out') {
-
-    let x = parseInt(this.offsetDiv.current!.style.left as string);
-    let y = parseInt(this.offsetDiv.current!.style.top as string);
-
-    let newX: number;
-    let newY: number;
-
-    if (direction === 'in') {
-
-      newX = x * 2;
-      newY = y * 2;
-      
-    } else {
-
-      newX = x / 2;
-      newY = y / 2;
-
-    }
-
-    this.offsetDiv.current!.style.left = `${newX}px`;
-    this.offsetDiv.current!.style.top = `${newY}px`;
+    console.log(`[DEV][ReactMap][RenderedComponent] Current offset (${this.offsetDiv.current!.style.left}, ${this.offsetDiv.current!.style.top})`);
 
   }
   */
-
 
 }
 

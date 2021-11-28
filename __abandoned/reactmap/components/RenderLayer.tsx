@@ -338,35 +338,6 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
 
     this.currZoom = newZoom;
 
-    // - - - -
-
-    /* - - - - BAD SOLUTION - - - -
-    
-    let direction: 'in' | 'out';
-
-    let minZoom = exportConstants.MIN_ZOOM;
-    let maxZoom = exportConstants.MAX_ZOOM;
-
-    if (  ((minZoom < this.currZoom) && (this.currZoom < maxZoom)) ||
-          ((minZoom < newZoom) && (newZoom < maxZoom))) {
-
-      direction = (this.currZoom < newZoom ? 'in' : 'out');
-
-      this.renderRefs.forEach((r) => {
-  
-        r.current!.doZoom(direction);
-  
-      });
-  
-      this.currZoom = newZoom;
-      
-    } else {
-
-      console.warn('[DEV][ReactMap][RenderLayer] Discarding duplicate zoom at level => ', newZoom);
-
-    }
-    */
-
   }
 
   private __mimic(action: () => void) {
@@ -429,17 +400,19 @@ class RenderLayer extends React.PureComponent<LayerProps, LayerState> {
 
   }
 
-  // __DEBUG__PrintRenderOffsets() {
+  /*
+  __DEBUG__PrintRenderOffsets() {
 
-  //   console.log('[DEV][ReactMap][RenderLayer] Printing offsets,');
+    console.log('[DEV][ReactMap][RenderLayer] Printing offsets,');
 
-  //   this.renderRefs.forEach((r) => {
+    this.renderRefs.forEach((r) => {
 
-  //     r.current!.__DEBUG__PrintOffset();
+      r.current!.__DEBUG__PrintOffset();
 
-  //   });
+    });
 
-  // }
+  }
+  */
 
   private __disconnectObserver() {
 

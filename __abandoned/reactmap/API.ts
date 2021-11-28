@@ -226,10 +226,6 @@ function __generateDragListener(map: google.maps.Map): google.maps.MapsEventList
 
       endListener = google.maps.event.addListenerOnce(map, 'dragend', () => {
 
-        // REACTMAP_RENDERLAYER!.continueRenderTransitions();
-  
-        // console.log('[DEV][ReactMap][EVENT] dragend');
-
         // REACTMAP_RENDERLAYER!.setZoomDirection(map.getZoom()!);
 
         originPixelCenter = __calculatePixelCoord({ lat: map.getCenter()!.lat(), lng: map.getCenter()!.lng() }, originZoom);
@@ -243,7 +239,6 @@ function __generateDragListener(map: google.maps.Map): google.maps.MapsEventList
         REACTMAP_EVENT_RENDERS_PAUSED = false;
         REACTMAP_RENDERLAYER!.stopStaticDrag();
         // REACTMAP_RENDERLAYER!.doDynamicDrag(transformDiff);
-        // REACTMAP_RENDERLAYER!.applyStoredOffset();
 
         _start = __calculateIntermediateCoord({ lat: map.getCenter()!.lat(), lng: map.getCenter()!.lng() }, _forwardZoom, zoomDirection!);
 
@@ -344,8 +339,6 @@ function __generateDragListener(map: google.maps.Map): google.maps.MapsEventList
     // console.log('[DEV][ReactMap] Zoom change event,');
     // console.log('[DEV][ReactMap] -- Zoom level => ', map.getZoom());
 
-    // _start = Date.now();
-
     REACTMAP_RENDERLAYER!.setZoomDirection(map.getZoom()!);
 
     // console.log('[DEV][ReactMap] -- Assigned zoom direction => ', REACTMAP_RENDERLAYER!.getZoomDirection());
@@ -362,8 +355,6 @@ function __generateDragListener(map: google.maps.Map): google.maps.MapsEventList
       REACTMAP_RENDERLAYER!.doZoomTransform(mapPixelCenter, currZoom, __calculatePixelCoord);
   
       google.maps.event.addListenerOnce(map, 'idle', () => {
-
-        // console.log(`[DEV][ReactMap] Zoom time: ${Date.now() - _start}`);
   
         REACTMAP_EVENT_ZOOM_ACTIVE = false;
   
