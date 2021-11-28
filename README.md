@@ -19,6 +19,20 @@ PlaceKeeper is a full stack application and currently featured with,
 
 PlaceKeeper's primary goal is to serve as a hands-on learning opportunity. As a secondary outcome, PlaceKeeper exhibits a full stack implementation and acts as a reference point for future projects.
 
+## Points of Interest
+
+- [ReactMap Writeup](https://github.com/seanthayer/PlaceKeeper/pull/15) ([PDF](https://drive.google.com/file/d/1yku9YHY4bs81nqVXiv-mWyFcBKnWmVef/view?usp=sharing)) — The complete writeup and analysis for the abandoned ReactMap branch. This branch attempted to fully integrate the rendering of React components on the Google Maps embed, with minimal dependency on API functionalities.
+- [ReactMap Graveyard](https://github.com/seanthayer/PlaceKeeper/tree/main/__abandoned/reactmap) — The actual code of ReactMap at its point of fullest development. No promises made in regard to readability or organization.
+  - [API](https://github.com/seanthayer/PlaceKeeper/blob/main/__abandoned/reactmap/API.ts) — The library functions that acted as ReactMap's interface.
+  - [RenderLayer](https://github.com/seanthayer/PlaceKeeper/blob/main/__abandoned/reactmap/components/RenderLayer.tsx) — The component that managed interactions between the API and rendered components.
+  - [RenderedComponent](https://github.com/seanthayer/PlaceKeeper/blob/main/__abandoned/reactmap/components/RenderedComponent.tsx) — The component that wrapped any user-defined React component, housing functions for position keeping and instance specific logic.
+- [Dev Interface](https://github.com/seanthayer/PlaceKeeper/blob/main/src/__DEV__/__DEV__INTERFACE.ts) — Orginally created when developing ReactMap, houses various debugging functions related to the map embed.
+- [Server](https://github.com/seanthayer/PlaceKeeper/blob/main/server.js) — PlaceKeeper's Node.js based server, utilizing Express and Sequelize.
+  - [SQL Starter](https://github.com/seanthayer/PlaceKeeper/blob/main/sql_example.sql) — SQL code for initializing the example tables. Also provides insight into the basic database schema.
+- [Map API](https://github.com/seanthayer/PlaceKeeper/blob/main/src/map/API.tsx) — Home to all functions that manage map pins and pin interactions.
+- [App](https://github.com/seanthayer/PlaceKeeper/blob/main/src/App.tsx) — PlaceKeeper's primary React component, composes all sub-components.
+- [Type Definitions](https://github.com/seanthayer/PlaceKeeper/blob/main/src/global.d.ts) — All globally accessible definitions for TypeScript functionality.
+
 ## Roadmap
 <details><summary>[Expand]</summary>
 
