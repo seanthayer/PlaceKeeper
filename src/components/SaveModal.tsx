@@ -149,7 +149,8 @@ class SaveModal extends React.Component<ModalProps, ModalState> {
      *    Consolidate map and pin information to save on the server.
      */
 
-    let formattedTitle  = this.state.mapName!.trim().replace(/\s+/g, ' ');
+    let mapTitle = this.state.mapName;
+    let formattedTitle: string;
 
     let modalContent;
 
@@ -158,7 +159,9 @@ class SaveModal extends React.Component<ModalProps, ModalState> {
 
     if (numOfPins) {
 
-      if (formattedTitle) {
+      if (mapTitle) {
+
+        formattedTitle = mapTitle.trim().replace(/\s+/g, ' ');
 
         mapTitles = await this.props.GETMaps().catch((err) => {
 

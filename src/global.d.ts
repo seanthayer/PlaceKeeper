@@ -243,7 +243,12 @@ declare namespace app {
 
     interface HTMLGen {
 
-      NewPinForm(context: { cleanUp?(): void }): React.ReactElement;
+      NewPinForm(context: { latLng: google.maps.LatLng | google.maps.LatLngLiteral }): string;
+    
+      PinInfo(context: { latLng: google.maps.LatLng | google.maps.LatLngLiteral, name: string, description?: string }): string;
+    
+      TrashButton(): string;
+      ConfirmText(): string;
     
     }
 
@@ -253,9 +258,7 @@ declare namespace app {
     
       generateMarker(map: google.maps.Map, pos?: google.maps.LatLng): google.maps.Marker | null;
       
-      generateInfoBox<T>(
-        opt?: { pos: google.maps.LatLng, html: string | React.ComponentClass<app.component.embedded.Intrinsic & T>, closeClick?(): void }
-      ): { window: google.maps.InfoWindow, DOMNode?: HTMLDivElement, element?: React.ReactElement<T>, cleanUp?(): void } | null;
+      generateInfoBox(opt?: { pos?: google.maps.LatLng, html?: string }): google.maps.InfoWindow | null;
     
     }
 
